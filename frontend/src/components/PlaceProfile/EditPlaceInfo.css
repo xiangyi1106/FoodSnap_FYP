@@ -1,0 +1,145 @@
+  .edit_place_info {
+      display: flex;
+      flex-direction: column;
+      padding: 20px 15px;
+  }
+  .edit_title{
+    display: flex;
+    justify-content: center;
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 1.5em;
+    font-weight: 600;
+  }
+
+  .edit_place_info_basic {
+      margin-top: 20px;
+      border: 1px solid gray;
+      border-radius: 10px;
+      padding: 20px 20px;
+  }
+
+  .edit_place_info_basic_row {
+      display: flex;
+      align-items: center;
+      padding: 10px 25px;
+  }
+
+  .edit_place_info_basic_label {
+      width: 30%;
+      font-family: "Source Sans 3", sans-serif;
+      font-weight: 600;
+      font-style: normal;
+  }
+
+  .edit_place_info_basic_input {
+      /* flex: 2; */
+      width: 70%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+  }
+
+  .edit_place_info_basic_input:focus {
+      border-color: #007bff;
+      outline: none;
+  }
+
+  .edit_place_info_actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+      gap: 15px;
+  }
+
+  .save_button {
+    width: 100px;
+  }
+
+  .cancel_button {
+    width: 100px;
+  }
+
+  .edit_place_picture {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+  }
+  
+  .edit_place_info_picture_row {
+    display: flex;
+    /* flex-direction: column; */
+    align-items: center;
+  }
+
+  .image_upload_section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 70%;
+    border: 1px dashed gray;
+    margin: 10px;
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .image_upload_section:first-child{
+    width: 30%;
+  }
+
+  .image_preview_container {
+    position: relative;
+    display: inline-block;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  
+  .profile_image {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  .cover_image {
+    width: 400px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+  
+
+  @media (max-width: 769px) {
+    .edit_place_info_basic_label{
+        width: 100%;
+    }
+    .edit_place_info_basic_input{
+        width: 100%;
+    }
+    .edit_place_info_basic_row {
+        display: block;
+        padding: 10px 0px;
+    }
+    .full_width{
+        width: 100%!important;
+    }
+    .edit_title{
+        font-size: 1.2rem;
+    }
+    .image_preview_container, .edit_place_info_picture_row{
+        display: block!important;
+    }
+
+    .image_upload_section{
+        width: 100%!important;
+        margin: 0;
+    }
+
+    .cover_image{
+        width: 100%;
+    }
+  }

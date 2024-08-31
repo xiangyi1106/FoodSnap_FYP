@@ -1,0 +1,45 @@
+export const asianCuisines  = [
+    "Asian Fusion",
+    "Chinese",
+    "Malay",
+    "Indian",
+    "Filipino",
+    "Indonesian",
+    "Italian",
+    "Japanese",
+    "Korean",
+    "Malaysian",
+    "Singaporean",
+    "Taiwanese",
+    "Thai",
+    "Vietnamese",
+]
+
+export const foodCategory = [
+    "Breakfast & Brunch",
+    "Noodles",
+    "Waffles",
+    "Bubble Tea",
+    "Coffee & Tea",
+    "Burgers",
+    "Chicken Wings",
+    "Fast Food",
+    "Sushi",
+    "Salad",
+    "Vegan",
+    "Vegetarian",
+    "Halal",
+    "Barbeque",
+    "Hot Pot",
+    "Steak",
+    "Chicken Rice",
+    "Dim Sum",
+    "Raw Food",
+    "Nasi Lemak",
+    "Pasta",
+    "Ramen",
+    "Soup",
+]
+
+
+

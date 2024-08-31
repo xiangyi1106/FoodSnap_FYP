@@ -1,0 +1,170 @@
+@import url('https://fonts.googleapis.com/css?family=Cormorant+Garamond:300,400,600|Tulpen+One&display=swap');
+
+:root {
+    --font-family-primary: 'Vollkorn', serif;
+    --font-family-secondary: 'PT Sans', sans-serif;
+
+    --font-size-title: 32px;
+    --line-height-title: 1.4;
+    --font-size-caption: 14px;
+    --line-height-caption: 1.2;
+
+    --color-text: #222022;
+    --color-highlight-primary: #FFEF7E;
+    --color-highlight-secondary: #B7F9E9;
+    --border-radius-primary: 10px;
+
+    --dark-text: #2A2935;
+
+    /* spacing */
+    --baseline: 12px;
+
+    /* fonts */
+    --book-title: 'Tulpen One', sans-serif;
+    --title: 'Cormorant Garamond', serif;
+    --body: 'Cormorant Garamond', serif;
+    --base-size: calc(var(--baseline) * 1.2);
+}
+
+.visited_place_card {
+    max-width: 960px;
+    border-radius: var(--border-radius-primary);
+    box-shadow: 24px 24px 80px rgba(0, 0, 0, 0.1);
+    padding: 20px 20px 28px 20px;
+    box-sizing: border-box;
+    /* margin: 20px; */
+    margin-bottom: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.visited_place_card:hover{
+    
+}
+
+.page__content {
+    padding: var(--baseline);
+    position: relative;
+    text-align: center;
+}
+
+.page__content-book-title {
+    font-family: var(--book-title);
+    font-size: calc(var(--base-size) * 3);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--dark-text);
+    margin-top: calc(var(--baseline) * 2);
+    margin-bottom: calc(var(--baseline) * 2);
+}
+
+.page__content-author {
+    font-family: var(--title);
+    font-size: calc(var(--base-size) * 1.2);
+    font-weight: 100;
+    text-transform: uppercase;
+    color: var(--dark-text);
+    border-top: 1px solid var(--dark-text);
+    border-bottom: 1px solid var(--dark-text);
+    display: inline-block;
+    padding: calc(var(--baseline) / 2) calc(var(--baseline) / 5);
+}
+
+.page__content-credits {
+    font-family: var(--title);
+    text-transform: uppercase;
+    font-size: calc(var(--base-size) * 0.85);
+    margin-bottom: calc(var(--baseline) * 2);
+    letter-spacing: 1px;
+  }
+
+@media (min-width: 576px) {
+    .visited_place_card {
+        flex-direction: row;
+        align-items: center;
+        margin-left: 40px;
+        margin-right: 40px;
+        margin-bottom: 40px;
+        padding: 32px;
+    }
+}
+
+.card__image {
+    width: 100%;
+    max-height: 300px;
+    border-radius: var(--border-radius-primary);
+    object-fit: cover;
+    margin-bottom: 18px;
+}
+
+@media (min-width: 576px) {
+    .card__image {
+        width: 45%;
+        max-height: none;
+        /* min-height: 400px; */
+        margin-bottom: 0;
+    }
+}
+
+.card__content {
+    width: 100%;
+}
+
+@media (min-width: 576px) {
+    .card__content {
+        width: 55%;
+        padding-left: 40px;
+    }
+}
+
+.card__date {
+    display: block;
+    font-family: var(--font-family-secondary);
+    font-size: var(--font-size-caption);
+    line-height: var(--line-height-caption);
+    text-transform: uppercase;
+    color: var(--color-text);
+    margin-bottom: 6px;
+}
+
+@media (min-width: 576px) {
+    .card__date {
+        margin-bottom: 8px;
+    }
+}
+
+.card__title {
+    font-family: var(--font-family-primary);
+    /* font-size: var(--font-size-title); */
+    font-size: 1.2rem;
+    line-height: var(--line-height-title);
+    color: var(--color-text);
+    background-image: linear-gradient(90deg, var(--color-highlight-primary), var(--color-highlight-secondary));
+    background-size: 100% 42%;
+    background-size: 100% 100%;
+    /* background-repeat: no-repeat; */
+    /* background-repeat: repeat space; */
+    background-position: 0 85%;
+    padding: 0 4px;
+    margin-left: -4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4; /* Number of lines to show */
+    -webkit-box-orient: vertical;
+}
+
+.month_selector{
+    display: flex;
+    justify-content: center;
+}
+
+.game_profile_card_wrapper{
+    display: flex;
+    justify-content: center;
+}  

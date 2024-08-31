@@ -1,0 +1,35 @@
+.opening-hours {
+    font-family: "Source Sans 3", sans-serif;
+    margin: 20px;
+    width: 70%;
+  }
+  
+  .day {
+    margin-bottom: 20px;
+  }
+  
+  .time-slot {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .time-slot label {
+    margin-right: 10px;
+  }
+  
+  .time-slot input {
+    margin-right: 10px;
+  }
+  
+  .closed-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-top: 10px;
+  }
+  
+  .closed-label input {
+    margin-right: 10px;
+  }
+  

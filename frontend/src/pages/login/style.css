@@ -1,0 +1,163 @@
+  body {
+    /* fallback for old browsers */
+    /* background: #6a11cb; */
+
+    /* Chrome 10-25, Safari 5.1-6 */
+    /* background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1)); */
+
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    /* background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1)) */
+
+    /* background: linear-gradient(to right, rgb(198, 255, 221), rgb(251, 215, 134), rgb(247, 121, 125));
+
+    background: linear-gradient(to right, rgb(127, 127, 213), rgb(134, 168, 231), rgb(145, 234, 228));
+
+    background: linear-gradient(to right, rgb(255, 153, 102), rgb(255, 94, 98));
+
+    background: linear-gradient(to right, rgb(201, 214, 255), rgb(226, 226, 226));
+
+    background: linear-gradient(to right, rgb(97, 144, 232), rgb(167, 191, 232));
+
+    background: linear-gradient(to right, rgb(255, 95, 109), rgb(255, 195, 113));
+
+
+    background: linear-gradient(to right, rgb(43, 192, 228), rgb(234, 236, 198)); */
+
+    /* background: linear-gradient(to right, rgb(43, 192, 228), rgb(234, 236, 198)); */
+
+  }
+
+  .login {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, rgb(43, 192, 228), rgb(234, 236, 198));
+  }
+
+  .login_wrapper {
+    background: linear-gradient(to right, rgb(43, 192, 228), rgb(234, 236, 198));
+    height: 100vh;
+    /*  */
+  }
+
+  .login_page {
+    overflow-y: auto;
+  }
+
+  .password_input {
+    position: relative;
+    /* border: 2px solid red; */
+
+  }
+
+  .password_input .icon_span {
+    position: absolute;
+    top: 32%;
+    right: 5px;
+    /* Adjust the right distance as needed */
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+
+  .display_none {
+    display: none;
+  }
+
+  .login_form_title{
+    font-size: 0.95rem;
+  }
+
+
+
+  input[type=password]::-ms-reveal,
+  input[type=password]::-ms-clear {
+    display: none;
+  }
+
+  /*--------------- Error text and Success text message ------------------ */
+  .error_text {
+    color: #b94a48;
+  }
+
+  .success_text {
+    position: relative;
+    padding: 15px 10px;
+    /* background: #b94a48; */
+    width: 100%;
+    color: #fff;
+    font-size: 13px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    background: var(--green-color);
+  }
+
+  /*--------------- Error text and Success text message ------------------ */
+
+  /* ---------------Media Queries------------------- */
+  /* Remove the maximum height for smaller screens */
+  /* @media (min-height: 740px) {
+  .register_container {
+    max-height: none;
+  }
+} */
+
+@media (max-width: 330px) and (min-width: 300px){
+  .input_error, .form_input{
+    width: 250px!important;
+  }
+
+  .password_input .icon_span, .error_icon{
+    right: 22px!important;
+  }
+
+  .login_button{
+    width: 250px!important;
+  }
+  .button-container {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 330px){
+  .error_icon{
+    top: 63%!important;
+  }
+}
+
+@media (max-width: 217px){
+  .error_icon{
+    top: 65%!important;
+  }
+}
+
+@media (max-width: 230px) {
+  .logo_img {
+    display: none!important;
+  }
+}
+
+  @media (max-width: 380px) {
+    .card-body {
+      padding: 1rem !important;
+    }
+  }
+
+  @media (max-width: 250px) {
+    .reg_grid label {
+      /* width: 10vh; */
+      /* width: 100%;
+      
+
+      font-size: 0.85em; */
+      /* font-size: 8px!important; */
+    }
+
+    .reg_grid select {
+      font-size: 14px;
+    }
+  }
+
+  /* ---------------Media Queries------------------- */

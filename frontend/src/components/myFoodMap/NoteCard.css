@@ -1,0 +1,57 @@
+.note_rounded {
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.note_container {
+    width: 100%;
+    width: 80%;
+    height: 16rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: var(--note-bg, white);
+    border: 1px solid var(--note-border, gray);
+    padding: 1.25rem;
+}
+
+.note_title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--note-title-color, #333);
+    margin-bottom: 0.75rem;
+}
+
+.note_description {
+    font-size: 1rem;
+    color: var(--note-text-color, #555);
+}
+
+.note_footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--note-footer-color, #777);
+}
+
+.note_date {
+    font-size: 0.875rem;
+}
+
+.note_icon_button {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: var(--note-icon-bg, #333);
+    color: var(--note-icon-color, white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+}
+
+.note_icon_button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--note-icon-focus, black);
+}

@@ -1,0 +1,100 @@
+.settings_layout {
+    padding: 2.5rem;
+    padding-bottom: 4rem;
+    font-family: 'Geist Sans', sans-serif;
+  }
+  
+  .settings_header {
+    margin-bottom: 1rem;
+  }
+  
+  .settings_title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: -0.02em;
+  }
+  
+  .settings_description {
+    color: #6b7280; /* muted-foreground color */
+  }
+  
+  .settings_separator {
+    margin: 1.5rem 0;
+    border: 1px solid rgba(218, 218, 218, 0.596);
+  }
+  
+  .settings_container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .settings_sidebar {
+    margin-left: -1rem;
+    width: 20%;
+  }
+  
+  .settings_content {
+    flex: 1;
+    max-width: 32rem;
+  }
+  
+  .profile_form_space_y_8 {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .profile_form_item {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .profile_form_label {
+    /* font-weight: bold; */
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .profile_form_input,
+  .profile_form_select,
+  .profile_form_textarea {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    /* font-size: 1rem; */
+    font-size: 0.9rem;
+
+  }
+  
+  .profile_form_textarea {
+    resize: none;
+  }
+  
+  .profile_form_description {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: grey;
+  }
+  
+  .profile_form_message {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+  }
+  
+  .profile_form_button {
+    background-color: #30BFBF;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .profile_form_button.mt_2 {
+    margin-top: 0.5rem;
+  }
+
+  

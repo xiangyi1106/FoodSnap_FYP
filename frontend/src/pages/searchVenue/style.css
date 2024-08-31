@@ -1,0 +1,245 @@
+.search_venue {
+  display: flex;
+  flex-direction: row;
+  margin-top: 56px;
+  margin-left: 50px;
+  overflow: hidden;
+  width: calc(100vw - 50px);
+  height: calc(100vh - 56px);
+
+  margin-left: 20vw;
+  /* Adjust this value to match the width of the left navigation */
+  overflow: hidden;
+  width: calc(100vw - 20vw);
+  /* Adjust the width calculation accordingly */
+  height: calc(100vh - 56px);
+}
+
+.map {
+  overflow: hidden;
+  /* width: 30%; */
+  flex-grow: 1;
+  /* Map will take up the remaining space */
+  margin-right: auto;
+  /* Ensures the map stays on the left */
+}
+
+.search_box {
+  width: 50%;
+  width: 60%;
+  margin-left: auto;
+
+}
+
+.searchbox_wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgb(214, 212, 212);
+}
+
+.category_title {
+  padding-left: 15px;
+  padding-top: 10px;
+  color: gray;
+  font-size: 0.8em;
+  font-weight: 500;
+}
+
+
+/* Place Details */
+/* PlaceDetail.css */
+.place-detail {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 16px;
+  margin-bottom: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  cursor: pointer;
+  font-family: "Source Sans 3", sans-serif;
+
+}
+
+.place-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.place-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  padding: 8px;
+}
+
+.place-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.place-name {
+  text-transform: capitalize;
+  /* width: 40%; */
+  font-size: 1.125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.place-price {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: gray;
+}
+
+.place-ratings {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.rating-stars {
+  /* Add your star rating styles here */
+}
+
+.rating-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: gray;
+}
+
+.price-level {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: gray;
+  /* margin-left: auto; */
+  margin-left: 10px;
+}
+
+.place-ranking {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: lightgray;
+}
+
+.open-status {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: darkgray;
+}
+
+.dietary-restrictions {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.badge {
+  background-color: teal;
+  color: white;
+  padding: 8px 15px;
+  margin: 4px;
+  border-radius: 4px;
+  background-color: #30BFBF;
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-size: 0.65em;
+  cursor: default;
+}
+
+/* .place-image {
+  object-fit: cover;
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+} */
+
+.place-image-container {
+  width: 120px;
+  height: 120px;
+  overflow: hidden;
+  border-radius: 8px;
+  /* This rounds the corners of the container */
+}
+
+.place-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+  /*Ensures the image covers the entire container without distortion */
+  object-position: center;
+  /* Centers the image within the container */
+}
+
+
+
+.place-address {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 4px;
+  margin-top: 8px;
+}
+
+.address-text {
+  font-size: small;
+  font-weight: 500;
+  color: gray;
+  margin-left: 8px;
+}
+
+.selected_active {
+  background-color: var(--logo-color);
+  color: #fff;
+}
+
+.selected_active:hover {
+  background: var(--bg-third);
+  color: rgba(72, 71, 71, 0.801);
+
+}
+
+@media (max-width: 769px) {
+  .search_venue {
+    width: 100vw !important;
+    height: 100vh !important;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    /* Add scrolling if needed */
+    margin: 0;
+  }
+
+  .search_box {
+    width: 100%;
+    margin: 0;
+    order: 2;
+    flex-shrink: 0;
+    /* Optionally add a fixed height if needed, or let it grow naturally */
+  }
+
+  .map {
+    width: 100%;
+    flex-grow: 1;
+    /* Allows map to take up remaining space */
+    height: 0;
+    /* Set height to 0 initially */
+    min-height: 50vh;
+    /* Minimum height for visibility */
+    order: 1;
+    /* Ensure no margin-top as it may affect layout */
+  }
+}

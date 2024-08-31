@@ -1,0 +1,56 @@
+  .rating {
+    background: #fff;
+  }
+  
+  input[type="radio"] {
+    position: fixed;
+    top: 0;
+    right: 100%;
+  }
+  
+  label {
+    font-size: 1.5em;
+    padding: 0.5em;
+    margin: 0;
+    float: left;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  
+  input[type="radio"]:checked ~ input + label {
+    background: none;
+    color: #aaa;
+  }
+  
+  input + label {
+    background: #fff;
+    color: orange;
+    margin: 0 0 1em 0;
+  }
+  
+  input + label:first-of-type {
+    border-top-left-radius: var(--rad);
+    border-bottom-left-radius: var(--rad);
+  }
+  
+  input:checked + label {
+    border-top-right-radius: var(--rad);
+    border-bottom-right-radius: var(--rad);
+  }
+
+  .rdbut label {
+    float: left;
+    width: 65px;
+    margin: 4px;
+    background-color: #EFEFEF;
+    border: none;
+    overflow: auto;
+    display: inline;
+    position: relative; /* Add this line */
+  }
+  .rdbut label input {
+    position: absolute;
+    top: -9999px; /* Adjust this if needed */
+    left: -9999px;
+  }
+  

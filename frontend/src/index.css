@@ -1,0 +1,423 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+}
+html {
+  overflow-y: scroll;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+:root {
+  --bg-primary: #fff;
+  --bg-secondary: #f0f2f5;
+  --bg-third: #e4e6eb;
+  --bg-forth: #f0f2f5;
+  --color-primary: #050505;
+  --color-secondary: #65676b;
+  --color-main:#30BFBF;
+  --divider: #ced0d4;
+  --dark-bg-primary: #18191a;
+  --dark-bg-secondary: #242526;
+  --dark-bg-third: #3a3b3c;
+  --dark-color-primary: #242526;
+  --dark-color-secondary: #b0b3b8;
+  --gray-color: #adadad;
+  --blue-color: #1876f2;
+  --green-color: #42b72a;
+  --light-blue-color: #e7f3ff;
+  --border-color: #ccced2;
+  --logo-color: #30BFBF;
+  --shadow-1: rgba(0, 0, 0, 0.2);
+  --shadow-2: rgba(0, 0, 0, 0.1);
+  --shadow-3: rgba(0, 0, 0, 0.3);
+  --shadow-inset: rgba(255, 255, 255, 0.5);
+}
+
+.blur{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.968);
+  background: gray;
+
+  /* background: #7f7f7f;
+  opacity: 0.6; */
+  z-index: 99;
+}
+
+/* Color */
+.logo_color{
+  background: linear-gradient(to right, rgb(43, 192, 228), rgb(234, 236, 198));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.logo_color_text{
+  color: #30BFBF!important;
+}
+
+.logo_color_background{
+  background-color: #30BFBF!important;
+}
+
+.logo_color_hover:hover{
+  color: #30BFBF!important;
+}
+
+.active_color{
+  color: #30BFBF!important;
+}
+
+/* Icon size */
+.icon_size_32{
+  width: 32px;
+  height: 32px;
+}
+
+.icon_size_30{
+  width: 30px;
+  height: 30px;
+}
+
+.icon_size_28{
+  width: 28px;
+  height: 28px;
+}
+
+.icon_size_26{
+  width: 26px;
+  height: 26px;
+}
+.icon_size_24{
+  width: 24px;
+  height: 24px;
+}
+.icon_size_22{
+  width: 22px;
+  height: 22px;
+}
+
+.icon_size_20{
+  width: 20px;
+  height: 20px;
+}
+
+.icon_size_18{
+  width: 18px;
+  height: 18px;
+}
+
+.icon_size_16{
+  width: 16px;
+  height: 16px;
+}
+
+.icon_size_14{
+  width: 14px;
+  height: 14px;
+}
+
+.icon_size_12{
+  width: 12px;
+  height: 12px;
+}
+
+/* Common Icon */
+
+.exit_icon {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  cursor: pointer;
+}
+
+.exit_icon_left {
+  position: absolute;
+  left: 13px;
+  top: 17px;
+  cursor: pointer;
+}
+
+/*----Buttons----*/
+.blue_btn {
+  border: none;
+  outline: none;
+  background: var(--blue-color);
+  padding: 8.5px 12px;
+  border-radius: 7px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+
+/* CSS */
+.green_btn {
+  appearance: button;
+  backface-visibility: hidden;
+  background-color: #30BFBF;
+  border-radius: 6px;
+  border-width: 0;
+  box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset,rgba(50, 50, 93, .1) 0 2px 5px 0,rgba(0, 0, 0, .07) 0 1px 1px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  font-family: -apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif;
+  font-size: 100%;
+  height: 44px;
+  line-height: 1.15;
+  outline: none;
+  overflow: hidden;
+  padding: 0 25px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  transform: translateZ(0);
+  transition: all .2s,box-shadow .08s ease-in;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: 100%;
+}
+
+.white_btn {
+  appearance: button;
+  backface-visibility: hidden;
+  background-color: #fff;
+  border-radius: 6px;
+  border-width: 0;
+  box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset,rgba(50, 50, 93, .1) 0 2px 5px 0,rgba(0, 0, 0, .07) 0 1px 1px 0;
+  box-sizing: border-box;
+  color: #30BFBF;
+  cursor: pointer;
+  font-family: -apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif;
+  font-size: 100%;
+  height: 44px;
+  line-height: 1.15;
+  outline: none;
+  overflow: hidden;
+  padding: 0 25px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  transform: translateZ(0);
+  transition: all .2s,box-shadow .08s ease-in;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: 100%;
+}
+
+.green_btn:disabled {
+  cursor: default;
+}
+
+.green_btn:focus {
+  box-shadow: rgba(50, 50, 93, .1) 0 0 0 1px inset, rgba(50, 50, 93, .2) 0 6px 15px 0, rgba(0, 0, 0, .1) 0 2px 2px 0, rgba(50, 151, 211, .3) 0 0 0 4px;
+}
+
+/* CSS */
+.button-31 {
+  background-color: #222;
+  border-radius: 4px;
+  border-style: none;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: "Farfetch Basis","Helvetica Neue",Arial,sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0;
+  max-width: none;
+  min-height: 44px;
+  min-width: 10px;
+  outline: none;
+  overflow: hidden;
+  padding: 9px 20px 8px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: 100%;
+}
+
+.button-31:hover,
+.button-31:focus {
+  opacity: .75;
+}
+
+/*---------------- Hover-------------- */
+.hover_style_1:hover{
+  background: var(--bg-secondary);
+}
+
+.hover_style_2:hover{
+  background: var(--bg-third);
+}
+
+.hover_style_3:hover{
+  background: var(--bg-forth);
+}
+
+.hover_color:hover{
+  color: #30BFBF!important;
+}
+
+.underline {
+  /* text-decoration: none; Start with no underline */
+  /* transition: text-decoration 1 ease; Transition the text-decoration property over 0.3 seconds with an ease timing function */
+  color: inherit;
+  text-decoration: underline 0.1em rgba(255, 255, 255, 0);
+  transition: text-decoration-color 300ms;
+}
+
+.underline:hover {
+  text-decoration: underline; /* Change to underline on hover */
+}
+
+/* Text Up Effect  */
+.text_up_effect {
+  display: inline-block;
+  transition-duration: 0.3s;
+  transition-property: transform;
+  transform: translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+}
+
+.text_up_effect:hover {
+  transform: translateY(-3px);
+  color: #0288d1; /* Adjust the color as needed */
+}
+
+.scale_effect:hover{
+  color: black;
+  transform: scale(1.02); /* Adjust the scale factor as needed */
+}
+
+.profile_card a{
+  color: black;
+}
+
+.profile_card a:hover{
+  color: black;
+  text-decoration: underline;
+}
+/*---------------- Hover-------------- */
+.overflow_hidden{
+  overflow: hidden!important;
+}
+
+.middle{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Font */
+.source-sans-3-bold {
+  font-family: "Source Sans 3", sans-serif;
+  /* font-optical-sizing: auto; */
+  font-weight: 600;
+  font-style: normal;
+}
+
+.lato-thin {
+  font-family: "Lato", sans-serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.lato-light {
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.lato-regular {
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.lato-bold {
+  font-family: "Lato", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.lato-black {
+  font-family: "Lato", sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.lato-thin-italic {
+  font-family: "Lato", sans-serif;
+  font-weight: 100;
+  font-style: italic;
+}
+
+.lato-light-italic {
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.lato-regular-italic {
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.lato-bold-italic {
+  font-family: "Lato", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.lato-black-italic {
+  font-family: "Lato", sans-serif;
+  font-weight: 900;
+  font-style: italic;
+}
+
+/* Modal */
+/* Ensure the scrollbar is always visible */
+body.modal-open {
+  /* overflow: hidden; */
+  /* padding-right: 17px; Adjust this value based on your scrollbar width */
+}
+
+.body.modal-open{
+  /* overflow: auto; */
+  padding-right: 0!important;
+}
+
+.modal-open[style] {
+  padding-right: 0px !important;
+}
+
+@media (max-width: 360px) {
+  .post_infos .icon_button{
+    margin: 8px;
+  }
+}

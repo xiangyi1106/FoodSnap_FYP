@@ -1,0 +1,32 @@
+.discover_post_user{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 0px;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.discover_post_user_name{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.discover_post_content{
+    /* Limiting to 2 lines and adding ellipsis */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Number of lines to show */
+    line-clamp: 2; /* Number of lines to show */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.discover_post:hover{
+    background-color: rgb(244, 244, 244);
+}
+
+.discover_post{
+    cursor: pointer;
+}

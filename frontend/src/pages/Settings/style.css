@@ -1,0 +1,89 @@
+.form_nav_flex {
+    display: flex;
+  }
+  
+  .form_nav_space_x_2 {
+    margin-right: 2rem;
+  }
+  
+  .form_nav_lg_flex_col {
+    flex-direction: column;
+  }
+  
+  .form_nav_lg_space_x_0 {
+    margin-right: 0;
+  }
+  
+  .form_nav_lg_space_y_1 {
+    margin-bottom: 1rem;
+  }
+  
+  .form_nav_button {
+    padding: 0.5rem 1rem;
+    text-align: left;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    color: rgba(0, 0, 0, 0.852);
+    font-size: 0.9rem;
+  }
+  
+  .form_nav_bg_muted {
+    background-color: #f5f5f5;
+    border-radius: 5px;
+  }
+  
+  .form_nav_hover_bg_muted:hover {
+    background-color: #e0e0e0;
+    color: black;
+  }
+  
+  .form_nav_hover_bg_transparent:hover {
+    background-color: transparent;
+    color: black;
+  }
+  
+  .form_nav_hover_underline:hover {
+    text-decoration: underline;
+  }
+  
+  .form_nav_justify_start {
+    justify-content: flex-start;
+  }
+
+  .lg_flex_row{
+    display: flex;
+    flex-direction: row;
+  }
+  
+  /* SettingsAccountPage.css */
+.space-y-6 > * + * {
+    margin-top: 1.5rem; /* 6 * 0.25rem = 1.5rem */
+  }
+  
+  .text-lg {
+    font-size: 1.125rem; /* Large text size */
+    font-weight: 500; /* Medium font weight */
+  }
+  
+  .text-sm {
+    font-size: 0.875rem; /* Small text size */
+  }
+  
+  .font-medium {
+    font-weight: 500;
+  }
+  
+  .text-muted-foreground {
+    color: #6b7280; /* Muted text color, adjust as needed */
+  }
+  
+  .separator {
+    margin: 1.5rem 0;
+    height: 1px;
+    background-color: #e5e7eb; /* Adjust color as needed */
+  }
+  

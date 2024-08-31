@@ -1,0 +1,10 @@
+.sad_emoji_icon {
+    background-image: url(../../../public/emoji_icons/sad.png);
+    background-position: 0px -75px;
+    background-size: auto;
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    -webkit-filter: invert(10%);
+    display: inline-block;
+  }
