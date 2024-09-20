@@ -31,8 +31,11 @@ export default function FoodResult() {
         'Noodles Soup',
     ]
 
+    const [visible, setVisible] = useState(false);
+
     const handleClick = (food) => {
         setFoodChoice(food);
+        setVisible(true);
     };
 
     const [foodChoice, setFoodChoice] = useState('');
@@ -52,22 +55,24 @@ export default function FoodResult() {
                     </button>
                 ))}
             </div>
-            <div className=''>Best restaurants serving sandwiches in Taman Impian Emas according to Google Maps from Google Gemin API</div>
-            <div className='foodResult_body'>
-                {sandwichRestaurants.map((restaurant, index) => (
-                    <FoodResultCard
-                        name={restaurant.name}
-                        hours={restaurant.hours}
-                        rating={restaurant.rating}
-                        description={restaurant.description}
-                        reason={restaurant.reason}
-                        address={restaurant.address}
-                    />
-                ))}
-                {/* <FoodResultCard />
+            {visible && <div>
+                <div className=''>Best restaurants serving sandwiches in Taman Impian Emas according to Google Maps from Google Gemin API</div>
+                <div className='foodResult_body'>
+                    {sandwichRestaurants.map((restaurant, index) => (
+                        <FoodResultCard
+                            name={restaurant.name}
+                            hours={restaurant.hours}
+                            rating={restaurant.rating}
+                            description={restaurant.description}
+                            reason={restaurant.reason}
+                            address={restaurant.address}
+                        />
+                    ))}
+                    {/* <FoodResultCard />
                 <FoodResultCard />
                 <FoodResultCard /> */}
-            </div>
+                </div>
+            </div>}
         </div>
     )
 }

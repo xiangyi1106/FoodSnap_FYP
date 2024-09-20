@@ -5,7 +5,7 @@ import PromotionFilter from '../../components/foodPromotion/Filter';
 export default function FoodPromotion() {
     const events = [
         {
-            image: 'https://scontent.fkul15-1.fna.fbcdn.net/v/t39.30808-6/456030504_904008118437681_1768087270355138725_n.jpg?stp=dst-jpg_p526x296&_nc_cat=108&ccb=1-7&_nc_sid=833d8c&_nc_ohc=AnmSQ8jfuwUQ7kNvgHpBemY&_nc_ht=scontent.fkul15-1.fna&oh=00_AYAqwm7dUHesDlyudsPVsK8PdJu6XnENWnOmkvvMCeArBA&oe=66C7AC4A',
+            image: 'https://3.bp.blogspot.com/-5vaTojemKfw/WS00mzcmBRI/AAAAAAAAGOc/MjrTjAHV5D4lPmy7vFxfNYjWIm56-__lwCLcB/s1600/Coffee%2BBean%2B%2526%2BTea%2BLeaf%2BDouble%2BChoc%2BPeppermint%2BBuy%2B1%2BFree%2B1%2BPromo.jpg',
             title: 'Start Your Day with Pure Bliss at Coffee Bean & Tea Leaf',
             link: '#',
             date: 'MON, 19 August, 2024',

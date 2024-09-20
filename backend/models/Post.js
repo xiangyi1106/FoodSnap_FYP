@@ -11,26 +11,26 @@ const postSchema = new mongoose.Schema(
         text: {
             type: String,
         },
-        media: [
-            {
-                // type: {
-                //     type: String,
-                //     enum: ["image", "video"],
-                //     required: true,
-                // },
-                // url: {
-                //     type: String,
-                //     required: true,
-                // },
-                type: Array,
-                default: [],
-            }
-        ],
-        //media should be no array bracket but need to change a lot
-        // media: {
+        // media: [
+        //     {
+        //         type: {
+        //             type: String,
+        //             enum: ["image", "video"],
+        //             required: true,
+        //         },
+        //         url: {
+        //             type: String,
+        //             required: true,
+        //         },
         //         type: Array,
         //         default: [],
-        // },
+        //     }
+        // ],
+        //media should be no array bracket but need to change a lot
+        media: {
+                type: Array,
+                default: [],
+        },
         tag: {
             type: Array,
             default: [],

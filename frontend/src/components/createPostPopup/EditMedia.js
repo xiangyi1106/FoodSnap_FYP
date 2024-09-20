@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import CIcon from '@coreui/icons-react';
 import { cilArrowLeft, cilLocationPin, cilX } from '@coreui/icons';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
 import ClearIcon from '@mui/icons-material/Clear';
 
 export default function EditMedia({ setPage, setMedias, medias }) {
@@ -25,67 +21,31 @@ export default function EditMedia({ setPage, setMedias, medias }) {
     const handleMediaClick = (data, type) => {
         setPreviewMedia({ data, type });
     };
+
     const handleDeleteMedia = (index) => {
         console.log("Preview media before deletion:", previewMedia);
-        setMedias((prevMedias) => prevMedias.filter((_, i) => i !== index));
-        // Check if there are any media items remaining
-        if (medias.length > 0) {
-            // Set the index of the media to be previewed
-            // let previewIndex;
-            // If the deleted item is not the last one
-            if (index !== medias.length - 1) {
-                // previewIndex = index;
-                setPreviewIndex(index);
+        
+        setMedias((prevMedias) => {
+            const updatedMedias = prevMedias.filter((_, i) => i !== index);
+    
+            // Check if there are any media items remaining
+            if (updatedMedias.length > 0) {
+                // If the deleted item is not the last one
+                if (index !== updatedMedias.length) {
+                    setPreviewIndex(index); // Set preview to the same index
+                } else {
+                    setPreviewIndex(index - 1); // Set preview to the previous one
+                }
             } else {
-                // If the deleted item is the last one, set the preview to the previous one
-                // previewIndex = index - 1;
-                setPreviewIndex(index-1);
+                // If no media items remain, reset the preview and page
+                setPreviewIndex(null); // No media to preview
+                setPage(0);
             }
-            console.log("Preview media after deletion:", previewMedia);
-        } else {
-            // If there are no more media items, set the preview media to a default image
-            setPreviewMedia({
-                data: "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg",
-                type: "image/jpg"
-            });
-        }
-
-        // // Check if there are any media items
-        // if (medias.length > 0) {
-        //     // If the clicked item is not the first one
-        //     if (index !== 0) {
-        //         // Set the previous index
-        //         const previousIndex = index - 1;
-        //         // Set the preview media to the previous item
-        //         setPreviewMedia({
-        //             data: medias[previousIndex].data,
-        //             type: medias[previousIndex].type
-        //         });
-        //         console.log(previousIndex);
-        //     } else {
-        //         // If the clicked item is the first one
-        //         // Check if there are still media items remaining after deletion
-        //         if (index + 1 < medias.length) {
-        //             // If yes, set the preview media to the next available item
-        //             setPreviewMedia({
-        //                 data: medias[index + 1].data,
-        //                 type: medias[index + 1].type
-        //             });
-        //             console.log('2');
-
-        //         } else {
-        //             // If not, set the preview media to the first item in the array
-        //             setPreviewMedia({
-        //                 data: "https://www.generationsforpeace.org/wp-content/uploads/2018/03/empty.jpg",
-        //                 type: "image/jpg"
-        //             });
-        //             console.log('3');
-
-        //         }
-        //     }
-        // }
+    
+            return updatedMedias;
+        });
     };
-
+    
     const handleDragStart = (e, index) => {
         e.dataTransfer.setData('index', index.toString());
     };
@@ -133,7 +93,6 @@ export default function EditMedia({ setPage, setMedias, medias }) {
                                             <ClearIcon />
                                         </IconButton>
                                     </ListItem>
-                                    {/* <div className='list_index'>{index}</div> */}
                                 </div>
                             );
                         })}

@@ -15,12 +15,13 @@ export default function MediaPreview({ medias, setMedias, setPage, setError }) {
             acceptedFiles.forEach((file) => {
                 if (
                     
-                    !file.type.startsWith("image/") &&
-                    !file.type.startsWith("video/")
+                    // !file.type.startsWith("image/") &&
+                    // !file.type.startsWith("video/")
+                    !['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4'].includes(file.type)
                 ) {
                     setError(
-                        // `Unsupported file type. Only Jpeg, Png, Webp, Gif, mp4, webm, ogg, quicktime are allowed.`
-                        `Unsupported file type. Only images and videos files are allowed.`
+                        `Unsupported file type. Only Jpeg, Png, Webp, Gif, mp4 are allowed.`
+                        // `Unsupported file type. Only images and videos files are allowed.`
                     );
                     acceptedFiles = acceptedFiles.filter((item) => item.name !== file.name);
                     return;

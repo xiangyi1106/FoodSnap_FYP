@@ -90,7 +90,7 @@ export default function Post({ post, user, profile }) {
                             <Moment fromNow interval={30}>
                                 {post.createdAt}
                             </Moment>
-                            . {post.privacy === 'public' ? <Public color="#828387" /> : post.privacy === 'followers' ? <CIcon icon={cilPeople} className="icon_size_12" style={{marginLeft:'2px'}} /> : <CIcon icon={cilLockLocked} className="icon_size_12" style={{marginLeft:'2px'}} />}
+                            . {post.privacy === 'public' ? <Public color="#828387" /> : post.privacy === 'followers' ? <CIcon icon={cilPeople} className="icon_size_12" style={{ marginLeft: '2px' }} /> : <CIcon icon={cilLockLocked} className="icon_size_12" style={{ marginLeft: '2px' }} />}
                         </div>
                     </div>
                 </Link>
@@ -102,7 +102,7 @@ export default function Post({ post, user, profile }) {
                 </div>
             </div>
             <>
-                <div className="post_text">{post.text}</div>
+                <div className="post_text"><p>{post.text}</p></div>
                 {post.media && post.media.length > 0 && (
                     <div
                         className={
@@ -117,20 +117,54 @@ export default function Post({ post, user, profile }) {
                                             : post.media.length >= 5 && "grid_5"
                         }
                     >
-                        {/* {post.media.slice(0, 5).map((m, i) => (
+                        {post.media.slice(0, 5).map((mediaItem, i) => (
+                            <Fragment key={`media-${i}`}>
+                                {mediaItem.type === "image" ? (
+                                    <img src={mediaItem.url} key={`image-${i}`} alt="" className={`img-${i}`} />
+                                ) : mediaItem.type === "video" ? (
+                                    <video key={`video-${i}`} className={`video-${i}`} controls>
+                                        <source src={mediaItem.url} type="video/mp4" />
+                                        Your browser does not support the video tag.
+                                    </video>
+                                ) : null}
+                            </Fragment>
+                        ))}
+
+                        {post.media.length > 5 && (
+                            <div className="more-pics-shadow">
+                                +{post.media.length - 5}
+                            </div>
+                        )}
+                    </div>
+                )}
+                {/* {post.media && post.media.length > 0 && (
+                    <div
+                        className={
+                            post.media.length === 1
+                                ? "grid_1"
+                                : post.media.length === 2
+                                    ? "grid_2"
+                                    : post.media.length === 3
+                                        ? "grid_3"
+                                        : post.media.length === 4
+                                            ? "grid_4"
+                                            : post.media.length >= 5 && "grid_5"
+                        }
+                    > */}
+                {/* {post.media.slice(0, 5).map((m, i) => (
                             m.type === "image" ? (
                                 <img src={m.url} key={i} alt="" className={`img-${i}`} />
                             ) : <video controls >
                                 <source src={m.url} />
                             </video> // Handle other media types if necessary
                         ))} */}
-                        {/* {post.media.slice(0, 5).map((m, i) => renderMedia(m, i))} */}
-                        {/* {post.media.slice(0, 5).map((mediaArray, index) => (
+                {/* {post.media.slice(0, 5).map((m, i) => renderMedia(m, i))} */}
+                {/* {post.media.slice(0, 5).map((mediaArray, index) => (
                             <Fragment key={`media-${index}`}>
                                 {renderMedia(mediaArray)}
                             </Fragment>
                         ))} */}
-                        {post.media.slice(0, 5).map((mArray, i) => (
+                {/* {post.media.slice(0, 5).map((mArray, i) => (
                             <Fragment key={`media-${i}`}>
                                 {Array.isArray(mArray) && mArray.length > 0 ? (
                                     mArray.map((m, innerIndex) => (
@@ -163,9 +197,9 @@ export default function Post({ post, user, profile }) {
                             <div className="more-pics-shadow">
                                 +{post.media.length - 5}
                             </div>
-                        )}
+                        )} */}
 
-                        {/* <CCarousel controls indicators dark interval={null} className="carousel">
+                {/* <CCarousel controls indicators dark interval={null} className="carousel">
                             {post.media.map((innerArray, index) => (
                                 <CCarouselItem key={`carousel-${index}`}>
                                     {innerArray.map((media, innerIndex) => (
@@ -183,8 +217,8 @@ export default function Post({ post, user, profile }) {
                                 </CCarouselItem>
                             ))}
                         </CCarousel> */}
-                    </div>
-                )}
+                {/* </div>
+                )} */}
             </>
             <div className="post_infos">
                 <div className="reacts_count">

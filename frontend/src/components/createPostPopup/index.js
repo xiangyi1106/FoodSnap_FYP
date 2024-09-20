@@ -88,7 +88,7 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
     const emojiPickerIconRef = useRef(null);
     const createPostPopUpRef = useRef(null);
 
-    useClickOutside(emojiPickerRef, [emojiPickerIconRef], () => setIsShowPicker(false));
+    useClickOutside(emojiPickerRef, [emojiPickerIconRef], () => {setIsShowPicker(false);});
     // useClickOutside(createPostPopUpRef, [createPostPopUpRef, alertRef], () => setVisible(false));
 
     const [privacy, setPrivacy] = useState("followers");

@@ -61,11 +61,11 @@ const WishlistPage = () => {
                                                 <DeleteIcon />
                                             </IconButton>
                                         </Tooltip>
-                                        <Tooltip title="Mark as Visited">
+                                        {/* <Tooltip title="Mark as Visited">
                                             <IconButton onClick={() => handleMarkVisited(item.id)} color="success">
                                                 <CheckCircleIcon />
                                             </IconButton>
-                                        </Tooltip>
+                                        </Tooltip> */}
                                         <Tooltip title="Add/Edit Note">
                                             <IconButton onClick={() => handleToggleNote(item.id)} color="primary">
                                                 <NoteAddIcon />

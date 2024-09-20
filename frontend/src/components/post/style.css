@@ -10,7 +10,7 @@
   background: var(--bg-primary);
   border-radius: 10px;
   box-shadow: 0 1px 2px var(--shadow-1);
-  user-select: none;
+  /* user-select: none; */
   color: var(--color-primary);
   margin-bottom: 10px;
 }
@@ -79,7 +79,7 @@
 
 .post_text {
   padding: 0 15px 10px 15px;
-  cursor: text;
+  cursor: text!important;
 }
 
 /* .post .carousel_size{
