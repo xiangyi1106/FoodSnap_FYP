@@ -117,6 +117,16 @@ const userSchema = mongoose.Schema({
             default: new Date(),
         },
     }],
+    likedPosts: [{
+        post: {
+            type: ObjectId,
+            ref: "Post",
+        },
+        likedAt: {
+            type: Date,
+            default: new Date(),
+        },
+    }],
     profileImageList: [ImageSchema],  // Replaces `picture` field with a list of profile images
     coverImageList: [ImageSchema],  // Replaces `cover` field with a list of cover images
     role: {

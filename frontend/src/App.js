@@ -31,6 +31,7 @@ import PlaceProfilePhotos from "./components/PlaceProfile/PlaceProfilePhotos";
 import PlaceProfileFoodMenu from "./components/PlaceProfile/PlaceProfileFoodMenu";
 import PlaceProfileRelatedPost from "./components/PlaceProfile/PlaceProfileRelatedPost";
 import VisitedPlaceLayout from "./pages/VisitedPlace/VisitedPlaceLayout";
+import PostDetailsPage from "./pages/PostDetails";
 
 const useAxios = () => {
   const [isExpired, setIsExpired] = useState(false);
@@ -111,6 +112,7 @@ function App() {
         </Route>
         <Route element={<LoginRoutes />}>
           <Route path="/profile" element={<Profile />} exact />
+          <Route path="/post/:id/:initialIndex" element={<PostDetailsPage user={user}/>} exact />
           <Route
             path="/profile/:username"
             element={<Profile />}

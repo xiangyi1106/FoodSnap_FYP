@@ -481,6 +481,23 @@
   max-height: 100vh;
 }
 
+/* Styling for shared posts */
+.shared_post_container {
+  border: 1px solid #e0e0e0;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.shared_post {
+  border-top: 1px dashed #ccc; 
+  /* Distinguish shared post with a dashed border */
+  background-color: #fafafa;
+  border-radius: 8px;
+}
+
 /*-----create comment-----*/
 
 @media (max-width: 415px) {

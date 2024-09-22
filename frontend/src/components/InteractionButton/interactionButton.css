@@ -1,0 +1,15 @@
+.liked{
+    color: #30BFBF;
+}
+
+.unliked{
+    color: black;
+}
+
+.liked:hover{
+    color: #30BFBF;
+}
+
+.unliked:hover{
+    color: black;
+}

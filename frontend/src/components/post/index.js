@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./style.css";
 import { Fragment, useState } from "react";
 import { Dots, Friends, Public } from "../../svg";
@@ -11,55 +11,14 @@ import CreateComment from "./CreateComment";
 export default function Post({ post, user, profile }) {
     const [visible, setVisible] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
-    const renderMedia = (media) => {
-        if (Array.isArray(media)) {
-            let count = -1;
-            return media.map((innerMedia, innerIndex) => {
-                count++;
-                console.log("index" + innerIndex);
-                if (!innerMedia || !innerMedia.type) {
-                    return null;
-                }
 
-                if (innerMedia.type === "image") {
-                    return <img src={innerMedia.url} key={`image-${count}`} alt="" className={`img-${count}`} />;
-                } else if (innerMedia.type === "video") {
+    const navigate = useNavigate();
 
-                    return (
-                        <video key={`video-${count}`} className={`img-${count}`} controls>
-                            <source src={innerMedia.url} type="video/mp4" />
-                            Your browser does not support the video tag.
-                        </video>
-                    );
-                } else {
-                    return null; // Handle other types or ignore
-
-                }
-            });
-        } else {
-            // If it's a single object, render it directly
-            const mediaObject = media;
-            if (!mediaObject.type) {
-                return null;
-            }
-
-            if (mediaObject.type === "image") {
-                return <img src={mediaObject.url} key={`image`} alt="" className={`img`} />;
-            } else if (mediaObject.type === "video") {
-                return (
-                    <video key={`video`} className={`video`} controls>
-                        <source src={mediaObject.url} type="video/mp4" />
-                        Your browser does not support the video tag.
-                    </video>
-                );
-            } else {
-                return null; // Handle other types or ignore
-            }
-        }
+    const handleClick = (postId, i) => {
+        navigate(`/post/${postId}/${i}`);
     };
-
     return (
-        <div className="post" style={{ width: `${profile && "100%"}` }}>
+        <div className={`post`} style={{ width: `${profile && "100%"}`,}}>
             <div className="post_header">
                 <Link
                     to={`/profile/${post.user.username}`}
@@ -84,6 +43,8 @@ export default function Post({ post, user, profile }) {
                                             ? "his"
                                             : "her"
                                     } cover picture`}
+                                {post.type === "shared" &&
+                                    `Repost`}
                             </div>
                         </div>
                         <div className="post_profile_privacy_date">
@@ -103,6 +64,13 @@ export default function Post({ post, user, profile }) {
             </div>
             <>
                 <div className="post_text"><p>{post.text}</p></div>
+
+                {/* Render shared post if exists */}
+                {post.sharedPost && (
+                    <div className="shared_post">
+                        <Post post={post.sharedPost} user={post.sharedPost.user} />
+                    </div>
+                )}
                 {post.media && post.media.length > 0 && (
                     <div
                         className={
@@ -120,9 +88,9 @@ export default function Post({ post, user, profile }) {
                         {post.media.slice(0, 5).map((mediaItem, i) => (
                             <Fragment key={`media-${i}`}>
                                 {mediaItem.type === "image" ? (
-                                    <img src={mediaItem.url} key={`image-${i}`} alt="" className={`img-${i}`} />
+                                    <img src={mediaItem.url} key={`image-${i}`} alt="" className={`img-${i}`} onClick={() => handleClick(post._id, i)} />
                                 ) : mediaItem.type === "video" ? (
-                                    <video key={`video-${i}`} className={`video-${i}`} controls>
+                                    <video key={`video-${i}`} className={`video-${i}`} controls onClick={() => handleClick(post.id, i)}>
                                         <source src={mediaItem.url} type="video/mp4" />
                                         Your browser does not support the video tag.
                                     </video>
@@ -220,32 +188,36 @@ export default function Post({ post, user, profile }) {
                 {/* </div>
                 )} */}
             </>
-            <div className="post_infos">
-                <div className="reacts_count">
-                    <div className="reacts_count_imgs">
-                        <CIcon icon={cilThumbUp} className="icon_size_22 icon_button" />
+            {post.type !== 'shared' && (<>
+                <div className="post_infos">
+                    <div className="reacts_count">
+                        <div className="reacts_count_imgs">
+                            <CIcon icon={cilThumbUp} className="icon_size_22 icon_button" />
+                        </div>
+                        <div className="reacts_count_imgs">
+                            <CIcon icon={cilCommentBubble} className="icon_size_22 icon_button" />
+                        </div>
+                        <div className="reacts_count_imgs">
+                            <CIcon icon={cilShare} className="icon_size_22 icon_button" />
+                        </div>
+                        {/* <div className="reacts_count_imgs">
+                            <CIcon icon={cilBookmark} className="icon_size_22 icon_button" />
+                        </div> */}
+                        {/* <div className="reacts_count_num">Like</div> */}
                     </div>
-                    <div className="reacts_count_imgs">
-                        <CIcon icon={cilCommentBubble} className="icon_size_22 icon_button" />
+                    <div className="to_right">
+                        <div className="comments_count">13 likes</div>
+                        <div className="comments_count">13 comments</div>
+                        <div className="share_count">1 share</div>
                     </div>
-                    <div className="reacts_count_imgs">
-                        <CIcon icon={cilShare} className="icon_size_22 icon_button" />
-                    </div>
-                    {/* <div className="reacts_count_imgs">
-                        <CIcon icon={cilBookmark} className="icon_size_22 icon_button" />
-                    </div> */}
-                    {/* <div className="reacts_count_num">Like</div> */}
                 </div>
-                <div className="to_right">
-                    <div className="comments_count">13 likes</div>
-                    <div className="comments_count">13 comments</div>
-                    <div className="share_count">1 share</div>
+                <div className="comments_wrap">
+                    <div className="comments_order"></div>
+                    <CreateComment user={user} />
                 </div>
-            </div>
-            <div className="comments_wrap">
-                <div className="comments_order"></div>
-                <CreateComment user={user} />
-            </div>
+            </>
+            )}
+
         </div>
     )
 }

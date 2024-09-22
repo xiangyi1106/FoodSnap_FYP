@@ -52,7 +52,7 @@ export default function PublicFeed({ user }) {
     return (
         <div className='feed_middle' style={{ height: `${height + 80}px` }}>
             <div className="public_feed_middle" ref={middle} style={{overflowY: 'auto'}}>
-                <DiscoverPostList />
+                <DiscoverPostList posts={posts}/>
             </div>
         </div>
     )

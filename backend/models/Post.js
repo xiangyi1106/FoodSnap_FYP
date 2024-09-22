@@ -5,7 +5,7 @@ const postSchema = new mongoose.Schema(
     {
         type: {
             type: String,
-            enum: ["profilePicture", "cover", null],
+            enum: ["profilePicture", "cover", "shared", null],
             default: null,
         },
         text: {
@@ -147,7 +147,8 @@ const postSchema = new mongoose.Schema(
                 enum: ["locked", "pending", "reviewed", "null"],
                 default: "null",
             },
-        }
+        },
+        sharedPost: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', default: null }, // Reference to the original post
     }
     , {
         timestamps: true,
