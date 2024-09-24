@@ -87,7 +87,7 @@ export default function Profile() {
       <div className="profile_top">
         <div className="profile_container">
           <Cover visitor={visitor} cover={profile.cover} />
-          <ProfilePictureInfo profile={profile} visitor={visitor} />
+          <ProfilePictureInfo profile={profile} visitor={visitor} user={user} />
           <ProfileMenu />
         </div>
       </div>

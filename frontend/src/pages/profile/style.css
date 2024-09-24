@@ -75,12 +75,15 @@
 .open_cover_menu_item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px;
+  gap: 8px;
+  /* padding: 10px; */
+  padding: 5px 10px;
   cursor: pointer;
   /* font-weight: 600; */
   font-size: 14px;
-  border-radius: 10px;
+  border-radius: 4px;
+  background-color: #30BFBF;
+  /* text-transform: uppercase; */
 }
 
 /* ----------ProfilePictureInfo--------------- */
