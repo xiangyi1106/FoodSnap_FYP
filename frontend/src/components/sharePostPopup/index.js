@@ -17,6 +17,8 @@ import { useDispatch } from "react-redux";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
+import PostInput from "../createPostPopup/PostInput";
+import PostTextArea from "../createPostPopup/PostTextArea";
 
 export default function SharePostPopUp({ setVisible, user, post }) {
     //Display the picker and media preview
@@ -102,9 +104,11 @@ export default function SharePostPopUp({ setVisible, user, post }) {
                                 {isLoading && <button className="logo_color_text">Sharing <CircularProgress className='logo_color_text' style={{ width: "13px", height: "13px" }} /></button>}
                             </div>
                         </div>
-                        <div className="post_content" style={{ minHeight: "320px" }}>
+                        {/* <div className="post_content" style={{ minHeight: "320px" }}>
                             <textarea autoFocus={true} disabled={isLoading} placeholder="Share something..." id="post_input" ref={textRef} maxLength={22000} value={text} style={{ minHeight: "320px" }} onChange={(e) => setText(e.target.value)} className="post_input" ></textarea>
-                        </div>
+                        </div> */}
+                        <PostInput setText={setText} text={text} isLoading={isLoading} user={user} textRef={textRef}/>
+                        {/* <PostTextArea setText={setText} text={text} isLoading={isLoading} user={user}/> */}
                     </div>
                     <div className="create_post_popup_footer">
                         <div className="create_post_popup_footer_button_set">

@@ -332,6 +332,13 @@ const getProfile = async (req, res) => {
 
         const posts = await Post.find({ user: profile._id })
             .populate("user")
+            .populate({
+                path: "sharedPost", // Populate the sharedPost field
+                populate: {
+                  path: "user", // Populate the user inside sharedPost
+                  select: "name picture username gender _id" // Select fields to retrieve from user
+                }
+              })
             .sort({ createdAt: -1 });
 
         // await profile.populate("friends", "first_name last_name username picture");

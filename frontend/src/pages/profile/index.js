@@ -63,12 +63,6 @@ export default function Profile() {
           );
 
           setPhotos(images.data);
-
-          // const userID = user.id;
-          // const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/getImages/${userID}`);
-          // // return response.data.images;
-          // setPhotos(response.data.images);
-          // console.log(photos);
         } catch (error) {
           console.log(error);
         }

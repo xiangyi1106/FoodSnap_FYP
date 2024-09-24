@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Box, Typography, Paper, TextField, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import Moment from 'react-moment';
-import { Public } from '../../../svg';
+import { Dots, Public } from '../../../svg';
 import CIcon from '@coreui/icons-react';
 import {
     cilLockLocked, cilPeople, cilThumbUp, cilCommentBubble, cilShare
@@ -11,39 +11,54 @@ import CreateComment from '../../../components/post/CreateComment';
 import LikeButton from '../../../components/InteractionButton/LikeButton';
 import axios from 'axios';
 import SharePostPopUp from '../../../components/sharePostPopup';
+import { fetchLikeStatus } from '../../../functions/post';
+import PostMenu from '../../../components/post/PostMenu';
 
 const PostDetailsInformation = ({ post, user }) => {
     const [likesCount, setLikesCount] = useState(post.likes.length); // Initialize likes count
     const [commentCount, setCommentCount] = useState(post.comments.length); // Initialize likes count
     const [sharesCount, setSharesCount] = useState(post.shares.length); // Initialize likes count
     const [isLiked, setIsLiked] = useState(false);
-    const [ isVisible, setVisible] = useState(false);
+    const [isVisible, setVisible] = useState(false);
+    const [checkSaved, setCheckSaved] = useState();
+    const [showMenu, setShowMenu] = useState();
 
+    const postRef = useRef(null);
+    const dotRef = useRef(null);
     useEffect(() => {
-        const fetchLikeStatus = async () => {
-            try {
-                const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/getLikeStatus/${post._id}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${user.token}`,
-                        },
-                    }
-                );
+        // const fetchLikeStatus = async () => {
+        //     try {
+        //         const response = await axios.get(
+        //             `${process.env.REACT_APP_BACKEND_URL}/getLikeStatus/${post._id}`,
+        //             {
+        //                 headers: {
+        //                     Authorization: `Bearer ${user.token}`,
+        //                 },
+        //             }
+        //         );
 
-                setIsLiked(response.data.isLiked); // Update the like status based on server response
-                console.log(response.data.isLiked);
-            } catch (error) {
-                console.log('Error fetching like status: ' + error.message);
-            }
+        //         setIsLiked(response.data.isLiked); // Update the like status based on server response
+        //         console.log(response.data.isLiked);
+        //     } catch (error) {
+        //         console.log('Error fetching like status: ' + error.message);
+        //     }
+        // };
+
+        // fetchLikeStatus();
+        const getPostLikes = async () => {
+            const res = await fetchLikeStatus(post._id, user.token);
+            setIsLiked(res.isLiked);
+            setCheckSaved(res.checkSaved);
+            console.log(res);
         };
 
-        fetchLikeStatus();
+        getPostLikes();
     }, []);
+
     return (
         <>
             {/* Right part - Post Details and Comments */}
-            <Box sx={{ flex: 1, padding: '10px 0px' }}>
+            <Box sx={{ flex: 1, padding: '10px 0px' }} ref={postRef}>
                 <div className="post_header">
                     <Link
                         to={`/profile/${post.user.username}`}
@@ -62,6 +77,13 @@ const PostDetailsInformation = ({ post, user }) => {
                             </div>
                         </div>
                     </Link>
+                    <div
+                        className="post_header_right hover_style_1"
+                        onClick={() => setShowMenu((prev) => !prev)}
+                        ref={dotRef}
+                    >
+                        <Dots color="#828387" />
+                    </div>
                 </div>
                 <Typography variant="body1" sx={{ marginTop: 1, padding: '10px 15px' }}>
                     {post.text}
@@ -84,8 +106,8 @@ const PostDetailsInformation = ({ post, user }) => {
                             <CIcon icon={cilCommentBubble} className="icon_size_22 icon_button" />
                         </div>
                         <div className="reacts_count_imgs">
-                            <CIcon icon={cilShare} className="icon_size_22 icon_button"  onClick={()=> setVisible(true)}/>
-                            {isVisible && <SharePostPopUp setVisible={setVisible} post={post} user={user}/>} 
+                            <CIcon icon={cilShare} className="icon_size_22 icon_button" onClick={() => setVisible(true)} />
+                            {isVisible && <SharePostPopUp setVisible={setVisible} post={post} user={user} />}
                         </div>
                         {/* <div className="reacts_count_imgs">
                         <CIcon icon={cilBookmark} className="icon_size_22 icon_button" />
@@ -123,6 +145,19 @@ const PostDetailsInformation = ({ post, user }) => {
                         <Typography variant="body2">User2: Thanks for sharing.</Typography>
                     </Box>
                 </Paper> */}
+                {showMenu && (
+                    <PostMenu
+                        userId={user.id}
+                        postUserId={post.user._id}
+                        setShowMenu={setShowMenu}
+                        postId={post._id}
+                        token={user.token}
+                        checkSaved={checkSaved}
+                        setCheckSaved={setCheckSaved}
+                        postRef={postRef}
+                        dotRef={dotRef}
+                    />
+                )}
             </Box>
         </>
     );

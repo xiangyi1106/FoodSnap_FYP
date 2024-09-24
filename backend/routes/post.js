@@ -1,5 +1,5 @@
 const express = require("express");
-const { createPost, getAllPosts, getPublicPosts, getPostDetails, toggleLike, getLikeStatus, sharePost } = require("../controllers/post");
+const { createPost, getAllPosts, getPublicPosts, getPostDetails, toggleLike, getLikeStatus, sharePost, savePost, deletePost } = require("../controllers/post");
 const { authUser } = require("../middleware/auth")
 const router = express.Router();
 
@@ -11,5 +11,7 @@ router.get("/api/post/:id", getPostDetails);
 router.put("/likePost/:postId", authUser, toggleLike);
 router.get("/getLikeStatus/:postId", authUser, getLikeStatus);
 router.post("/api/posts/share/:postId", authUser, sharePost);
+router.put("/savePost/:id", authUser, savePost);
+router.delete("/deletePost/:id", authUser, deletePost);
 
 module.exports = router;

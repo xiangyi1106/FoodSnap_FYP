@@ -1,45 +1,75 @@
 import { Link, useNavigate } from "react-router-dom";
 import "./style.css";
-import { Fragment, useState } from "react";
-import { Dots, Friends, Public } from "../../svg";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { Dots, Public } from "../../svg";
 import Moment from "react-moment";
-import { CCarousel, CCarouselItem, CImage } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilShare, cilThumbUp, cilCommentBubble, cilBookmark, cilPeople, cilLockLocked } from '@coreui/icons';
 import CreateComment from "./CreateComment";
+import { linkifyMentionsAndHashtags } from "../../functions/linkify";
+import PostMenu from "./PostMenu";
 
 export default function Post({ post, user, profile }) {
     const [visible, setVisible] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
+    const [checkSaved, setCheckSaved] = useState();
 
     const navigate = useNavigate();
 
     const handleClick = (postId, i) => {
         navigate(`/post/${postId}/${i}`);
     };
+
+    // Create a map of names to user IDs
+    const mentionMap = (post.mentions || []).reduce((acc, mention) => {
+        if (!acc[mention.name]) {
+            acc[mention.name] = [];
+        }
+        acc[mention.name].push(mention.userId);
+        return acc;
+    }, {});
+
+    const formattedText = linkifyMentionsAndHashtags(post.text, mentionMap);
+
+    const postRef = useRef(null);
+    const dotRef = useRef(null);
+
+    const [showDot, setShowDot] = useState(true);
+    const [isOriginalPostAvailable, setIsOriginalPostAvailable] = useState(true);
+
+
+    useEffect(() => {
+        // If post is a shared post, hide the Dots button for the original post
+        if (post.sharedPost) {
+            setShowDot(true);
+        } else {
+            setShowDot(false);
+        }
+    }, [post.sharedPost]);
+
     return (
-        <div className={`post`} style={{ width: `${profile && "100%"}`,}}>
+        <div className={`post`} style={{ width: `${profile && "100%"}`, }} ref={postRef} >
             <div className="post_header">
                 <Link
-                    to={`/profile/${post.user.username}`}
+                    to={`/profile/${post.user?.username}`}
                     className="post_header_left"
                 >
-                    <img src={post.user.picture} alt="" />
+                    <img src={post.user?.picture} alt="" />
                     <div className="header_col">
                         <div className="post_profile_name">
-                            {post.user.name} <span> @{post.user.username} </span>
+                            {post.user?.name} <span> @{post.user?.username} </span>
                             <div className="updated_p">
                                 {post.type === "profilePicture" &&
-                                    `updated ${post.user.gender === "custom"
+                                    `updated ${post.user?.gender === "custom"
                                         ? "the"
-                                        : post.user.gender === "male"
+                                        : post.user?.gender === "male"
                                             ? "his"
                                             : "her"
                                     } profile picture`}
                                 {post.type === "cover" &&
-                                    `updated ${post.user.gender === "custom"
+                                    `updated ${post.user?.gender === "custom"
                                         ? "the"
-                                        : post.user.gender === "male"
+                                        : post.user?.gender === "male"
                                             ? "his"
                                             : "her"
                                     } cover picture`}
@@ -55,20 +85,29 @@ export default function Post({ post, user, profile }) {
                         </div>
                     </div>
                 </Link>
-                <div
+                {showDot && <div
                     className="post_header_right hover_style_1"
                     onClick={() => setShowMenu((prev) => !prev)}
+                    ref={dotRef}
                 >
                     <Dots color="#828387" />
-                </div>
+                </div>}
             </div>
             <>
-                <div className="post_text"><p>{post.text}</p></div>
+                {/* <div className="post_text"><p>{post.text}</p></div> */}
+                <div className="post_text"><p>{formattedText}</p></div>
 
-                {/* Render shared post if exists */}
-                {post.sharedPost && (
+                {/* Render shared post if it exists and is available */}
+                {post.sharedPost && isOriginalPostAvailable && (
                     <div className="shared_post">
                         <Post post={post.sharedPost} user={post.sharedPost.user} />
+                    </div>
+                )}
+
+                {/* Handle case where original post is not available */}
+                {post.sharedPost && !isOriginalPostAvailable && (
+                    <div className="shared_post">
+                        <p>This post is no longer available.</p>
                     </div>
                 )}
                 {post.media && post.media.length > 0 && (
@@ -217,7 +256,20 @@ export default function Post({ post, user, profile }) {
                 </div>
             </>
             )}
-
+            {showMenu && (
+                <PostMenu
+                    userId={user.id}
+                    postUserId={post.user._id}
+                    setShowMenu={setShowMenu}
+                    postId={post._id}
+                    token={user.token}
+                    checkSaved={checkSaved}
+                    setCheckSaved={setCheckSaved}
+                    postRef={postRef}
+                    dotRef={dotRef}
+                // sharedPost={post.sharedPost}
+                />
+            )}
         </div>
     )
 }

@@ -34,3 +34,56 @@ export const createPost = async (
     return error.response.data.message;
   }
 };
+
+export const fetchLikeStatus = async (postId, token) => {
+  try {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_BACKEND_URL}/getLikeStatus/${postId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return data;
+
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+
+export const savePost = async (postId, token) => {
+  try {
+    const { data } = await axios.put(
+      `${process.env.REACT_APP_BACKEND_URL}/savePost/${postId}`,
+      {},
+
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+export const deletePost = async (postId, token) => {
+  try {
+    const { data } = await axios.delete(
+      `${process.env.REACT_APP_BACKEND_URL}/deletePost/${postId}`,
+
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};

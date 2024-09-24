@@ -30,7 +30,6 @@ export default function Cover({ visitor, cover }) {
         setWidth(coverRef.current.clientWidth);
     }, [window.innerWidth]);
     
-    useClickOutside(menuRef, [], () => setShowCoverMenu(false));
 
     const [error, setError] = useState("");
 
@@ -64,6 +63,10 @@ export default function Cover({ visitor, cover }) {
         },
         [croppedAreaPixels]
     );
+
+    const addCoverBtnRef = useRef(null);
+    useClickOutside(menuRef, [addCoverBtnRef], () => setShowCoverMenu(false));
+
 
     const updateCoverPicture = async () => {
         try {
@@ -141,7 +144,7 @@ export default function Cover({ visitor, cover }) {
             )}
             {cover && !coverPicture && (<img src={cover} className="cover" alt="profile_cover" ref={cRef}></img>)}
             {!visitor && (
-                <div className="udpate_cover_wrapper">
+                <div className="udpate_cover_wrapper" ref={addCoverBtnRef}>
                     <div
                         className="open_cover_update"
                         onClick={() => setShowCoverMenu((prev) => !prev)}
