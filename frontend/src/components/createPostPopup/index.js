@@ -88,7 +88,6 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
     const emojiPickerIconRef = useRef(null);
     const createPostPopUpRef = useRef(null);
 
-    useClickOutside(emojiPickerRef, [emojiPickerIconRef], () => {setIsShowPicker(false);});
     // useClickOutside(createPostPopUpRef, [createPostPopUpRef, alertRef], () => setVisible(false));
 
     const [privacy, setPrivacy] = useState("followers");
@@ -115,14 +114,28 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
     const [activeButtons, setActiveButtons] = useState(new Set());
 
     const handleButtonClick = (buttonName) => {
-        const newActiveButtons = new Set(activeButtons);
-        if (newActiveButtons.has(buttonName)) {
-            newActiveButtons.delete(buttonName);
-        } else {
-            newActiveButtons.add(buttonName);
-        }
-        setActiveButtons(newActiveButtons);
+        setActiveButtons((prevActiveButtons) => {
+            const newActiveButtons = new Set(prevActiveButtons);
+            if (newActiveButtons.has(buttonName)) {
+                newActiveButtons.delete(buttonName);
+            } else {
+                newActiveButtons.add(buttonName);
+            }
+            return newActiveButtons;
+        });
     };
+    
+    // Updated useClickOutside logic to properly update the state
+    useClickOutside(emojiPickerRef, [emojiPickerIconRef], () => {
+        setIsShowPicker(false);
+        setActiveButtons((prevActiveButtons) => {
+            const updatedButtons = new Set(prevActiveButtons);
+            if (updatedButtons.has('emoji')) {
+                updatedButtons.delete('emoji');
+            }
+            return updatedButtons;
+        });
+    });
 
     const dispatch = useDispatch();
 
