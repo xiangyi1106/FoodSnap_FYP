@@ -2,15 +2,21 @@ import React, { useEffect, useState } from 'react'
 import { CButton, CModalBody, CModalFooter, CModalHeader, CModalTitle, CModal } from '@coreui/react';
 import { MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import johorBahruAreas from '../../data/johorBahruAreas';
-import MyLocationIcon from '@mui/icons-material/MyLocation';
 
 export default function ChangeLocationModal({ setVisible, visible, selected, setSelected }) {
 
+    const [currentSelected, setCurrentSelected] = useState(localStorage.getItem('currentLocation') || '');
+
     const handleChange = (event) => {
-        setSelected(event.target.value);
+        setCurrentSelected(event.target.value);
     };
 
-    
+    const saveLocation = () => {
+        setSelected(currentSelected);
+        localStorage.setItem('currentLocation', currentSelected); // Use 'selected' instead of 'location' since it's the latest value
+    };
+
+
     return (
         <div className='modal-open'>
             <CModal
@@ -69,14 +75,11 @@ export default function ChangeLocationModal({ setVisible, visible, selected, set
                             <Select
                                 labelId="city-select-label"
                                 id="city-select"
-                                value={selected || ""}
+                                value={currentSelected || ""}
                                 label="city"
                                 onChange={handleChange}
                                 MenuProps={{ disableScrollLock: true }}
                             >
-                                {/* <MenuItem value="currentLocation">
-                                    <MyLocationIcon style={{ marginRight: '10px' }} /> Use Your Current Location
-                                </MenuItem> */}
                                 {johorBahruAreas.map((location, index) => (
                                     <MenuItem key={index} value={location}>
                                         {location}
@@ -92,7 +95,7 @@ export default function ChangeLocationModal({ setVisible, visible, selected, set
                     <CButton color="secondary" onClick={() => setVisible(false)}>
                         Cancel
                     </CButton>
-                    <CButton color="primary">Ok</CButton>
+                    <CButton color="primary" onClick={() => { saveLocation(); setVisible(false) }}>Ok</CButton>
                 </CModalFooter>
             </CModal>
         </div>

@@ -4,23 +4,25 @@ import { cilArrowLeft, cilCheckAlt, cilX } from '@coreui/icons';
 import './style.css';
 import Slider from '@mui/material/Slider';
 import FoodResult from './foodResult';
+import axios from 'axios';
+import { getFoodRecommendations } from '../../functions/AIRecommendation';
 
-export default function FoodSuggestion({ setVisible }) {
-    const [weather, setWeather] = useState('');
-    const [mealType, setMealType] = useState('');
-    const [mood, setMood] = useState('');
-    const [dietaryPreference, setDietaryPreference] = useState('');
-    const [cuisine, setCuisine] = useState('');
-    const [allergies, setAllergies] = useState('');
-    const [suggestionSource, setSuggestionSource] = useState('database');
+export default function FoodSuggestion({ setVisible, location }) {
+    // const [weather, setWeather] = useState('');
+    const [mealType, setMealType] = useState('breakfast');
+    const [mood, setMood] = useState('normal');
+    const [dietaryPreference, setDietaryPreference] = useState('no');
+    const [spicyLevelValue, setSpicyLevelValue] = useState(0); // State for spicy level
+    const [loveIngredients, setLoveIngredients] = useState(''); // State for ingredients they love
+    const [avoidIngredients, setAvoidIngredients] = useState(''); // State for ingredients they want to avoid
 
-    const handleWeatherChange = (selectedWeather) => setWeather(selectedWeather);
+    // const handleWeatherChange = (selectedWeather) => setWeather(selectedWeather);
     const handleMealTypeChange = (selectedMealType) => setMealType(selectedMealType);
     const handleMoodChange = (selectedMood) => setMood(selectedMood);
     const handleDietaryPreferenceChange = (selectedDietaryPreference) => setDietaryPreference(selectedDietaryPreference);
-    const handleCuisineChange = (selectedCuisine) => setCuisine(selectedCuisine);
-    const handleAllergiesChange = (selectedAllergies) => setAllergies(selectedAllergies);
-    const handleSuggestionSourceChange = (source) => setSuggestionSource(source);
+    const handleSpicyLevelChange = (event, value) => setSpicyLevelValue(value); // Handle spicy level change
+    const handleLoveIngredientsChange = (event) => setLoveIngredients(event.target.value); // Handle love ingredients
+    const handleAvoidIngredientsChange = (event) => setAvoidIngredients(event.target.value); // Handle avoid ingredients
 
     const spicyLevel = [
         {
@@ -51,14 +53,25 @@ export default function FoodSuggestion({ setVisible }) {
 
     const [isLoading, setIsLoading] = useState(false);
     const [isResultShown, setIsResultShown] = useState(false);
-    const handleClick = () => {
-        setIsLoading(true);
-        // Set isLoading to true after 3 seconds
-        setTimeout(() => {
-            setIsResultShown(true);
-            setIsLoading(false);
 
-        }, 3000); // 3000 milliseconds = 3 seconds
+    const handleClickFood = async () => {
+        setIsLoading(true);
+        const response = await getFoodRecommendations(
+            mealType,
+            mood,
+            dietaryPreference,
+            spicyLevelValue,
+            loveIngredients,
+            avoidIngredients,
+            location,
+            // user.token
+        );
+        // Check if media upload was successful
+        const suggestions = response.data;
+        setIsResultShown(true);
+        setIsLoading(false);
+        console.log('Suggestions:', suggestions);
+        
     };
     return (
         <div className="blur place_detail_information" style={{ backgroundColor: "gray" }}>
@@ -144,23 +157,24 @@ export default function FoodSuggestion({ setVisible }) {
                                         valueLabelDisplay="auto"
                                         marks={spicyLevel}
                                         className='logo_color_text'
+                                        onChange={handleSpicyLevelChange}
                                     />
                                 </div>
                             </div>
                             <div className="preference_group">
                                 <p>Are there any specific ingredients you love?</p>
                                 <div className="button_group" >
-                                    <input type='text' name='' className='' placeholder='e.g., cheese, chocolate, seafood'></input>
+                                    <input type='text' name='' className='' placeholder='e.g., cheese, chocolate, seafood' onChange={handleLoveIngredientsChange} ></input>
                                 </div>
                             </div>
                             <div className="preference_group">
                                 <p>Are there any specific ingredients you want to avoid?</p>
                                 <div className="button_group" >
-                                    <input type='text' name='' className='' placeholder='e.g., nuts, dairy, soy'></input>
+                                    <input type='text' name='' className='' placeholder='e.g., nuts, dairy, soy' onChange={handleAvoidIngredientsChange} ></input>
                                 </div>
                             </div>
                             <div className='preference_group'>
-                                <button className="glow-on-hover" type="button" onClick={handleClick}>Search</button>
+                                <button className="glow-on-hover" type="button" onClick={handleClickFood}>Search</button>
                             </div>
                             {isLoading && <div className='preference_group'>
                                 <div className='loader'></div>

@@ -30,6 +30,9 @@ const foodVenueSchema = new Schema({
         fullAddress: { type: String } // Full address as a single string
     }],
 
+    latitude: { type: Number },
+    longitude: { type: Number },
+
     openingHour: [{
         openTime: { type: String }, // e.g., "09:00 AM"
         closeTime: { type: String } // e.g., "09:00 PM"
@@ -38,7 +41,7 @@ const foodVenueSchema = new Schema({
     rating: { type: Number, default: 0 }, // Rating of the venue
     priceLevel: { type: String }, // Price level (e.g., "$", "$$", "$$$")
     category: [{ type: String }], // Categories (e.g., "Restaurant", "Cafe")
-
+    dishesType: [{ type: String }], 
     otherinfo: [{
         halalOptions: { type: String, default: 'No' }, // Halal options (e.g., "Yes", "No")
         vegetarianOptions: { type: String, default: 'No' }, // Vegetarian options (e.g., "Yes", "No")
@@ -52,10 +55,11 @@ const foodVenueSchema = new Schema({
         acceptsDebitCards: { type: String, default: 'Yes' },
         acceptsCreditCards: { type: String, default: 'Yes' },
         acceptsTNGBoostQRPayment: { type: String, default: 'Yes' },
-        serviceCharge: { type: Number, default: 0 },
-        SSTCharge: { type: Number, default: 0 }
+
     }],
 
+    serviceCharge: { type: Number, default: 0 },
+    SSTCharge: { type: Number, default: 0 },
     // Reference to MenuItem
     menuItems: [{ type: ObjectId, ref: 'MenuItem' }]
 

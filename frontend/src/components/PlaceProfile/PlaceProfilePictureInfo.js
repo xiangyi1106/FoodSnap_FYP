@@ -5,6 +5,7 @@ import StarRating from '../searchVenue/StarRating';
 import { IconButton, Tooltip } from '@mui/material';
 import CIcon from '@coreui/icons-react';
 import { cilColorBorder, cilBookmark } from '@coreui/icons';
+import EditPlaceInfo from './EditPlaceInfo';
 
 export default function PlaceProfilePictureInfo({
   imageUrl,
@@ -13,11 +14,13 @@ export default function PlaceProfilePictureInfo({
   reviewCount,
   priceLevel,
   categories,
-  setVisible,
-  visible,
+  // setVisible,
+  // visible,
 }) {
+  const [visible, setVisible] = useState(false);
   return (
     <div className='profile_picture_wrapper' style={{ padding: '0 4rem' }}>
+      {visible && <EditPlaceInfo setVisible={setVisible} />}
       <div className='profile_picture_left'>
         <div className='profile_picture'>
           <div
@@ -57,7 +60,7 @@ export default function PlaceProfilePictureInfo({
         style={{ gap: '15px', position: 'relative', top: '20px' }}
       >
         <Tooltip title='Edit Information'>
-          <IconButton aria-label='edit' sx={{ border: '1px solid gray' }} onClick={()=>setVisible(true)}>
+          <IconButton aria-label='edit' sx={{ border: '1px solid gray' }} onClick={() => setVisible(true)}>
             <CIcon icon={cilColorBorder} className='icon_size_20' />
           </IconButton>
         </Tooltip>

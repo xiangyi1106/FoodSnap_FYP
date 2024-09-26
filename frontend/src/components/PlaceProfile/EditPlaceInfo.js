@@ -9,16 +9,20 @@ import johorBahruAreas from '../../data/johorBahruAreas';
 import OpeningHours from './OpeningHours';
 import placeOtherInformation from '../../data/placeOtherInformation';
 import ColorToggleButton from './ToggleButton';
+import { foodVenueTypes } from '../../data/foodVenueTypes';
 
 export default function EditPlaceInfo({ setVisible }) {
     const [formData, setFormData] = useState({
         restaurantName: '',
+        category: {type: 'Restaurant'},
         address: '',
-        // area: '',
         postalCode: '',
         city: '',
-        state: '',
+        state: 'Johor',
+        latitude: '',
+        longitude: '',
         phone: '',
+        openingHours: {},
         website: '',
         description: '',
         otherInfo: placeOtherInformation.reduce((acc, info) => ({ ...acc, [info]: 'noInfo' }), {}),
@@ -26,6 +30,7 @@ export default function EditPlaceInfo({ setVisible }) {
         sstCharge: 0,
         profilePicture: null,
         coverPicture: null,
+        type: [],
         // otherInfo: {
         //     halalOptions: 'noInfo',
         //     vegetarianOptions: 'noInfo',
@@ -41,6 +46,7 @@ export default function EditPlaceInfo({ setVisible }) {
         //     acceptsTngBoostQrPayment: 'noInfo',
         // }
     });
+    const [errors, setErrors] = useState({});
     const pictureInput = useRef(null);
     const coverInput = useRef(null);
 
@@ -115,15 +121,82 @@ export default function EditPlaceInfo({ setVisible }) {
         }));
     };
 
-
-    const handleSave = () => {
-        // Handle save logic here
-        console.log(formData);
-        setVisible(false);
+    // Update formData when selection changes
+    const handleDishTypeChange = (event, newValue) => {
+        setFormData((prevData) => ({
+            ...prevData,
+            type: newValue, // Update with selected values
+        }));
     };
 
+    const handleCategoryChange = (event, newValue) => {
+        setFormData((prevData) => ({
+            ...prevData,
+            category: newValue, // Update with selected values
+        }));
+    };
+
+
+    const handleCityChange = (event, newValue) => {
+        setFormData((prevData) => ({
+          ...prevData,
+          city: newValue || "", // Update city value from Autocomplete
+        }));
+      };
+      
+
+    const validatePhoneNumber = (phone) => {
+        const cleanedPhone = phone.replace(/-/g, ''); // Remove hyphens for validation
+        if (cleanedPhone.startsWith('011')) {
+            return /^[0-9]{11}$/.test(cleanedPhone); // 011 + 8 digits
+        } else if (cleanedPhone.startsWith('01')) {
+            return /^[0-9]{10}$/.test(cleanedPhone); // 7 or 8 digits for other prefixes
+        } else {
+            return false;
+        }
+
+    };
+
+    const validatePostalCode = (postalCode) => /^[0-9]{5}$/.test(postalCode);
+
+    const validateLatitude = (latitude) => {
+        const lat = parseFloat(latitude);
+        return !isNaN(lat) && lat >= -90 && lat <= 90;
+    };
+
+    const validateLongitude = (longitude) => {
+        const lon = parseFloat(longitude);
+        return !isNaN(lon) && lon >= -180 && lon <= 180;
+    };
+
+
+    const validateForm = () => {
+        const errors = {};
+        if (!formData.restaurantName) errors.restaurantName = "Restaurant Name is required.";
+        if (!formData.address) errors.address = "Address is required.";
+        if (!formData.postalCode || !validatePostalCode(formData.postalCode)) errors.postalCode = "Invalid Postal Code. It should be exactly 5 digits.";
+        if (!formData.phone || !validatePhoneNumber(formData.phone)) errors.phone = "Invalid Phone Number. It should be 7 or 8 digits, or 011 followed by 8 digits.";
+        if (!formData.latitude || !validateLatitude(formData.latitude)) errors.latitude = "Invalid Latitude. It must be between -90 and 90.";
+        if (!formData.longitude || !validateLongitude(formData.longitude)) errors.longitude = "Invalid Longitude. It must be between -180 and 180.";
+        if (isNaN(formData.serviceCharge) || formData.serviceCharge < 0 || formData.serviceCharge > 100) errors.serviceCharge = "Service Charge must be between 0 and 100.";
+        if (isNaN(formData.sstCharge) || formData.sstCharge < 0 || formData.sstCharge > 100) errors.sstCharge = "SST Charge must be between 0 and 100.";
+
+        return errors;
+    };
+
+    const handleSave = () => {
+
+        const errors = validateForm();
+        if (Object.keys(errors).length > 0) {
+            setErrors(errors);
+            return;
+        }
+        console.log(formData);
+        // setVisible(false);
+    }
+
     return (
-        <div className="blur place_detail_information" style={{backgroundColor: "gray"}}>
+        <div className="blur place_detail_information" style={{ backgroundColor: "gray" }}>
             <div className="container_wrapper" style={{ backgroundColor: "#fff" }}>
                 <div className="profile">
                     <div className="close_button hover_style_2">
@@ -134,7 +207,7 @@ export default function EditPlaceInfo({ setVisible }) {
                         <div className="edit_place_info_basic">
                             <div className="edit_place_info_picture_row">
                                 <div className="image_upload_section">
-                                    <label htmlFor="profilePicture" style={{fontWeight: '500', fontFamily: "Source Sans 3, sans-serif"}}>Upload Profile Picture</label>
+                                    <label htmlFor="profilePicture" style={{ fontWeight: '500', fontFamily: "Source Sans 3, sans-serif" }}>Upload Profile Picture</label>
                                     <input
                                         type="file"
                                         id="profilePicture"
@@ -144,13 +217,13 @@ export default function EditPlaceInfo({ setVisible }) {
                                         onChange={(e) => handlePictureChange(e, 'profilePicture')}
                                     />
                                     <div className="image_preview_container">
-                                        <img src={ formData.profilePicture? formData.profilePicture: 'https://cdn.pixabay.com/photo/2017/11/10/05/24/add-2935429_1280.png'} alt="Profile" className="profile_image" onClick={() => { pictureInput.current.click();}}/>
+                                        <img src={formData.profilePicture ? formData.profilePicture : `${process.env.PUBLIC_URL}/images/generative-image.png`} alt="Profile" className="profile_image" onClick={() => { pictureInput.current.click(); }} />
                                         {formData.profilePicture && <button onClick={() => removePicture('profilePicture')} className="small_white_circle"><CIcon icon={cilX} className="icon_size_22" /></button>}
                                     </div>
                                 </div>
 
                                 <div className="image_upload_section">
-                                    <label htmlFor="coverPicture" style={{fontWeight: '500', fontFamily: "Source Sans 3, sans-serif"}}>Upload Cover Picture</label>
+                                    <label htmlFor="coverPicture" style={{ fontWeight: '500', fontFamily: "Source Sans 3, sans-serif" }}>Upload Cover Picture</label>
                                     <input
                                         type="file"
                                         id="coverPicture"
@@ -160,8 +233,8 @@ export default function EditPlaceInfo({ setVisible }) {
                                         onChange={(e) => handlePictureChange(e, 'coverPicture')}
                                     />
                                     <div className="image_preview_container">
-                                        <img src={ formData.coverPicture? formData.coverPicture: 'https://cdn.pixabay.com/photo/2017/11/10/05/24/add-2935429_1280.png'} alt="Cover" className="cover_image"  onClick={() => { coverInput.current.click();}}/>
-                                        {formData.coverPicture && <button onClick={() => removePicture('coverPicture')} className="small_white_circle" style={{zIndex: '99'}}><CIcon icon={cilX} className="icon_size_22" /></button>}
+                                        <img src={formData.coverPicture ? formData.coverPicture : `${process.env.PUBLIC_URL}/images/generative-image.png`} style={{ objectFit: formData.coverPicture ? 'cover' : 'contain' }} alt="Cover" className="cover_image" onClick={() => { coverInput.current.click(); }} />
+                                        {formData.coverPicture && <button onClick={() => removePicture('coverPicture')} className="small_white_circle" style={{ zIndex: '99' }}><CIcon icon={cilX} className="icon_size_22" /></button>}
                                     </div>
                                 </div>
                             </div>
@@ -172,24 +245,56 @@ export default function EditPlaceInfo({ setVisible }) {
                                 <div className="edit_place_info_basic_label">
                                     Restaurant Name
                                 </div>
-                                <input
-                                    className="edit_place_info_basic_input"
-                                    name="restaurantName"
-                                    value={formData.restaurantName}
-                                    onChange={handleChange}
-                                />
+                                <div className="edit_place_info_basic_col full_width">
+                                    <input
+                                        className="edit_place_info_basic_input"
+                                        name="restaurantName"
+                                        value={formData.restaurantName}
+                                        onChange={handleChange}
+                                        // style={{width: '300px'}}
+                                        required
+                                    />
+                                    {errors.restaurantName && <span className="error_message">{errors.restaurantName}</span>}
+                                </div>
                             </div>
 
                             <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">
+                                    Category
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'center' }} className='edit_city'>
+                                    <Autocomplete
+                                        id="filter-demo"
+                                        options={foodVenueTypes}
+                                        getOptionLabel={(option) => option.type}
+                                        filterOptions={filterOptions}
+                                        sx={{ width: 340 }}
+                                        // sx={{ width: '100%' }}
+                                        value={formData.category}
+                                        onChange={handleCategoryChange}
+                                        name="category"
+                                        className='full_width'
+                                        renderInput={(params) => <TextField {...params} />}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className="edit_place_info_basic_row">
+                                <div className="edit_place_info_basic_label">
                                     Address
                                 </div>
-                                <input
-                                    className="edit_place_info_basic_input"
-                                    name="address"
-                                    value={formData.address}
-                                    onChange={handleChange}
-                                />
+                                <div className="edit_place_info_basic_col full_width">
+                                    <input
+                                        className="edit_place_info_basic_input"
+                                        name="address"
+                                        value={formData.address}
+                                        onChange={handleChange}
+                                        // style={{width: '600px'}}
+                                        required
+                                    />
+                                    {errors.address && <span className="error_message">{errors.address}</span>}
+
+                                </div>
                             </div>
                             <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">
@@ -203,11 +308,12 @@ export default function EditPlaceInfo({ setVisible }) {
                                         filterOptions={filterOptions}
                                         sx={{ width: 340 }}
                                         // sx={{ width: '100%' }}
-                                        value={formData.area}
-                                        onChange={handleChange}
-                                        name="area"
+                                        value={formData.city}
+                                        onChange={handleCityChange}
+                                        name="city"
                                         className='full_width'
                                         renderInput={(params) => <TextField {...params} />}
+                                        required
                                     />
                                 </div>
                             </div>
@@ -215,32 +321,59 @@ export default function EditPlaceInfo({ setVisible }) {
                                 <div className="edit_place_info_basic_label">
                                     Postal Code
                                 </div>
-                                <input
-                                    className="edit_place_info_basic_input full_width"
-                                    name="postalCode"
-                                    value={formData.postalCode}
-                                    onChange={handleChange}
-                                    style={{ width: '35%' }}
-                                />
-                            </div>
-                            {/* <div className="edit_place_info_basic_row" >
-                                <div className="edit_place_info_basic_label">
-                                    City
+                                <div className="edit_place_info_basic_col full_width" style={{ width: '35%' }}>
+
+                                    <input
+                                        className="edit_place_info_basic_input"
+                                        name="postalCode"
+                                        value={formData.postalCode}
+                                        onChange={handleChange}
+                                        placeholder='Eg: 81300'
+                                        // style={{ width: '35%' }}
+                                        required
+                                    />
+                                    {errors.postalCode && <span className="error_message">{errors.postalCode}</span>}
+
                                 </div>
-                                <input
-                                    className="edit_place_info_basic_input"
-                                    name="city"
-                                    value="Johor Bahru"
-                                    style={{ width: '35%' }}
-                                    readOnly
-                                />
-                            </div> */}
+                            </div>
+                            <div className="edit_place_info_basic_row" >
+                                <div className="edit_place_info_basic_label">
+                                    Latitude
+                                </div>
+                                <div className="edit_place_info_basic_col full_width" style={{ width: '35%' }}>
+                                    <input
+                                        className="edit_place_info_basic_input "
+                                        name="latitude"
+                                        value={formData.latitude}
+                                        onChange={handleChange}
+                                    // style={{ width: '35%' }}
+                                    />
+                                    {errors.latitude && <span className="error_message">{errors.latitude}</span>}
+                                </div>
+                            </div>
+
+                            <div className="edit_place_info_basic_row" >
+                                <div className="edit_place_info_basic_label">
+                                    Longitude
+                                </div>
+                                <div className="edit_place_info_basic_col full_width" style={{ width: '35%' }}>
+                                    <input
+                                        className="edit_place_info_basic_input "
+                                        name="longitude"
+                                        value={formData.longitude}
+                                        onChange={handleChange}
+                                    // style={{ width: '35%' }}
+                                    />
+                                    {errors.longitude && <span className="error_message">{errors.longitude}</span>}
+                                    <p style={{ color: 'gray', fontSize: '0.85rem' }}>Provide latitude and longitude to perform a better accuracy on the map.</p>
+                                </div>
+                            </div>
                             <div className="edit_place_info_basic_row" >
                                 <div className="edit_place_info_basic_label">
                                     State
                                 </div>
                                 <input
-                                    className="edit_place_info_basic_input full_width"
+                                    className="edit_place_info_basic_input "
                                     name="state"
                                     value="Johor"
                                     readOnly
@@ -249,33 +382,40 @@ export default function EditPlaceInfo({ setVisible }) {
                                 />
                             </div>
                             <div className="edit_place_info_basic_row" >
-                                <div className="edit_place_info_basic_label">
+                                <div className="edit_place_info_basic_label" >
                                     Phone
                                 </div>
-                                <input
-                                    className="edit_place_info_basic_input full_width"
-                                    name="phone"
-                                    value={formData.phone}
-                                    onChange={handleChange}
-                                    style={{ width: '35%' }}
-                                />
+                                <div className="edit_place_info_basic_col full_width" style={{ width: '35%' }}>
+                                    <input
+                                        className="edit_place_info_basic_input "
+                                        name="phone"
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                        placeholder='Eg: 012345678'
+                                    // style={{ width: '35%' }}
+                                    />
+                                    {errors.phone && <span className="error_message">{errors.phone}</span>}
+                                </div>
                             </div>
                             <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">
                                     Website
                                 </div>
-                                <input
-                                    className="edit_place_info_basic_input"
-                                    name="website"
-                                    value={formData.website}
-                                    onChange={handleChange}
-                                />
+                                {/* <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', width: '35%' }}></div> */}
+                                <div className="edit_place_info_basic_col full_width">
+                                    <input
+                                        className="edit_place_info_basic_input "
+                                        name="website"
+                                        value={formData.website}
+                                        onChange={handleChange}
+                                    />
+                                </div>
                             </div>
                             <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">
                                     Opening Hours
                                 </div>
-                                <OpeningHours />
+                                <OpeningHours formData={formData} setFormData={setFormData} />
                             </div>
                             <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">
@@ -300,7 +440,9 @@ export default function EditPlaceInfo({ setVisible }) {
                                         id="tags-standard"
                                         options={restaurantTypes}
                                         getOptionLabel={(option) => option}
-                                        filterOptions={filterOptions}
+                                        // filterOptions={filterOptions}
+                                        // value={formData.type || []} // Set the value from formData
+                                        onChange={handleDishTypeChange} // Handle change
                                         renderInput={(params) => (
                                             <TextField
                                                 {...params}
@@ -310,7 +452,6 @@ export default function EditPlaceInfo({ setVisible }) {
                                     />
                                     {/* </div> */}
                                 </div>
-
                             </div>
                         </div>
                         <div className="edit_place_info_basic">
@@ -322,16 +463,6 @@ export default function EditPlaceInfo({ setVisible }) {
                                     <div className='' style={{ width: '70%' }}>
                                         <ColorToggleButton value={formData.otherInfo[info]}
                                             onChange={handleOtherInfoToggle(info)} />
-                                        {/* {formData.hasServiceCharge && (
-                                            <input
-                                                type="number"
-                                                placeholder="Percentage"
-                                                value={info.serviceCharge.percentage}
-                                                // onChange={(e) => handlePercentageChange(index, e.target.value)}
-                                                min="0"
-                                                max="100"
-                                            />
-                                        )} */}
                                     </div>
                                 </div>
                             ))}
@@ -339,27 +470,37 @@ export default function EditPlaceInfo({ setVisible }) {
                                 <div className="edit_place_info_basic_label">
                                     Service Charge
                                 </div>
-                                <input
-                                    className="edit_place_info_basic_input full_width"
-                                    name="serviceCharge"
-                                    value={formData.serviceCharge}
-                                    onChange={handleChargeChange}
-                                    style={{ width: '35%' }}
-                                    type='text'
-                                />
+                                <div className="edit_place_info_basic_col full_width">
+
+                                    <input
+                                        className="edit_place_info_basic_input "
+                                        name="serviceCharge"
+                                        value={formData.serviceCharge}
+                                        onChange={handleChargeChange}
+                                        style={{ width: '35%' }}
+                                        type='text'
+                                    />
+                                    {errors.serviceCharge && <span className="error_message">{errors.serviceCharge}</span>}
+                                </div>
+
                             </div>
                             <div className="edit_place_info_basic_row" >
                                 <div className="edit_place_info_basic_label">
                                     SST Charge
                                 </div>
-                                <input
-                                    className="edit_place_info_basic_input full_width"
-                                    name="SSTCharge"
-                                    value={formData.SSTCharge}
-                                    onChange={handleChargeChange}
-                                    style={{ width: '35%' }}
-                                    type='text'
-                                />
+                                <div className="edit_place_info_basic_col full_width">
+
+                                    <input
+                                        className="edit_place_info_basic_input "
+                                        name="sstCharge"
+                                        value={formData.sstCharge}
+                                        onChange={handleChargeChange}
+                                        style={{ width: '35%' }}
+                                        type='text'
+                                    />
+                                    {errors.sstCharge && <span className="error_message">{errors.sstCharge}</span>}
+                                </div>
+
                             </div>
 
                         </div>

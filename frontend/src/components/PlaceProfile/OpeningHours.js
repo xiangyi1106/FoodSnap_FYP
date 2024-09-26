@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './OpeningHours.css';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
 
-const OpeningHours = () => {
+const OpeningHours = ({ formData, setFormData }) => {
     const [hours, setHours] = useState({
         mon: [],
         tue: [],
@@ -27,6 +27,25 @@ const OpeningHours = () => {
         sun: false,
         publicHoliday: false,
     });
+
+    useEffect(() => {
+        // Update formData state with hours and closedDays
+        setFormData(prevData => ({
+            ...prevData,
+            openingHours: {
+                ...hours,
+                ...Object.keys(closedDays).reduce((acc, day) => {
+                    if (closedDays[day]) {
+                        acc[day] = []; // If day is closed, no hours to save
+                    } else {
+                        acc[day] = hours[day]; // Save hours if day is not closed
+                    }
+                    return acc;
+                }, {}),
+            },
+            // closedDays,
+        }));
+    }, [hours, closedDays]);
 
     const handleTimeChange = (day, index, type, value) => {
         setHours((prevHours) => {

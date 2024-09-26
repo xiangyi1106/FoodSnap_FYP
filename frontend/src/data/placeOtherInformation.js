@@ -11,8 +11,6 @@ const placeOtherInformation = [
     "Accepts Debit Cards",
     "Accepts Credit Cards",
     "Accepts TNG/Boost/QR Payment",
-    "Service Charge",
-    "SST Charge"
 ]
 
 export default placeOtherInformation;

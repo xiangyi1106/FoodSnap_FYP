@@ -20,7 +20,7 @@ export default function PlaceDetails({ setVisible }) {
     }, [tab]);
 
     return (
-        <div className='blur place_detail_information' style={{backgroundColor: "gray"}}>
+        <div className='blur place_detail_information' style={{ backgroundColor: "gray" }}>
             <div className='container_wrapper'>
                 <div className='profile'>
                     <div className='close_button hover_style_2'><CIcon icon={cilX} className="icon_size_22 close_button_icon" onClick={() => { setVisible(false); console.log("visible none"); }} /></div>

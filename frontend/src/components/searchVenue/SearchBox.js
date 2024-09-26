@@ -1,16 +1,11 @@
 import { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import CIcon from '@coreui/icons-react';
 import IconButton from '@mui/material/IconButton';
 import { cilSearch, cilFilter, cilLightbulb } from '@coreui/icons';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Tooltip from '@mui/material/Tooltip';
-import { CButton, CModalBody, CModalFooter, CModalHeader, CModalTitle, CModal } from '@coreui/react';
 import { City, Country, State } from "country-state-city";
 import Selector from './Selector';
 import LocationSelector from './LocationSelector';
@@ -23,46 +18,41 @@ import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import ChangeLocationModal from './ChangeLocationModal';
 import SearchFoodCategoryModal from './SearchFoodCategoryModal';
 
-export default function SearchBox() {
-    const [visible, setVisible] = useState(false);
-    const countryData = Country.getAllCountries();
-    const [stateData, setStateData] = useState([]);
-    const [cityData, setCityData] = useState([]);
+export default function SearchBox({setVisible}) {
+    // const countryData = Country.getAllCountries();
+    // const [stateData, setStateData] = useState([]);
+    // const [cityData, setCityData] = useState([]);
 
-    const [country, setCountry] = useState(countryData[0] || '');
-    const [state, setState] = useState('');
-    const [city, setCity] = useState('');
+    // const [country, setCountry] = useState(countryData[0] || '');
+    // const [state, setState] = useState('');
+    // const [city, setCity] = useState('');
 
-    useEffect(() => {
-        const states = State.getStatesOfCountry(country?.isoCode) || [];
-        console.log(country?.isoCode)
-        setStateData(states);
-        console.log(state)
-        console.log(stateData)
+    // useEffect(() => {
+    //     const states = State.getStatesOfCountry(country?.isoCode) || [];
+    //     setStateData(states);
+    //     if (states.length > 0) {
+    //         setState(states[0]?.name || '');
+    //     } else {
+    //         setState('');
+    //     }
+    // }, [country]);
 
-        if (states.length > 0) {
-            setState(states[0]?.name || '');
-        } else {
-            setState('');
-        }
-    }, [country]);
+    // useEffect(() => {
+    //     const cities = City.getCitiesOfState(country?.isoCode, state?.isoCode) || [];
+    //     setCityData(cities);
+    //     if (cities.length > 0) {
+    //         setCity(cities[0]?.name || '');
+    //     } else {
+    //         setCity('');
+    //     }
+    // }, [state]);
 
-    useEffect(() => {
-        const cities = City.getCitiesOfState(country?.isoCode, state?.isoCode) || [];
-        setCityData(cities);
-        if (cities.length > 0) {
-            setCity(cities[0]?.name || '');
-        } else {
-            setCity('');
-        }
-    }, [state]);
-
-    // const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [isPlaceDetailsVisible, setPlaceDetailsVisible] = useState(false);
     const [isFoodVenueFinderVisible, setFoodVenueFinderVisible] = useState(false);
     const [isAISearchVisible, setIsAISearchVisible] = useState(false);
     const [isFilterVisible, setIsFiterVisible] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('');
+    const [isEditPlaceVisible, setIsEditPlaceVisible] = useState(false);
 
     //Hide the outer scrollbar
     useEffect(() => {
@@ -83,13 +73,11 @@ export default function SearchBox() {
     return (
         <Card sx={{ width: '100%', marginLeft: "auto", marginRight: "auto" }}>
             {isPlaceDetailsVisible && <PlaceDetails setVisible={setPlaceDetailsVisible} />}
-            {/* {isPlaceDetailsVisible && <EditPlaceInfo setVisible={setPlaceDetailsVisible}/>} */}
             {isAISearchVisible && <FoodSuggestion setVisible={setIsAISearchVisible} />}
             <CardContent>
                 <div className='searchbox_wrapper'>
                     <Tooltip title="Change Location">
                         <IconButton aria-label="location" onClick={() => setVisible(true)}>
-                            {/* <CIcon icon={cilLocationPin} className="icon_size_18 logo_color_text" /> */}
                             <LocationOnIcon className="logo_color_text" />
                         </IconButton>
                     </Tooltip>
@@ -108,7 +96,6 @@ export default function SearchBox() {
                 <FoodVenueFinder setVisible={setPlaceDetailsVisible} />
             </CardContent>
             <SearchFoodCategoryModal setVisible={setIsFiterVisible} visible={isFilterVisible} setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory} />
-            <ChangeLocationModal setVisible={setVisible} visible={visible} setSelected={setCity} selected={city} />
         </Card>
     );
 }
