@@ -1,4 +1,5 @@
-// import { GoogleGenerativeAI } from "@google/generative-ai";
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
 exports.getFoodRecommendation = async (req, res) => {
     // Extract preferences from the request body
     let { mealType, mood, dietaryPreference, spicyLevelValue, loveIngredients, avoidIngredients, location } = req.body;
@@ -8,17 +9,16 @@ exports.getFoodRecommendation = async (req, res) => {
     mood = mood || 'none';
     dietaryPreference = dietaryPreference || 'none';
     spicyLevelValue = (spicyLevelValue !== undefined && spicyLevelValue !== null) ? spicyLevelValue : 'none';
-    // loveIngredients = (loveIngredients && loveIngredients.trim() !== '') ? loveIngredients.split(',').map(ingredient => ingredient.trim()) : ['none'];
-    // avoidIngredients = (avoidIngredients && avoidIngredients.trim() !== '') ? avoidIngredients.split(',').map(ingredient => ingredient.trim()) : ['none'];
     loveIngredients = loveIngredients || 'none';
     avoidIngredients = avoidIngredients || 'none';
+    location = location || 'Johor Bahru'
 
+    console.log(mealType, mood, dietaryPreference, spicyLevelValue, loveIngredients, avoidIngredients, location);
     try {
         // Initialize the Google Generative AI client
-        // const genAI = new GoogleGenerativeAI(process.env.API_KEY);
-        // const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_AI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-        // Create the prompt to request exactly two restaurant suggestions
         const prompt = `
             You are an advanced AI food recommendation expert. Based on the following user preferences, provide an array of food recommendations based on Malaysian styles and its location:
             
@@ -26,24 +26,29 @@ exports.getFoodRecommendation = async (req, res) => {
             Mood: ${mood}
             Dietary Preference: ${dietaryPreference}
             Spicy Level: ${spicyLevelValue}%
-            Loved Ingredients: ${loveIngredients.join(', ')}
-            Avoided Ingredients: ${avoidIngredients.join(', ')}
+            Loved Ingredients: ${loveIngredients}
+            Avoided Ingredients: ${avoidIngredients}
             Location: ${location}
 
             Format the response as a array with max six items. Example format:
             ["Laksa", "Sandwiches", "Roti Canai", 'Nasi Lemak', 
             'Char Kway Teow' ]
+            Please give me only the array but not extra text.
         `;
 
-        // Send the prompt to the generative model
-        const response = await model.generateText({
-            prompt: prompt,
-            max_tokens: 200 // Adjust token limit based on expected response size
-        });
+        const result = await model.generateContent(prompt);
 
-        // Parse response and send suggestions back to the frontend
-        const suggestions = JSON.parse(response.data.text); // Ensure it's an array of strings
-        res.json(suggestions);
+        const suggestions = await result.response.text();
+
+        console.log('API response:', suggestions);
+
+        // res.json(suggestions);
+        // Return the suggestions array as JSON
+        // res.json({ suggestions: JSON.parse(suggestions) });
+        food_suggestions = JSON.parse(suggestions);
+        res.json({ food_suggestions });
+
+
 
     } catch (error) {
         console.error('Error fetching food suggestions:', error);
@@ -59,12 +64,12 @@ exports.getRestaurantsRecommendation = async (req, res) => {
 
     try {
         // Initialize the Google Generative AI client
-        // const genAI = new GoogleGenerativeAI(process.env.API_KEY);
-        // const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_AI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         // Create the prompt to request exactly two restaurant suggestions
         const prompt = `
-            You are an advanced AI food recommendation expert. Based on the following selected food, provide exactly two restaurant recommendations:
+            You are an advanced AI food recommendation expert. Based on the following selected food, provide max three restaurant recommendations:
             
             Food: ${food}
             Location: ${location}
@@ -96,29 +101,18 @@ exports.getRestaurantsRecommendation = async (req, res) => {
                     "reason": "Well known for its sandwiches."
                 }
             ]
+            Please give me only the json but not extra text.
         `;
 
-        // Send the prompt to the generative model
-        const response = await model.generateText({
-            prompt: prompt,
-            max_tokens: 1000 // Adjust token limit based on expected response size
-        });
+        const result = await model.generateContent(prompt);
 
-        // Parse the response assuming it's in JSON format
-        const restaurants = JSON.parse(response.data.text); // Adjust if the response is structured differently
+        const restaurant_suggestion = await result.response.text();
 
-        // Process the response to generate suggestions
-        const suggestions = restaurants.map(restaurant => ({
-            name: restaurant.name,
-            rating: restaurant.rating,
-            openHour: restaurant.opening_hours, // Ensure this field matches your data
-            address: restaurant.address,
-            description: restaurant.description,
-            reason: restaurant.reason || 'Suggested based on your preferences' // Use AI-generated reason or fallback
-        }));
+        console.log('API response:', restaurant_suggestion);
 
-        // Send the suggestions back to the frontend
-        res.json(suggestions);
+        restaurant_suggestions = JSON.parse(restaurant_suggestion);
+        res.json({ restaurant_suggestions });
+
 
     } catch (error) {
         console.error('Error fetching restaurant suggestions:', error);

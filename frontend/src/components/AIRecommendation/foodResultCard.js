@@ -16,7 +16,7 @@ const FoodResultCard = ({ name, hours, rating, description, reason, address }) =
                 </div>
                 <p>{description}</p>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom:'15px', gap:'5px' }}>
-                    <CIcon icon={cilThumbUp} style={{ marginRight: '3px', position: 'relative', bottom: '3px', color: 'green' }} className="icon_size_20" />
+                    <CIcon icon={cilThumbUp} style={{ marginRight: '3px', position: 'relative', bottom: '3px', color: 'green' }} className="icon_size_24" />
                     <h4 style={{color: 'gray' }}>{reason}</h4>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom:'15px', gap:'5px' }}>

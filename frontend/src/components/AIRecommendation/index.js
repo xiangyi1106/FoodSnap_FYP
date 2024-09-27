@@ -1,25 +1,24 @@
 import React, { useCallback, useRef, useState } from 'react';
 import CIcon from '@coreui/icons-react';
-import { cilArrowLeft, cilCheckAlt, cilX } from '@coreui/icons';
+import { cilX } from '@coreui/icons';
 import './style.css';
 import Slider from '@mui/material/Slider';
 import FoodResult from './foodResult';
-import axios from 'axios';
 import { getFoodRecommendations } from '../../functions/AIRecommendation';
 
-export default function FoodSuggestion({ setVisible, location }) {
+export default function FoodSuggestion({ setVisible, user }) {
     // const [weather, setWeather] = useState('');
-    const [mealType, setMealType] = useState('breakfast');
-    const [mood, setMood] = useState('normal');
-    const [dietaryPreference, setDietaryPreference] = useState('no');
-    const [spicyLevelValue, setSpicyLevelValue] = useState(0); // State for spicy level
-    const [loveIngredients, setLoveIngredients] = useState(''); // State for ingredients they love
-    const [avoidIngredients, setAvoidIngredients] = useState(''); // State for ingredients they want to avoid
+    const [mealType, setMealType] = useState(localStorage.getItem('AImealType') || 'breakfast');
+    const [mood, setMood] = useState(localStorage.getItem('AImood') || 'normal');
+    const [dietaryPreference, setDietaryPreference] = useState(localStorage.getItem('AIdietaryPreference') || 'no');
+    const [spicyLevelValue, setSpicyLevelValue] = useState(parseInt(localStorage.getItem('AIspicyLevelValue')) || 0); // State for spicy level
+    const [loveIngredients, setLoveIngredients] = useState(localStorage.getItem('AIloveIngredients') || ''); // State for ingredients they love
+    const [avoidIngredients, setAvoidIngredients] = useState(localStorage.getItem('AIavoidIngredients') || ''); // State for ingredients they want to avoid
 
     // const handleWeatherChange = (selectedWeather) => setWeather(selectedWeather);
-    const handleMealTypeChange = (selectedMealType) => setMealType(selectedMealType);
-    const handleMoodChange = (selectedMood) => setMood(selectedMood);
-    const handleDietaryPreferenceChange = (selectedDietaryPreference) => setDietaryPreference(selectedDietaryPreference);
+    const handleMealTypeChange = (selectedMealType) => {setMealType(selectedMealType);};
+    const handleMoodChange = (selectedMood) => {setMood(selectedMood); };
+    const handleDietaryPreferenceChange = (selectedDietaryPreference) => {setDietaryPreference(selectedDietaryPreference);};
     const handleSpicyLevelChange = (event, value) => setSpicyLevelValue(value); // Handle spicy level change
     const handleLoveIngredientsChange = (event) => setLoveIngredients(event.target.value); // Handle love ingredients
     const handleAvoidIngredientsChange = (event) => setAvoidIngredients(event.target.value); // Handle avoid ingredients
@@ -53,9 +52,19 @@ export default function FoodSuggestion({ setVisible, location }) {
 
     const [isLoading, setIsLoading] = useState(false);
     const [isResultShown, setIsResultShown] = useState(false);
+    const [foodSuggestion, setFoodSuggestion] = useState(null);
+    const location = localStorage.getItem('currentLocation') || 'Johor Bahru';
 
     const handleClickFood = async () => {
         setIsLoading(true);
+        localStorage.setItem("AImealType", mealType);
+        localStorage.setItem("AImood", mood);
+        localStorage.setItem("AIdietaryPreference", dietaryPreference);
+        localStorage.setItem("AIspicyLevelValue", spicyLevelValue.toString()); // Save as a string
+        localStorage.setItem("AIloveIngredients", loveIngredients);
+        localStorage.setItem("AIavoidIngredients", avoidIngredients);
+
+
         const response = await getFoodRecommendations(
             mealType,
             mood,
@@ -64,14 +73,25 @@ export default function FoodSuggestion({ setVisible, location }) {
             loveIngredients,
             avoidIngredients,
             location,
-            // user.token
+            user.token,
         );
         // Check if media upload was successful
-        const suggestions = response.data;
+        const suggestions = response.food_suggestions;
+        setFoodSuggestion(suggestions);
         setIsResultShown(true);
         setIsLoading(false);
         console.log('Suggestions:', suggestions);
+        console.log('Food Suggestions:', foodSuggestion);
         
+        // console.log(mealType);
+        // console.log(mood);
+        // console.log(dietaryPreference);
+        // console.log(spicyLevelValue);
+        // console.log(loveIngredients);
+        // console.log(avoidIngredients);
+        // console.log(location);
+        // console.log(user.token);
+
     };
     return (
         <div className="blur place_detail_information" style={{ backgroundColor: "gray" }}>
@@ -86,7 +106,7 @@ export default function FoodSuggestion({ setVisible, location }) {
                             <div className="preference_group">
                                 <p>What is your mood now?</p>
                                 <div className="button_group" style={{ gap: '40px' }}>
-                                    <div className='emoji_group'>
+                                    {/* <div className='emoji_group'>
                                         <img
                                             src={mood === "sad" ? "/emoji_icons/sad.png" : "/emoji_icons/sad_o.png"}
                                             className='emoji_button'
@@ -124,7 +144,8 @@ export default function FoodSuggestion({ setVisible, location }) {
                                             onClick={() => handleMoodChange('happy')}
                                         />
                                         <div className='emoji_group_text'>Happy</div>
-                                    </div>
+                                    </div> */}
+                                    <MoodButtonGroup mood={mood} handleMoodChange={handleMoodChange} />
                                 </div>
                             </div>
                             <div className="preference_group">
@@ -151,13 +172,14 @@ export default function FoodSuggestion({ setVisible, location }) {
                                 <div className="button_group" style={{ width: '300px', color: '#30bfbfc0' }}>
                                     <Slider
                                         aria-label="Custom marks"
-                                        defaultValue={0}
+                                        // defaultValue={0}
                                         getAriaValueText={valuetext}
                                         step={25}
                                         valueLabelDisplay="auto"
                                         marks={spicyLevel}
                                         className='logo_color_text'
                                         onChange={handleSpicyLevelChange}
+                                        value={spicyLevelValue ?? 0} // Use the spicyLevelValue state here
                                     />
                                 </div>
                             </div>
@@ -181,10 +203,31 @@ export default function FoodSuggestion({ setVisible, location }) {
                                 <p>Loading ...</p>
                             </div>}
                         </div>
-                        {isResultShown && <FoodResult />}
+                        {isResultShown && foodSuggestion && <FoodResult foodSuggestion={foodSuggestion} user={user}/>}
                     </div>
                 </div>
             </div>
         </div>
     )
+}
+
+// Helper component for mood selection buttons
+function MoodButtonGroup({ mood, handleMoodChange }) {
+    const moods = [
+        { name: 'sad', icon: '/emoji_icons/sad.png', iconO: '/emoji_icons/sad_o.png' },
+        { name: 'angry', icon: '/emoji_icons/angry.png', iconO: '/emoji_icons/angry_o.png' },
+        { name: 'normal', icon: '/emoji_icons/happy.png', iconO: '/emoji_icons/happy_o.png' },
+        { name: 'happy', icon: '/emoji_icons/smile.png', iconO: '/emoji_icons/smile_o.png' }
+    ];
+    return moods.map(m => (
+        <div className='emoji_group' key={m.name}>
+            <img
+                src={mood === m.name ? m.icon : m.iconO}
+                className='emoji_button'
+                alt={m.name}
+                onClick={() => handleMoodChange(m.name)}
+            />
+            <div className='emoji_group_text'>{m.name.charAt(0).toUpperCase() + m.name.slice(1)}</div>
+        </div>
+    ));
 }

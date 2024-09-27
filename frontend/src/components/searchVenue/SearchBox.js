@@ -18,7 +18,7 @@ import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import ChangeLocationModal from './ChangeLocationModal';
 import SearchFoodCategoryModal from './SearchFoodCategoryModal';
 
-export default function SearchBox({setVisible}) {
+export default function SearchBox({setVisible, user}) {
     // const countryData = Country.getAllCountries();
     // const [stateData, setStateData] = useState([]);
     // const [cityData, setCityData] = useState([]);
@@ -73,7 +73,7 @@ export default function SearchBox({setVisible}) {
     return (
         <Card sx={{ width: '100%', marginLeft: "auto", marginRight: "auto" }}>
             {isPlaceDetailsVisible && <PlaceDetails setVisible={setPlaceDetailsVisible} />}
-            {isAISearchVisible && <FoodSuggestion setVisible={setIsAISearchVisible} />}
+            {isAISearchVisible && <FoodSuggestion setVisible={setIsAISearchVisible} user={user}/>}
             <CardContent>
                 <div className='searchbox_wrapper'>
                     <Tooltip title="Change Location">

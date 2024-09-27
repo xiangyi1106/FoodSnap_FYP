@@ -3,7 +3,7 @@ import "./style.css";
 import Map from '../../components/searchVenue/Map';
 import SearchBox from '../../components/searchVenue/SearchBox';
 import ChangeLocationModal from '../../components/searchVenue/ChangeLocationModal';
-export default function SearchVenue() {
+export default function SearchVenue({user}) {
     // Usage example
     const addresses = [
         "28, Jalan Impian Emas 7, Taman Impian Emas, 81300 Skudai, Johor",
@@ -21,7 +21,7 @@ export default function SearchVenue() {
                 <Map addresses={addresses} selected={selected}/>
             </div>
             <div className='search_box'>
-                <SearchBox setVisible={setVisible} />
+                <SearchBox setVisible={setVisible} user={user} />
             </div>
             {visible && <ChangeLocationModal setVisible={setVisible} visible={visible} setSelected={setSelected} selected={selected} />}
         </div>
