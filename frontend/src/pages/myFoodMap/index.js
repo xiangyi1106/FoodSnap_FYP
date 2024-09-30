@@ -4,7 +4,7 @@ import SearchBox from '../../components/searchVenue/SearchBox';
 import MyMap from '../../components/myFoodMap/myFoodMap';
 import MyFoodMapContainer from '../../components/myFoodMap/MyFoodMapContainer';
 import Map from '../../components/searchVenue/Map';
-import VisitedPlaceGrid from '../VisitedPlace';
+// import VisitedPlaceGrid from '../VisitedPlace';
 export default function MyFoodMap() {
     const locations = [
         [51.505, -0.09],

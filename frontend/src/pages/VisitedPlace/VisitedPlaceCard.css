@@ -104,7 +104,7 @@
 @media (min-width: 576px) {
     .card__image {
         width: 45%;
-        max-height: none;
+        /* max-height: none; */
         /* min-height: 400px; */
         margin-bottom: 0;
     }

@@ -3,25 +3,41 @@ import { IconButton, Typography, Box, MenuItem, Select } from '@mui/material';
 import { ArrowBack, ArrowForward } from '@mui/icons-material';
 import dayjs from 'dayjs';
 
-export default function CustomCalendarHeader() {
+export default function CustomCalendarHeader({setSelectedMonth, setSelectedYear}) {
     const [currentDate, setCurrentDate] = useState(dayjs());
 
     const handlePrevMonth = () => {
-        setCurrentDate(currentDate.subtract(1, 'month'));
+        const minDate = dayjs().year(2024).month(0); // January 2024
+
+        // Prevent going before January 2024
+        if (currentDate.isSame(minDate, 'month')) {
+            return; // Do nothing if already January 2024
+        }
+
+        const newDate = currentDate.subtract(1, 'month');
+        setCurrentDate(newDate);
+        setSelectedMonth(newDate.month());
+        setSelectedYear(newDate.year());
     };
 
     const handleNextMonth = () => {
-        setCurrentDate(currentDate.add(1, 'month'));
+        const newDate = currentDate.add(1, 'month');
+        setCurrentDate(newDate);
+        setSelectedMonth(newDate.month());
+        setSelectedYear(newDate.year());
+
     };
 
     const handleMonthChange = (event) => {
         const newMonth = event.target.value;
         setCurrentDate(currentDate.month(newMonth));
+        setSelectedMonth(newMonth);
     };
 
     const handleYearChange = (event) => {
         const newYear = event.target.value;
         setCurrentDate(currentDate.year(newYear));
+        setSelectedYear(newYear);
     };
 
     // Manually create an array of month names
@@ -30,9 +46,6 @@ export default function CustomCalendarHeader() {
         'July', 'August', 'September', 'October', 'November', 'December'
     ];
 
-    // Create an array of years around the current year
-    //   const years = Array.from(new Array(21), (val, index) => currentDate.year() + index);
-
     // Create a static array of years
     const startYear = 2024;
     const endYear = 2044;
@@ -40,7 +53,7 @@ export default function CustomCalendarHeader() {
 
     return (
         <Box display="flex" alignItems="center" justifyContent="space-between">
-            <IconButton onClick={handlePrevMonth}>
+            <IconButton onClick={handlePrevMonth} disabled={currentDate.isSame(dayjs().year(2024).month(0), 'month')}>
                 <ArrowBack />
             </IconButton>
 

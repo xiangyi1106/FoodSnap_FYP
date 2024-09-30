@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import './style.css';
 
-const VisitedPlaceGrid = ({ year, month, visits }) => {
-    // Get the number of days in the month
-    const daysInMonth = new Date(year, month, 0).getDate();
+const VisitedPlaceGrid = ({ year, month, visits, onDayClick  }) => {
+    // Correct calculation for the number of days in the month
+    // const daysInMonth = new Date(year, month, 0).getDate();
     // Get the day of the week of the first day of the month (0 = Sunday, 6 = Saturday)
-    const firstDayOfMonth = new Date(year, month - 1, 1).getDay();
+    // const firstDayOfMonth = new Date(year, month - 1, 1).getDay();
+
+    // Correct calculation for the number of days in the month (month should be zero-indexed)
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    // Get the day of the week of the first day of the month (0 = Sunday, 6 = Saturday)
+    const firstDayOfMonth = new Date(year, month, 1).getDay(); // Use zero-indexed month here
 
     // Create an array representing the grid
     const gridItems = [];
 
-    // Fill in the leading empty cells before the first day of the month
-    for (let i = 0; i < firstDayOfMonth; i++) {
-        gridItems.push(null);
-    }
 
     // Fill in the day boxes with information on whether a place was visited
     for (let day = 1; day <= daysInMonth; day++) {
@@ -21,10 +22,17 @@ const VisitedPlaceGrid = ({ year, month, visits }) => {
         gridItems.push({ day, isVisited });
     }
 
+     // Add trailing empty cells to ensure the grid is always 35 boxes
+     while (gridItems.length < 35) {
+        gridItems.push(null);
+    }
+
     const [selectedDate, setSelectedDate] = useState(null); // Track the selected day
 
     const handleDayClick = (day) => {
         setSelectedDate(selectedDate === day ? null : day); // Toggle selection
+        onDayClick(day); // Pass the clicked day to the parent
+        console.log(day);
     };
 
     // Render the grid

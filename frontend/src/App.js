@@ -133,7 +133,7 @@ function App() {
             <Route index element={<Feed posts={posts} user={user} />} />
             <Route path="discover" element={<PublicFeed user={user} />} />
             <Route path="searchVenue" element={<SearchVenue user={user}/>} />
-            <Route path="myFoodJourney" element={<VisitedPlaceLayout />} />
+            <Route path="myFoodJourney" element={<VisitedPlaceLayout user={user} />} />
             <Route path="myWishlistVenue" element={<MyFoodMap />} />
             <Route path="foodEvent" element={<FoodEvent />} />
             <Route path="foodPromotion" element={<FoodPromotion />} />

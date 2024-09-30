@@ -1,9 +1,9 @@
 import React from 'react';
 import './VisitedPlaceCard.css'; // Assuming the CSS is in this file
 
-export default function VisitedPlaceCard({ imageUrl, date, title }) {
+export default function VisitedPlaceCard({ imageUrl, date, title, onClick }) {
     return (
-        <div className="visited_place_card">
+        <div className="visited_place_card" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}>
             {imageUrl && (
                 <img src={imageUrl} className="card__image" alt={title} />
             )}

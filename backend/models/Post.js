@@ -86,9 +86,9 @@ const postSchema = new mongoose.Schema(
                 type: Number,
             },
             //not important
-            license: {
-                type: String,
-            }
+            // license: {
+            //     type: String,
+            // }
         }],
         // //not important
         // rating: {

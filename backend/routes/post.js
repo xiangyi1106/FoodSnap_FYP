@@ -1,5 +1,5 @@
 const express = require("express");
-const { createPost, getAllPosts, getPublicPosts, getPostDetails, toggleLike, getLikeStatus, sharePost, savePost, deletePost } = require("../controllers/post");
+const { createPost, getAllPosts, getPublicPosts, getPostDetails, toggleLike, getLikeStatus, sharePost, savePost, deletePost, postsWithLocation } = require("../controllers/post");
 const { authUser } = require("../middleware/auth")
 const router = express.Router();
 
@@ -13,5 +13,7 @@ router.get("/getLikeStatus/:postId", authUser, getLikeStatus);
 router.post("/api/posts/share/:postId", authUser, sharePost);
 router.put("/savePost/:id", authUser, savePost);
 router.delete("/deletePost/:id", authUser, deletePost);
+router.get("/posts/user/:userId/location", authUser, postsWithLocation);
+
 
 module.exports = router;

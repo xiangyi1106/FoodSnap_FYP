@@ -54,22 +54,50 @@ const cleanMentions = (text) => {
 
 exports.createPost = async (req, res) => {
   try {
-    const { text, user } = req.body;
+    // const { text, user } = req.body;
 
-    const mentions = extractMentions(text);
-    // Clean mentions before saving
-    text = cleanMentions(text);
+    // const mentions = extractMentions(text);
+    // // Clean mentions before saving
+    // text = cleanMentions(text);
 
-    // Extract hashtags from text
+    // // Extract hashtags from text
+    // const hashtags = extractHashtags(text);
+
+
+    // // Save or update hashtags in the database
+    // await saveHashtags(hashtags);
+
+    // // Convert hashtags to their respective IDs
+    // const hashtagDocs = await Hashtag.find({ name: { $in: hashtags } }).select('_id');
+    // const hashtagIds = hashtagDocs.map(doc => doc._id);
+
+    let { text, user } = req.body;
+
+    // Initialize an empty array for mentions
+    let mentions = [];
+
+    // Check if mentions exist in the text
+    if (text.includes('@')) {
+      mentions = extractMentions(text);  // Extract mentions only if present
+      text = cleanMentions(text);        // Clean mentions from the text
+    }
+
+    // Extract hashtags from text, if any
     const hashtags = extractHashtags(text);
 
+    // Initialize an empty array for hashtag IDs
+    let hashtagIds = [];
 
-    // Save or update hashtags in the database
-    await saveHashtags(hashtags);
+    // Save or update hashtags and convert to IDs only if there are hashtags
+    if (hashtags.length > 0) {
+      // Save or update hashtags in the database
+      await saveHashtags(hashtags);
 
-    // Convert hashtags to their respective IDs
-    const hashtagDocs = await Hashtag.find({ name: { $in: hashtags } }).select('_id');
-    const hashtagIds = hashtagDocs.map(doc => doc._id);
+      // Convert hashtags to their respective IDs
+      const hashtagDocs = await Hashtag.find({ name: { $in: hashtags } }).select('_id');
+      hashtagIds = hashtagDocs.map(doc => doc._id);
+    }
+
 
     // Create a new post with hashtags
     const post = await new Post({
@@ -185,10 +213,10 @@ exports.getLikeStatus = async (req, res) => {
 
     const user = await User.findById(userId);
     const checkSaved = user?.savedPosts.find(
-      (x) => x.post.toString() === postId 
+      (x) => x.post.toString() === postId
     );
 
-    res.json({ isLiked: isLiked, checkSaved: !!checkSaved  });// Return true if post is saved, otherwise false
+    res.json({ isLiked: isLiked, checkSaved: !!checkSaved });// Return true if post is saved, otherwise false
   } catch (error) {
     console.error('Server error:', error);
     res.status(500).json({ message: 'Server error' });
@@ -286,6 +314,42 @@ exports.deletePost = async (req, res) => {
     res.json({ status: "ok" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
+  }
+};
+
+// Get all posts that have a location
+exports.postsWithLocation = async (req, res) => {
+  const { userId } = req.params;
+  const { month, year } = req.query; // month and year will be passed as query params
+
+  try {
+    // Calculate the start and end of the month with time
+    const startOfMonth = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0)); // First day of the month, 00:00:00 UTC
+    const endOfMonth = new Date(Date.UTC(year, month, 0, 23, 59, 59)); // Last day of the month, 23:59:59 UTC
+    console.log(month, year);
+    console.log('Start of month:', startOfMonth, 'End of month:', endOfMonth);
+    console.log('User ID:', userId);
+
+    // Find posts with a location for the specified user and month
+    const postsWithLocation = await Post.find({
+      user: userId, // Filter by user ID
+      // location: { $exists: true, $ne: null }, // Ensure location exists and is not null
+      location: { $ne: [] }, // Ensure location array is not empty
+      createdAt: { $gte: startOfMonth, $lt: endOfMonth }, // Filter by date range
+    })
+    .populate('user', 'name username picture') // Populate user with specific fields like name and email
+    .exec();
+
+    console.log('Posts found:', postsWithLocation.length);
+
+    // Check if posts are found
+    if (postsWithLocation.length === 0) {
+      return res.status(404).json({ message: 'No posts with locations found for the specified month and year.' });
+    }
+
+    res.json(postsWithLocation);
+  } catch (err) {
+    res.status(500).json({ error: 'Error fetching posts with locations for the user' });
   }
 };
 
