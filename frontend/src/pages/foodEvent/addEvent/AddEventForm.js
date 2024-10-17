@@ -14,7 +14,7 @@ import { handleImage } from "../../../functions/handleImage";
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
 
-export function AddEventForm({ user }) {
+export function AddEventForm({ user, setIsCreateFormVisible }) {
     const [showEndDate, setShowEndDate] = useState(false);
     const [locationText, setLocationText] = useState('');
     const [locationList, setLocationList] = useState([]);
@@ -81,6 +81,7 @@ export function AddEventForm({ user }) {
             formData.append("path", path);
 
             const res = await uploadMedias(formData, path, user.token);
+            console.log(res);
             return res;
 
         } catch (error) {
@@ -105,87 +106,21 @@ export function AddEventForm({ user }) {
             // foodVenue: "",
         },
         validationSchema: eventFormSchema,
-        //     onSubmit: async (values, { resetForm }) => {
-        //         try {
-
-        //             // Upload media if there is an image selected
-        //             if (formik.values.eventImage) {
-        //                 const media = dataURItoBlob(formik.values.eventImage);
-        //                 const path = `${user.username}/event`;
-        //                 let formData = new FormData();
-        //                 formData.append("path", path);
-        //                 formData.append("file", media);
-
-        //                 const result = await uploadMedias(formData, path, user.token);
-
-        //                 // Ensure the media upload succeeded
-        //                 if (!result || result.length === 0) {
-        //                     throw new Error("Failed to upload media");
-        //                 }
-        //                 formik.setFieldValue('eventImage', result);
-        //             }
-
-
-        //             // Check if user has selected an address from the list
-        //             if (!address || !address.latitude || !address.longitude) {
-        //                 // Manually entered address case
-        //                 const manualAddress = locationText; // Get the full input address from formik
-        //                 const addressText = {
-        //                     fullAddress: manualAddress,
-        //                 }
-        //                 const locationData = {
-        //                     name: manualAddress,
-        //                     address: addressText, // Save the manually entered address
-        //                     latitude: null, // No latitude available
-        //                     longitude: null, // No longitude available
-        //                 };
-
-        //                 // Set the manual address as the location value
-        //                 formik.setFieldValue('location', locationData);
-        //             }
-        //             const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/addEvent`, values, {
-        //                 headers: {
-        //                     Authorization: `Bearer ${user.token}`,
-        //                 },
-        //             });
-        //             console.log(response.data); // Handle success, show confirmation, etc.
-        //             // Clear the form after successful submission
-        //             // resetForm();  // This clears the form
-        //             toast.success("Event created successfully!"); // Success toast notification
-
-        //         } catch (error) {
-        //             // resetForm();  // This clears the form
-        //             toast.error("Failed to create event: " + error.response.data.message); // Error toast notification
-        //         }
-        //     },
-        // });
-
         onSubmit: async (values, { resetForm }) => {
             try {
                 // If an event image is selected, upload it
-
-                if (formik.values.eventImage) {
-                    // const media = dataURItoBlob(formik.values.eventImage);
-                    // const path = `${user.username}/event`;
-                    // let formData = new FormData();
-                    // formData.append("path", path);
-                    // formData.append("file", media);
-
-                    // // Upload the media
-                    // const result = await uploadMedias(formData, path, user.token);
-
-                    // // Check if media upload was successful
-                    // if (!result || result.length === 0) {
-                    //   throw new Error("Failed to upload media");
-                    // }
-
-                    // // Set the uploaded media in form values
-                    // formik.setFieldValue('eventImage', result);
-                    // console.log(formik.values.eventImage);
-                    const pic = updatePicture(image);
-                    pic ? formik.setFieldValue('eventImage', pic) : formik.setFieldValue('eventImage', null);
+                if (image) {
+                    // Await the promise to resolve
+                    const pic = await updatePicture(image);
+        
+                    if (pic && pic.length > 0 && pic[0].url) {
+                        // Directly set the image URL in the values object
+                        values.eventImage = pic[0].url;
+                    } else {
+                        values.eventImage = null;
+                    }
                 }
-
+        
                 // Now process the location: check if address is selected from suggestions
                 if (!address || !address.latitude || !address.longitude) {
                     const manualAddress = locationText;
@@ -201,19 +136,21 @@ export function AddEventForm({ user }) {
                         longitude: null, // No longitude available
                     };
 
-                    formik.setFieldValue('location', locationData);
+                    // formik.setFieldValue('location', locationData);
+                    values.location = locationData;
                 }
 
                 // Finally, post the event data to the backend
-                //   const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/addEvent`, values, {
-                //     headers: {
-                //       Authorization: `Bearer ${user.token}`,
-                //     },
-                //   });
+                const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/addEvent`, values, {
+                    headers: {
+                        Authorization: `Bearer ${user.token}`,
+                    },
+                });
 
                 //   // Handle success response
-                //   console.log(response.data);
+                console.log(response.data);
                 toast.success("Event created successfully!");
+                setIsCreateFormVisible(false);
 
                 // Optionally reset the form after successful submission
                 //   resetForm();

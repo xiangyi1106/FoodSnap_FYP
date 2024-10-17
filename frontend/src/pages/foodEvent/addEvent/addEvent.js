@@ -20,7 +20,7 @@ export default function AddEvent({ setIsCreateFormVisible, user }) {
                         </div>
                         <div className="settings_separator"></div>
                         <div className="settings_container">
-                            <AddEventForm user={user}/>
+                            <AddEventForm user={user} setIsCreateFormVisible={setIsCreateFormVisible}/>
                         </div>
                     </div>
                 </div>

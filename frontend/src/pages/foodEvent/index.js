@@ -62,9 +62,10 @@ export default function FoodEvent() {
      // Function to handle filtered results
      const handleResults = (results) => {
         if (results.length > 0) {
+            setFilteredEvents(null);
             setFilteredEvents(results); // Set the filtered events
         } else {
-            setFilteredEvents(events); // If no results or the filter is cleared, revert to all events
+            setFilteredEvents(null);
         }
     };
 
@@ -73,9 +74,11 @@ export default function FoodEvent() {
             <div className='food_event_container_title'>Food Events</div>
             <div className='filter_container'><PromotionFilter onResults={handleResults} /></div>
             <div className="food_event_card_container">
-                {filteredEvents.map((event, index) => (
+                {filteredEvents ? filteredEvents.map((event, index) => (
                     <FoodEventCard key={index} event={event}/>
-                ))}
+                )) : <div>
+                    No Event Found
+                    </div>}
             </div>
         </div>
     )

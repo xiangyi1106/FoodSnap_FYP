@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './style.css';
 import Header from '../../../components/header';
@@ -60,14 +60,19 @@ const EventDetails = () => {
                                             {event?.endDate && new Date(event?.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} {event?.endTime && event?.endTime}
                                         </p>
                                         <div className="discover_post_user">
-                                            <div className="discover_post_user_name">
-                                                <Avatar
-                                                    alt={event?.organizer.name}
-                                                    src={event?.organizer.picture}
-                                                    sx={{ width: 18, height: 18 }}
-                                                />
-                                                {event?.organizer.name}
-                                            </div>
+                                            <Link
+                                                to={`/profile/${event?.organizer?.username}`}
+                                                style={{color: 'black'}}
+                                            >
+                                                <div className="discover_post_user_name">
+                                                    <Avatar
+                                                        alt={event?.organizer.name}
+                                                        src={event?.organizer.picture}
+                                                        sx={{ width: 18, height: 18 }}
+                                                    />
+                                                    {event?.organizer.name}
+                                                </div>
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>
@@ -99,8 +104,8 @@ const EventDetails = () => {
                 <div className="profile_bottom">
                     <div className="profile_container" style={{ maxWidth: "none" }}>
                         <div className="bottom_container" style={{ padding: "10px 4rem" }}>
-                            <div>
-                                <p>Description</p>
+                            <div style={{ padding: '5px 13px' }}>
+                                <p style={{ textTransform: 'uppercase', color: 'gray', fontSize: '0.9rem' }}>Description</p>
                                 <p>{event?.description}</p>
                             </div>
                         </div>

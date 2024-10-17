@@ -1,12 +1,14 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import PostDetailsCarousel from './PostDetailsCarousel';
 import PostDetailsInformation from './PostInformation';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Box } from '@mui/material';
+import CIcon from '@coreui/icons-react';
+import { cilX } from '@coreui/icons';
 
-const PostDetailsPage = ({user}) => {
+const PostDetailsPage = ({ user }) => {
     const { id, mediaIndex } = useParams();
     const [post, setPost] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(parseInt(mediaIndex, 10) || 0);
@@ -26,19 +28,23 @@ const PostDetailsPage = ({user}) => {
 
     useEffect(() => {
         if (mediaIndex) {
-          setCurrentIndex(parseInt(mediaIndex, 10));
+            setCurrentIndex(parseInt(mediaIndex, 10));
         }
-      }, [mediaIndex]);
+    }, [mediaIndex]);
 
-      if (!post) return <div>Loading...</div>;
+    // Use navigate hook from react-router-dom
+    const navigate = useNavigate();
+
+    if (!post) return <div>Loading...</div>;
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh'}}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh' }}>
             {/* Left part - Media */}
             <Box sx={{ flex: 2, marginRight: 2 }}>
-                <PostDetailsCarousel media={post.media} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex}/>
+                <div className='close_button hover_style_2' style={{ left: '12px', right: '0' }}><CIcon icon={cilX} className="icon_size_22 close_button_icon" onClick={() => navigate(-1)} /></div>
+                <PostDetailsCarousel media={post.media} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
             </Box>
-            <PostDetailsInformation post={post} user={user}/>
+            <PostDetailsInformation post={post} user={user} />
         </Box>
     );
 };

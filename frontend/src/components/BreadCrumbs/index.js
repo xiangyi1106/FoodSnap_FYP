@@ -20,6 +20,7 @@ const CustomBreadcrumbs = ({ breadcrumbs }) => {
                             color="inherit"
                             href={breadcrumb.href}
                             key={breadcrumb.label}
+                            className='logo_color_hover'
                         >
                             {breadcrumb.label}
                         </Link>

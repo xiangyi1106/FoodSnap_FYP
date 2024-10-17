@@ -27,7 +27,7 @@ export default function PromotionFilter({ onResults }) {
             });
             // Send results back to the parent component
             onResults(response.data);
-            console.log(response.data);
+            console.log('filter',response.data);
         } catch (error) {
             console.error('Error searching events:', error);
         }

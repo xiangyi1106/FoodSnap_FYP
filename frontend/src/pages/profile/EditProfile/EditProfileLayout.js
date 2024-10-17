@@ -35,7 +35,7 @@ export default function EditProfile({ setVisible }) {
                 <div className='container_wrapper' style={{backgroundColor: 'white'}}>
                     <div className='profile'>
                     </div>
-                    <div className='close_button hover_style_2'><CIcon icon={cilX} className="icon_size_22 close_button_icon" onClick={() => { setVisible(false); console.log("visible none"); }} /></div>
+                    <div className='close_button hover_style_2'><CIcon icon={cilX} className="icon_size_22 close_button_icon" onClick={() => { setVisible(false); }} /></div>
                     <div className="settings_layout hidden">
                         <div className="settings_header">
                             <h2 className="settings_title">Edit Profile</h2>

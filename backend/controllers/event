@@ -90,8 +90,7 @@ exports.getEventDetails = async (req, res) => {
 exports.searchEvent = async (req, res) => {
     try {
         const { keyword, location, startDate } = req.query;
-        console.log(keyword, location, startDate );
-        
+
         // Initialize query object
         let query = {};
 
@@ -105,7 +104,7 @@ exports.searchEvent = async (req, res) => {
 
         // Location filter (if provided)
         if (location && location !== 'none') {
-            query['location.name'] = { $regex: location, $options: 'i' }; // Partial match for location
+            query['location.name'] = { $regex: location, $options: 'i' }; // Partial match for location with case insensitive
         }
 
         // Date filter (if provided)
@@ -161,9 +160,11 @@ exports.searchEvent = async (req, res) => {
                     break;
             }
         }
+        console.log(query);
 
         // Query the database for matching events
-        const events = await Event.find(query);
+        const events = await Event.find(query).sort({ date: -1 });;
+        console.log(events);
 
         res.status(200).json(events);
     } catch (error) {
