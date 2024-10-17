@@ -1,6 +1,7 @@
 
 import CIcon from '@coreui/icons-react';
 import { cilArrowLeft, cilCheckAlt, cilX } from '@coreui/icons';
+//not use
 export default function PlaceProfileOverviewInfoLeft() {
     return (
         <div>

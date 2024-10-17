@@ -4,6 +4,7 @@ import SearchBox from '../../components/searchVenue/SearchBox';
 import MyMap from '../../components/myFoodMap/myFoodMap';
 import MyFoodMapContainer from '../../components/myFoodMap/MyFoodMapContainer';
 import Map from '../../components/searchVenue/Map';
+import RestaurantWishlist from './MyWishlist';
 // import VisitedPlaceGrid from '../VisitedPlace';
 export default function MyFoodMap() {
     const locations = [
@@ -18,14 +19,15 @@ export default function MyFoodMap() {
 
     const visits = [1, 3, 15, 23, 29]; // Example visited days in the month
     return (
-        <div className='search_venue'>
-            <div className='map'>
+        //  style={{display: 'block', overflowY: 'scroll'}}
+        <div className=' myWishlist'>
+            {/* <div className='map'>
                 <Map addresses={addresses} />
-                {/* <VisitedPlaceGrid year={2024} month={8} visits={visits} /> */}
             </div>
             <div className='search_box'>
                 <MyFoodMapContainer />
-            </div>
+            </div> */}
+            <RestaurantWishlist />
         </div>
     );
 }

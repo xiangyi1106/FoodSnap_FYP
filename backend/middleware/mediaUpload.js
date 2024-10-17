@@ -12,8 +12,8 @@ module.exports = async function (req, res, next) {
         file.mimetype !== "image/png" &&
         file.mimetype !== "image/gif" &&
         file.mimetype !== "image/webp" &&
-        file.mimetype !== "video/mp4" 
-        // !file.mimetype.match(/^video/)
+        // file.mimetype !== "video/mp4" 
+        !file.mimetype.match(/^video/)
       ) {
         removeTmp(file.tempFilePath);
         return res.status(400).json({ message: "Unsupported format." });

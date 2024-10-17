@@ -22,9 +22,12 @@ exports.uploadImagesAndVideos = async (req, res) => {
       // Optionally, remove temporary file
       removeTmp(file.tempFilePath);
     }
-    res.json(media);
+    // res.json(media);
+    // Send response only once after all uploads succeed
+    return res.json(media);
+
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+      return res.status(500).json({ message: error.message });
   }
 };
 

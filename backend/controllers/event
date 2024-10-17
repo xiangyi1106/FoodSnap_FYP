@@ -1,0 +1,174 @@
+const User = require("../models/User");
+const Event = require("../models/Event");
+const FoodVenue = require("../models/FoodVenue");
+
+exports.addEvent = async (req, res) => {
+    const {
+        eventName,
+        date,
+        time,
+        endDate,
+        endTime,
+        eventImage,
+        location,
+        description,
+        privacy,
+    } = req.body;
+
+    try {
+        // Automatically use the current logged-in user as the organizer
+        const organizer = req.user.id;
+
+        // Check if an event with the same name, date, and location already exists
+        const existingEvent = await Event.findOne({
+            name: eventName,
+            date: date,
+            "location.address": location.address
+        });
+
+        if (existingEvent) {
+            return res.status(400).json({ message: "Event already exists at this location and date" });
+        }
+
+        // If no such event exists, create a new event
+        const newEvent = new Event({
+            name: eventName,
+            date,
+            time,
+            endDate,
+            endTime,
+            image: eventImage,
+            location: {
+                name: location.name,
+                address: location.address, // Full address
+                latitude: location.latitude, // Latitude from the selected place
+                longitude: location.longitude, // Longitude from the selected place
+            },
+            description,
+            organizer, // Save current user as the organizer
+            privacy,
+        });
+
+        await newEvent.save();
+        res.status(201).json(newEvent);
+    } catch (error) {
+        console.error('Error saving event:', error);
+        res.status(500).json({ message: 'Server error, unable to save event' });
+    }
+};
+
+exports.getPublicEvents = async (req, res) => {
+    try {
+        const events = await Event.find() // Fetch only public events
+            .sort({ createdAt: -1 }); // Sort by newest to oldest
+        res.json(events);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+
+exports.getEventDetails = async (req, res) => {
+    try {
+
+        const eventId = req.params.id;
+
+        const event = await Event.findById(eventId).populate("organizer", "name picture username gender");
+
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        res.json(event);
+
+    } catch (error) {
+        console.error('Error fetching event:', error);
+        res.status(500).json({ message: 'Server error:' + error });
+    }
+};
+
+exports.searchEvent = async (req, res) => {
+    try {
+        const { keyword, location, startDate } = req.query;
+        console.log(keyword, location, startDate );
+        
+        // Initialize query object
+        let query = {};
+
+        // Keyword search (e.g., search in event title or description)
+        if (keyword) {
+            query.$or = [
+                { name: { $regex: keyword, $options: 'i' } }, // Case-insensitive search
+                { description: { $regex: keyword, $options: 'i' } }
+            ];
+        }
+
+        // Location filter (if provided)
+        if (location && location !== 'none') {
+            query['location.name'] = { $regex: location, $options: 'i' }; // Partial match for location
+        }
+
+        // Date filter (if provided)
+        if (startDate && startDate !== 'Any Date') {
+            const now = new Date();
+            let startOfDay, endOfDay;
+
+            switch (startDate) {
+                case 'Today':
+                    // Start and end of today in UTC
+                    startOfDay = new Date(now.setUTCHours(0, 0, 0, 0)); // Midnight UTC
+                    endOfDay = new Date(now.setUTCHours(23, 59, 59, 999)); // End of day UTC
+                    query.date = { $gte: startOfDay, $lt: endOfDay };
+                    break;
+
+                case 'Tomorrow':
+                    const tomorrow = new Date(now);
+                    tomorrow.setUTCDate(now.getUTCDate() + 1); // Tomorrow's date
+                    startOfDay = new Date(tomorrow.setUTCHours(0, 0, 0, 0));
+                    endOfDay = new Date(tomorrow.setUTCHours(23, 59, 59, 999));
+                    query.date = { $gte: startOfDay, $lt: endOfDay };
+                    break;
+
+                case 'This Week':
+                    const startOfWeek = new Date(now.setUTCHours(0, 0, 0, 0));
+                    startOfWeek.setUTCDate(startOfWeek.getUTCDate() - startOfWeek.getUTCDay()); // Start of this week (Sunday)
+                    const endOfWeek = new Date(startOfWeek);
+                    endOfWeek.setUTCDate(endOfWeek.getUTCDate() + 7); // End of this week (next Sunday)
+                    query.date = { $gte: startOfWeek, $lt: endOfWeek };
+                    break;
+
+                case 'Next Week':
+                    const startOfNextWeek = new Date(now);
+                    startOfNextWeek.setUTCDate(now.getUTCDate() + 7 - now.getUTCDay()); // Start of next week (Sunday)
+                    const endOfNextWeek = new Date(startOfNextWeek);
+                    endOfNextWeek.setUTCDate(endOfNextWeek.getUTCDate() + 7); // End of next week (Sunday)
+                    query.date = { $gte: startOfNextWeek, $lt: endOfNextWeek };
+                    break;
+
+                case 'This Month':
+                    const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)); // Start of this month
+                    const endOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0)); // End of this month
+                    query.date = { $gte: startOfMonth, $lt: endOfMonth };
+                    break;
+
+                case 'Next Month':
+                    const startOfNextMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)); // Start of next month
+                    const endOfNextMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 2, 0)); // End of next month
+                    query.date = { $gte: startOfNextMonth, $lt: endOfNextMonth };
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        // Query the database for matching events
+        const events = await Event.find(query);
+
+        res.status(200).json(events);
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        res.status(500).json({ message: 'Error fetching events', error });
+    }
+};
+

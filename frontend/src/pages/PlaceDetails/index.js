@@ -22,6 +22,8 @@ export default function PlaceDetailsLayout() {
         { name: 'posts', label: 'Posts', href: '/venue/posts' },
         { name: 'photos', label: 'Photos', href: '/venue/photos' },
         { name: 'menu', label: 'Menu', href: '/venue/menu' },
+        { name: 'promotions', label: 'Promotions', href: '/venue/promotions' },
+        { name: 'events', label: 'Events', href: '/venue/events' },
     ];
 
     const [visible, setVisible] = useState(false);

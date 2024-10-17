@@ -1,0 +1,157 @@
+.myWishlist{
+    margin-top: 56px;
+    margin-left: 50px;
+    overflow-y: scroll;
+    margin-left: 20vw;
+    width: calc(100vw - 20vw);
+    height: calc(100vh - 56px);
+}
+.restaurant_wishlist_section {
+    height: 100%;
+    padding: 40px 0;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .restaurant_wishlist_wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .restaurant_wishlist_layout {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .restaurant_wishlist_content {
+    width: 100%;
+  }
+  
+  .restaurant_wishlist_card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .restaurant_wishlist_card_body {
+    padding: 20px;
+  }
+  
+  .restaurant_wishlist_back_link a {
+    color: #333;
+    text-decoration: none;
+  }
+  
+  .restaurant_wishlist_arrow_left::before {
+    content: '\f30a';
+    font-family: 'Font Awesome 5 Free';
+    margin-right: 8px;
+  }
+  
+  .restaurant_wishlist_row {
+    display: flex;
+  }
+  
+  .restaurant_wishlist_left_col {
+    width: 60%;
+    padding-right: 20px;
+  }
+  
+  .restaurant_wishlist_right_col {
+    width: 40%;
+    padding-left: 20px;
+  }
+  
+  .restaurant_wishlist_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .restaurant_wishlist_title {
+    font-weight: bold;
+  }
+  
+  .restaurant_wishlist_subtitle {
+    color: #777;
+  }
+  
+  .restaurant_wishlist_item {
+    /* border-bottom: 1px solid #ddd; */
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    padding: 15px 20px;
+    margin: 15px 0;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .restaurant_wishlist_item_body {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .restaurant_wishlist_item_info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .restaurant_wishlist_item_img {
+    width: 65px;
+    border-radius: 4px;
+  }
+  
+  .restaurant_wishlist_item_details {
+    margin-left: 15px;
+  }
+  
+  .restaurant_wishlist_location {
+    color: #888;
+    font-size: 12px;
+  }
+  
+  .restaurant_wishlist_item_actions {
+    display: flex;
+    align-items: center;
+  }
+  
+  .restaurant_wishlist_item_actions span {
+    margin-right: 15px;
+  }
+  
+  .restaurant_wishlist_trash_icon::before {
+    content: '\f2ed';
+    font-family: 'Font Awesome 5 Free';
+    color: #cecece;
+    cursor: pointer;
+  }
+  
+  .restaurant_wishlist_payment_card {
+    background-color: #30BFBF;
+    color: white;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .restaurant_wishlist_summary_row {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .restaurant_wishlist_checkout_btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #17a2b8;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px;
+  }
+  
+  .restaurant_wishlist_arrow_right::before {
+    content: '\f30b';
+    font-family: 'Font Awesome 5 Free';
+  }
+  

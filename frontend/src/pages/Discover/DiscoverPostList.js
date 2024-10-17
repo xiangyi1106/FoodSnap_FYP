@@ -59,7 +59,7 @@ export default function DiscoverPostList({ posts }) {
                                     <div className="discover_post_user_name">
                                         <Avatar
                                             alt={post.user.name}
-                                            src={post.user.profile}
+                                            src={post.user.picture}
                                             sx={{ width: 18, height: 18 }}
                                         />
                                         {post.user.name}

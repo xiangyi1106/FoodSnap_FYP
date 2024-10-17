@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-
+// not use
 export default function PlaceProfileMenu({ currentActive, setCurrentActive }) {
     return (
         <div className="profile_menu_wrap">
@@ -18,6 +18,9 @@ export default function PlaceProfileMenu({ currentActive, setCurrentActive }) {
                 </Link>
                 <Link to={`/place/menu`} className={currentActive === 'menu' ? 'profile_menu_active' : 'logo_color_hover'} onClick={() => setCurrentActive("menu")}>
                     Menu
+                </Link>
+                <Link to={`/place/promotion`} className={currentActive === 'promotion' ? 'profile_menu_active' : 'logo_color_hover'} onClick={() => setCurrentActive("promotion")}>
+                    Promotion
                 </Link>
             </div>
         </div>

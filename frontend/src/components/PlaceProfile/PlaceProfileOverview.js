@@ -17,16 +17,6 @@ export default function PlaceProfileOverview() {
         { status: 'no', text: 'Needs Reservations' },
     ];
 
-    const hoursData = [
-        { day: 'Mon', time: '2:00 PM - 10:00 PM' },
-        { day: 'Tue', time: '2:00 PM - 10:00 PM' },
-        { day: 'Wed', time: '2:00 PM - 10:00 PM' },
-        { day: 'Thu', time: '2:00 PM - 10:00 PM' },
-        { day: 'Fri', time: '2:00 PM - 10:00 PM' },
-        { day: 'Sat', time: '2:00 PM - 10:00 PM' },
-        { day: 'Sun', time: '2:00 PM - 10:00 PM' },
-    ];
-
     return (
         <div className="profile_grid" style={{ gap: '40px' }}>
             <div className="profile_left">
@@ -38,13 +28,21 @@ export default function PlaceProfileOverview() {
                 />
             </div>
             <div className="profile_right">
-                <PlaceProfileOverviewInfoRight />
-                {/* <PlaceProfileOverviewInfoRightPart
+                {/* <PlaceProfileOverviewInfoRight /> */}
+                <PlaceProfileOverviewInfoRightPart
                     telephone="0127127492"
-                    website="www.tribus.com"
+                    website="https://www.tribus.com"
                     address="28, Jalan Impian Emas 7, Taman Impian Emas, 81300 Skudai, Johor"
-                    hours={hoursData}
-                /> */}
+                    openingHours={[
+                        { day: 'Mon', time: '11:30 AM - 12:30 AM' },
+                        { day: 'Tue', time: '11:30 AM - 12:30 AM' },
+                        { day: 'Wed', time: '11:30 AM - 12:30 AM' },
+                        { day: 'Thu', time: '11:30 AM - 12:30 AM' },
+                        { day: 'Fri', time: '11:30 AM - 12:30 AM' },
+                        { day: 'Sat', time: '11:30 AM - 12:30 AM' },
+                        { day: 'Sun', time: '11:30 AM - 12:30 AM' },
+                    ]}
+                />
             </div>
         </div>
     )

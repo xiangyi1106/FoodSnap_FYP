@@ -1,15 +1,7 @@
 export default function PlaceProfileOverviewInfoRight() {
-
-    // const initial = {
-    //     telephone: details?.telephone ? details.telephone : "012-3456789",
-    //     website: details?.website ? details.website : "www.google.com",
-    //     address: details?.address ? details.address : "49, Jalan Bukit Aliff 4 Taman Damansara Aliff 81200 Johor Bahru, Johor Malaysia",
-    // };
-    // const [infos, setInfos] = useState(initial);
-
+//not use
     return (
         <div className="profile_card">
-            {/* <div className="profile_card_header">Information</div> */}
             <div className="info_profile">
                 <div className="info_profile_title logo_color_text source-sans-3-bold">Telephone</div>
             </div>
@@ -55,13 +47,6 @@ export default function PlaceProfileOverviewInfoRight() {
                     <div className="opening_hour_time">11:30 AM - 12:30 AM</div>
                 </div>
             </div>
-            {/* <div className="info_profile_title_text">Mon 2:00 PM - 10:00 PM</div>
-            <div className="info_profile_title_text">Tue 2:00 PM - 10:00 PM</div>
-            <div className="info_profile_title_text">Wed 2:00 PM - 10:00 PM</div>
-            <div className="info_profile_title_text">Thu 2:00 PM - 10:00 PM</div>
-            <div className="info_profile_title_text">Fri 2:00 PM - 10:00 PM</div>
-            <div className="info_profile_title_text">Sat 2:00 PM - 10:00 PM</div>
-            <div className="info_profile_title_text">Sun 2:00 PM - 10:00 PM</div> */}
         </div>
     );
 }

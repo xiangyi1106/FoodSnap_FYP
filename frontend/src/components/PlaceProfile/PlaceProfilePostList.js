@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import { Masonry } from '@mui/lab';
 import Pagination from '@mui/material/Pagination';
 import Post from '../post';
-
+//not use
 export default function PlaceProfilePostList({user}) {
     const [page, setPage] = React.useState(1);
     const itemsPerPage = 12;

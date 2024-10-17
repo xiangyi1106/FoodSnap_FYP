@@ -13,6 +13,7 @@ import Post from "../../components/post";
 import { getUserSelector } from "../../helpers/selectors";
 import Intro from "../../components/intro";
 import useMediaQuery from '@mui/material/useMediaQuery';
+import ProfileSidebar from "./ProfileSidebar";
 
 export default function Profile() {
   const { username } = useParams();
@@ -88,15 +89,15 @@ export default function Profile() {
         <div className="profile_container">
           <Cover visitor={visitor} cover={profile.cover} />
           <ProfilePictureInfo profile={profile} visitor={visitor} user={user} />
-          <ProfileMenu />
+          {/* <ProfileMenu /> */}
         </div>
       </div>
       <div className="profile_bottom">
-        <div className="profile_container">
+        <div className="profile_container" style={{maxWidth: '850px', margin: '0 auto'}}>
           <div className="bottom_container">
-            <div className="profile_grid">
+            <div className="profile_grid" style={{ gridTemplateColumns: '0.8fr 1fr' }}>
               <div className="profile_left">
-                <Intro
+                {/* <Intro
                   detailss={profile.details}
                   visitor={visitor}
                   setOthername={setOthername}
@@ -105,7 +106,8 @@ export default function Profile() {
                   username={userName}
                   token={user.token}
                   photos={photos}
-                />
+                /> */}
+                <ProfileSidebar />
                 <div className="relative_copyright" style={{ display: isMobile ? 'none' : '' }}>
                   <Link to="/">Privacy </Link>
                   <span>. </span>

@@ -11,6 +11,7 @@ import CIcon from '@coreui/icons-react';
 import { cilSearch, cilBell } from '@coreui/icons';
 import { MDBBtn, MDBIcon } from 'mdb-react-ui-kit';
 import Tooltip from '@mui/material/Tooltip';
+import AddEvent from "../../pages/foodEvent/addEvent/addEvent";
 
 export default function Header({ setVisible, visible, page, currentPath }) {
     const userSelector = (state) => state.user;
@@ -30,6 +31,8 @@ export default function Header({ setVisible, visible, page, currentPath }) {
     };
 
     const profileLinkRef = useRef(null);
+
+    const [isCreateFormVisible, setIsCreateFormVisible] = useState(false);
 
     return (
         <header>
@@ -58,6 +61,9 @@ export default function Header({ setVisible, visible, page, currentPath }) {
                 {currentPath === "/" && <Tooltip title="Create Post"><MDBBtn outline href='#' className="btn_create_post" onClick={() => setVisible(true)}>
                     <span>Create Post</span> <MDBIcon className="btn_create_post_icon ml-2" fas icon="plus-circle" /> 
                 </MDBBtn></Tooltip>}
+                {currentPath === "/foodEvent" && <Tooltip title="Create Event"><MDBBtn outline href='#' className="btn_create_post" onClick={() => setIsCreateFormVisible(true)}>
+                    <span>Create Event</span> <MDBIcon className="btn_create_post_icon ml-2" fas icon="plus-circle" /> 
+                </MDBBtn></Tooltip>}
                 <div className="circle_icon hover_color">
                     <CIcon icon={cilBell} className="icon_size_22" style={{ position: "relative" }} />
                     {/* <NotificationsIcon className="icon_size_20" style={{ position: "relative" }} /> */}
@@ -69,6 +75,7 @@ export default function Header({ setVisible, visible, page, currentPath }) {
                     {/* <span>Username <ExpandMoreIcon style={{}} className="user_dropdown_icon icon_size_20"/></span> */}
                 </Link>
                 {isShowUserMenu && <UserMenu setIsShowUserMenu={setIsShowUserMenu} profileLinkRef={profileLinkRef} user={user} />}
+                {isCreateFormVisible && <AddEvent setIsCreateFormVisible={setIsCreateFormVisible} user={user}/>}
             </div>
         </header>
     )

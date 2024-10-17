@@ -5,21 +5,32 @@ import johorBahruAreas from '../../data/johorBahruAreas';
 import './Filter.css';
 import CIcon from '@coreui/icons-react';
 import { cilSearch, cilBell } from '@coreui/icons';
+import axios from 'axios';
 
-const locations = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami']; // Example locations
+// const locations = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami']; // Example locations
 const dates = ['Any Date', 'Today', 'Tomorrow', 'This Week', 'Next Week', 'This Month', 'Next Month']; // Example locations
 
-export default function PromotionFilter({ onFilter }) {
+export default function PromotionFilter({ onResults }) {
     const [keyword, setKeyword] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('none');
     const [startDate, setStartDate] = useState("Any Date");
 
-    const handleFilter = () => {
-        onFilter({
-            keyword: keyword,
-            location: selectedLocation,
-            startDate,
-        });
+    const handleFilter = async () => {
+        console.log(keyword, selectedLocation, startDate);
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/event/search`, {
+                params: {
+                    keyword,
+                    location: selectedLocation,
+                    startDate,
+                },
+            });
+            // Send results back to the parent component
+            onResults(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error searching events:', error);
+        }
     };
 
     return (
@@ -42,15 +53,15 @@ export default function PromotionFilter({ onFilter }) {
                         },
                     },
                 }}
-                InputProps={{
-                    endAdornment: (
-                        <InputAdornment position="end">
-                            <IconButton  edge="end" style={{ color: '#30BFBF' }}>
-                                <CIcon icon={cilSearch} className="icon_size_20" />
-                            </IconButton>
-                        </InputAdornment>
-                    ),
-                }}
+                // InputProps={{
+                //     endAdornment: (
+                //         <InputAdornment position="end">
+                //             <IconButton  edge="end" style={{ color: '#30BFBF' }}>
+                //                 <CIcon icon={cilSearch} className="icon_size_20" />
+                //             </IconButton>
+                //         </InputAdornment>
+                //     ),
+                // }}
             >
             </TextField>
             <FormControl>
@@ -120,9 +131,9 @@ export default function PromotionFilter({ onFilter }) {
                     ))}
                 </Select>
             </FormControl>
-            {/* <Button variant="contained" style={{ backgroundColor: '#30BFBF' }} onClick={handleFilter}>
+            <Button variant="contained" style={{ backgroundColor: '#30BFBF' }} onClick={handleFilter}>
                 Search
-            </Button> */}
+            </Button>
         </div>
     );
 }

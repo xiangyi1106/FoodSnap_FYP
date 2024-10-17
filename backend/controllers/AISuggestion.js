@@ -101,12 +101,22 @@ exports.getRestaurantsRecommendation = async (req, res) => {
                     "reason": "Well known for its sandwiches."
                 }
             ]
-            Please give me only the json but not extra text.
+            Please give me only the json.
         `;
 
         const result = await model.generateContent(prompt);
 
-        const restaurant_suggestion = await result.response.text();
+        let restaurant_suggestion = await result.response.text();
+
+        const jsonStart = restaurant_suggestion.indexOf('[');
+        const jsonEnd = restaurant_suggestion.lastIndexOf(']') + 1;
+
+        // Extract the JSON content
+        if (jsonStart !== -1 && jsonEnd !== -1) {
+            restaurant_suggestion = restaurant_suggestion.slice(jsonStart, jsonEnd);
+        } else {
+            throw new Error('Invalid JSON format');
+        }
 
         console.log('API response:', restaurant_suggestion);
 

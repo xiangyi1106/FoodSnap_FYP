@@ -32,7 +32,16 @@ const TextInput = ({
         {label}
       </label>
       {isTextarea ? (
-        <textarea {...inputProps} rows={rows} />
+        <textarea {...inputProps} rows={rows}
+        style={{
+          filter: "none",
+          backdropFilter: "none",
+          overflow: "auto",
+          boxShadow: "none",  // Remove any shadow effects
+          WebkitBackdropFilter: "none",  // Specific for WebKit browsers like Edge
+          appearance: "none",  // Reset any default appearance styles
+        }}
+           />
       ) : (
         <input {...inputProps} />
       )}

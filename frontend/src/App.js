@@ -32,6 +32,7 @@ import PlaceProfileFoodMenu from "./components/PlaceProfile/PlaceProfileFoodMenu
 import PlaceProfileRelatedPost from "./components/PlaceProfile/PlaceProfileRelatedPost";
 import VisitedPlaceLayout from "./pages/VisitedPlace/VisitedPlaceLayout";
 import PostDetailsPage from "./pages/PostDetails";
+import EventDetails from "./pages/foodEvent/eventDetails/EventDetails";
 
 const useAxios = () => {
   const [isExpired, setIsExpired] = useState(false);
@@ -138,6 +139,7 @@ function App() {
             <Route path="foodEvent" element={<FoodEvent />} />
             <Route path="foodPromotion" element={<FoodPromotion />} />
           </Route>
+          <Route path="/foodEvent/:id/" element={<EventDetails />} exact />
         </Route>
       </Routes>
       <ToastContainer position="bottom-right" />

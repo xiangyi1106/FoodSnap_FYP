@@ -1,21 +1,30 @@
 import React from 'react';
 import './FoodEventCard.css'; // Import the updated CSS file for FoodEventCard
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { useNavigate } from 'react-router-dom';
 
 export default function FoodEventCard({ event }) {
+  
+  const navigate = useNavigate();
+
+  const handleClick = (eventId) => {
+      console.log(eventId);
+      navigate(`/foodEvent/${eventId}`);
+  };
+
   return (
-    <div className="food_event_card_card">
+    <div className="food_event_card_card" onClick={() => handleClick(event._id)}>
       <div className="food_event_card_card_image">
-        <img src={event.image} alt={event.title} />
+        <img src={event.image ? event.image : `${process.env.PUBLIC_URL}/images/no-picture.png`} alt={event.name} />
       </div>
       <div className="food_event_card_card_header">
-        <div className='food_event_card_card_header_title'>{event.title}</div>
+        <div className='food_event_card_card_header_title'>{event.name}</div>
         <button className="food_event_card_icon_button">
           <span className="material-symbols-outlined"><FavoriteBorderIcon /></span>
         </button>
       </div>
       <div className="food_event_card_card_meta">
-          <p>{event.location}</p>
+          <p>{event.location.name}</p>
         </div> 
       <div className="food_event_card_card_footer">
         <div className="food_event_card_card_meta">
@@ -25,7 +34,9 @@ export default function FoodEventCard({ event }) {
             <path d="M16 2v4" />
             <path d="M2 10h20" />
           </svg>
-          <p>{event.date}</p>
+          {/* <p>{event.date}</p> */}
+          <p>{new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          <p className='' style={{marginLeft: '10px'}}>{event.time}</p>
         </div>
 
         {/* <div className="food_event_card_card_meta" style={{ alignItems: 'center', fontSize: '0.9rem' }}>
