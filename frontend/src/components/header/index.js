@@ -12,6 +12,7 @@ import { cilSearch, cilBell } from '@coreui/icons';
 import { MDBBtn, MDBIcon } from 'mdb-react-ui-kit';
 import Tooltip from '@mui/material/Tooltip';
 import AddEvent from "../../pages/foodEvent/addEvent/addEvent";
+import AddPromotion from "../../pages/foodPromotion/AddPromotion/AddPromotion";
 
 export default function Header({ setVisible, visible, page, currentPath }) {
     const userSelector = (state) => state.user;
@@ -33,6 +34,7 @@ export default function Header({ setVisible, visible, page, currentPath }) {
     const profileLinkRef = useRef(null);
 
     const [isCreateFormVisible, setIsCreateFormVisible] = useState(false);
+    const [isCreatePromotionVisible, setIsCreatePromotionVisible] = useState(false);
 
     return (
         <header>
@@ -64,6 +66,9 @@ export default function Header({ setVisible, visible, page, currentPath }) {
                 {currentPath === "/foodEvent" && <Tooltip title="Create Event"><MDBBtn outline href='#' className="btn_create_post" onClick={() => setIsCreateFormVisible(true)}>
                     <span>Create Event</span> <MDBIcon className="btn_create_post_icon ml-2" fas icon="plus-circle" /> 
                 </MDBBtn></Tooltip>}
+                {currentPath === "/foodPromotion" && user.role === 'user' && <Tooltip title="Create Promotion"><MDBBtn outline href='#' className="btn_create_post" onClick={() => setIsCreatePromotionVisible(true)}>
+                    <span>Create Promotion</span> <MDBIcon className="btn_create_post_icon ml-2" fas icon="plus-circle" /> 
+                </MDBBtn></Tooltip>}
                 <div className="circle_icon hover_color">
                     <CIcon icon={cilBell} className="icon_size_22" style={{ position: "relative" }} />
                     {/* <NotificationsIcon className="icon_size_20" style={{ position: "relative" }} /> */}
@@ -76,6 +81,7 @@ export default function Header({ setVisible, visible, page, currentPath }) {
                 </Link>
                 {isShowUserMenu && <UserMenu setIsShowUserMenu={setIsShowUserMenu} profileLinkRef={profileLinkRef} user={user} />}
                 {isCreateFormVisible && <AddEvent setIsCreateFormVisible={setIsCreateFormVisible} user={user}/>}
+                {isCreatePromotionVisible && <AddPromotion setIsCreatePromotionVisible={setIsCreatePromotionVisible} user={user}/>}
             </div>
         </header>
     )

@@ -69,13 +69,15 @@ export default function FoodEvent() {
         }
     };
 
+    const [isEvent, setIsEvent] = useState(true);
+
     return (
         <div className='food_event_container'>
             <div className='food_event_container_title'>Food Events</div>
-            <div className='filter_container'><PromotionFilter onResults={handleResults} /></div>
+            <div className='filter_container'><PromotionFilter onResults={handleResults} isEvent={isEvent}/></div>
             <div className="food_event_card_container">
                 {filteredEvents ? filteredEvents.map((event, index) => (
-                    <FoodEventCard key={index} event={event}/>
+                    <FoodEventCard key={index} event={event} isEvent={isEvent}/>
                 )) : <div>
                     No Event Found
                     </div>}

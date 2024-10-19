@@ -3,13 +3,16 @@ import './FoodEventCard.css'; // Import the updated CSS file for FoodEventCard
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useNavigate } from 'react-router-dom';
 
-export default function FoodEventCard({ event }) {
-  
+export default function FoodEventCard({ event, isEvent }) {
+
   const navigate = useNavigate();
 
   const handleClick = (eventId) => {
-      console.log(eventId);
+    if (isEvent) {
       navigate(`/foodEvent/${eventId}`);
+    } else {
+      navigate(`/foodPromotion/${eventId}`);
+    }
   };
 
   return (
@@ -24,8 +27,8 @@ export default function FoodEventCard({ event }) {
         </button>
       </div>
       <div className="food_event_card_card_meta">
-          <p>{event.location.name}</p>
-        </div> 
+        <p>{event.location.name}</p>
+      </div>
       <div className="food_event_card_card_footer">
         <div className="food_event_card_card_meta">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" display="block" id="Calendar">
@@ -36,7 +39,7 @@ export default function FoodEventCard({ event }) {
           </svg>
           {/* <p>{event.date}</p> */}
           <p>{new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-          <p className='' style={{marginLeft: '10px'}}>{event.time}</p>
+          <p className='' style={{ marginLeft: '10px' }}>{event.time}</p>
         </div>
 
         {/* <div className="food_event_card_card_meta" style={{ alignItems: 'center', fontSize: '0.9rem' }}>

@@ -138,6 +138,7 @@ const login = async (req, res) => {
             name: user.name,
             token: token,
             verified: user.verified,
+            role: user.role,
         });
 
     } catch (error) {

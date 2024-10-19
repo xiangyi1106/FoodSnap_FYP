@@ -19,7 +19,7 @@ const eventSchema = new Schema({
   },
   endDate: { type: Date }, // Optional end date and time
   endTime: { type: String }, // Optional end date and time
-  placeName: { type: String }, // Name of the place or venue
+  // placeName: { type: String }, // Name of the place or venue
   // address: {
   //   street: { type: String },
   //   city: { type: String },

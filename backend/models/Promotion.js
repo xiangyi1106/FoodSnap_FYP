@@ -2,39 +2,66 @@ const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
 const promotionSchema = new Schema({
-  title: { 
-    type: String, 
-    required: true 
+  name: {
+    type: String,
+    required: true
   },
-  description: { 
-    type: String 
+  description: {
+    type: String
   },
-  startDate: { 
-    type: Date, 
-    required: true 
+  date: {
+    type: Date,
+    required: true
   },
-  endDate: { 
-    type: Date, 
-    required: true 
+  time: {
+    type: String,
+    required: true
   },
+  endDate: { type: Date }, // Optional end date and time
+  endTime: { type: String }, // Optional end date and time
   image: { 
     type: String // URL to an image (optional) 
   },
-  isActive: { 
-    type: Boolean, 
-    default: true 
-  },
+  // isActive: { 
+  //   type: Boolean, 
+  //   default: true 
+  // },
   termsAndConditions: { 
     type: String // Optional field for any additional terms and conditions
   },
-  createdBy: { 
+  organizer: { 
     type: Schema.Types.ObjectId, 
     ref: 'User', 
     required: true 
   },
-  foodVenue: { 
-    type: Schema.Types.ObjectId, 
-    ref: 'FoodVenue' // Reference to the food venue if applicable
+  location: {
+    type: {
+      place_id: { type: String, 
+        // required: true 
+      },
+      name: { type: String,
+        //  required: true 
+        }, // Display name or place name
+      address: {
+        type: Object, // Instead of Map
+        // required: true
+      },
+      latitude: { type: Number, 
+        // required: true 
+      },
+      longitude: { type: Number,
+        //  required: true 
+        }
+    },
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ['upcoming', 'completed', 'canceled']
+  },
+  privacy: {
+    type: String,
+    enum: ['public', 'followers', 'private']
   },
 }, { 
   timestamps: true 

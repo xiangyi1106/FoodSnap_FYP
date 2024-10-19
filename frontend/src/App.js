@@ -33,6 +33,7 @@ import PlaceProfileRelatedPost from "./components/PlaceProfile/PlaceProfileRelat
 import VisitedPlaceLayout from "./pages/VisitedPlace/VisitedPlaceLayout";
 import PostDetailsPage from "./pages/PostDetails";
 import EventDetails from "./pages/foodEvent/eventDetails/EventDetails";
+import PromotionDetails from "./pages/foodPromotion/PromotionDetails/PromotionDetails";
 
 const useAxios = () => {
   const [isExpired, setIsExpired] = useState(false);
@@ -140,6 +141,7 @@ function App() {
             <Route path="foodPromotion" element={<FoodPromotion />} />
           </Route>
           <Route path="/foodEvent/:id/" element={<EventDetails user={user} />} exact />
+          <Route path="/foodPromotion/:id/" element={<PromotionDetails user={user} />} exact />
         </Route>
       </Routes>
       <ToastContainer position="bottom-right" />

@@ -6,19 +6,19 @@ import './Filter.css';
 import CIcon from '@coreui/icons-react';
 import { cilSearch, cilBell } from '@coreui/icons';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 // const locations = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami']; // Example locations
 const dates = ['Any Date', 'Today', 'Tomorrow', 'This Week', 'Next Week', 'This Month', 'Next Month']; // Example locations
 
-export default function PromotionFilter({ onResults }) {
+export default function PromotionFilter({ onResults, isEvent }) {
     const [keyword, setKeyword] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('none');
     const [startDate, setStartDate] = useState("Any Date");
 
     const handleFilter = async () => {
-        console.log(keyword, selectedLocation, startDate);
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/event/search`, {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/${isEvent ? 'event' : 'promotion'}/search`, {
                 params: {
                     keyword,
                     location: selectedLocation,
@@ -27,16 +27,16 @@ export default function PromotionFilter({ onResults }) {
             });
             // Send results back to the parent component
             onResults(response.data);
-            console.log('filter',response.data);
+            // console.log('filter',response.data);
         } catch (error) {
-            console.error('Error searching events:', error);
+            toast.error("Error searching searching: " + error);
         }
     };
 
     return (
         <div className="promotion-filter">
             <TextField
-                label="Search keywords"
+                label="Search keywords in name and description"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 variant="outlined"
@@ -53,15 +53,15 @@ export default function PromotionFilter({ onResults }) {
                         },
                     },
                 }}
-                // InputProps={{
-                //     endAdornment: (
-                //         <InputAdornment position="end">
-                //             <IconButton  edge="end" style={{ color: '#30BFBF' }}>
-                //                 <CIcon icon={cilSearch} className="icon_size_20" />
-                //             </IconButton>
-                //         </InputAdornment>
-                //     ),
-                // }}
+            // InputProps={{
+            //     endAdornment: (
+            //         <InputAdornment position="end">
+            //             <IconButton  edge="end" style={{ color: '#30BFBF' }}>
+            //                 <CIcon icon={cilSearch} className="icon_size_20" />
+            //             </IconButton>
+            //         </InputAdornment>
+            //     ),
+            // }}
             >
             </TextField>
             <FormControl>

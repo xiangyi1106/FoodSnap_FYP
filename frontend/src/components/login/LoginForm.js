@@ -164,7 +164,6 @@ export default function LoginForm() {
                                             // Check if the data contains a 'name' property indicating username or email
                                             if (error.response.data.hasOwnProperty("errorName")) {
                                                 if (error.response.data.errorName === "emailOrUsername") {
-                                                    console.log("hi");
                                                     // Handle username related error
                                                     setEmaiOrUsernameError(error.response.data.message);
                                                     setPasswordError("");
