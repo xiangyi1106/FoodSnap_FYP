@@ -10,11 +10,14 @@ import { Avatar, IconButton, Tooltip } from '@mui/material';
 import CIcon from '@coreui/icons-react';
 import { cilColorBorder, cilBookmark } from '@coreui/icons';
 import { FavoriteBorderOutlined } from '@mui/icons-material';
+import EditEvent from '../EditEvent/EditEvent';
 
-const EventDetails = () => {
+const EventDetails = ({ user }) => {
     const { id } = useParams();
     const [event, setEvent] = useState(null);
     const location = useLocation();
+    const [visitor, setVisitor] = useState(false);
+    const [visible, setVisible] = useState(false);
 
     // Generate breadcrumbs using the reusable function
     const breadcrumbs = generateBreadcrumbs(location, 'Food Event', '/foodEvent', event?.name);
@@ -23,6 +26,7 @@ const EventDetails = () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/event/${id}`); // Include ID in the request URL
                 setEvent(response.data);
+                setVisitor(response.data.organizer.id !== user._id); // Update visitor state
                 // console.log(response.data);
             } catch (error) {
                 toast.error("Error fetching event: " + error.message);
@@ -30,14 +34,13 @@ const EventDetails = () => {
         };
 
         fetchEvent();
-    }, [id]);
-
-    const [visible, setVisible] = useState(false);
+    }, [id, user, visible]);
 
     return (
         <div className="profile place_detail_information">
             <Header />
             <div className="place_details_wrapper">
+                {visible && <EditEvent eventId={event?._id} user={user} setVisible={setVisible}/>}
                 {/* {visible && <EditFoodVenueForm />} */}
                 <CustomBreadcrumbs breadcrumbs={breadcrumbs} />
                 <div className="profile_top" style={{ marginTop: '0' }}>
@@ -62,7 +65,7 @@ const EventDetails = () => {
                                         <div className="discover_post_user">
                                             <Link
                                                 to={`/profile/${event?.organizer?.username}`}
-                                                style={{color: 'black'}}
+                                                style={{ color: 'black' }}
                                             >
                                                 <div className="discover_post_user_name">
                                                     <Avatar
@@ -81,18 +84,12 @@ const EventDetails = () => {
                                 className='profile_picture_right'
                                 style={{ gap: '15px', position: 'relative', top: '130px' }}
                             >
-                                <Tooltip title='Edit Information'>
-                                    {/* <IconButton aria-label='edit' sx={{ border: '1px solid gray' }} onClick={() => setVisible(true)}>
-                                        <CIcon icon={cilColorBorder} className='icon_size_20' />
-                                    </IconButton> */}
-                                    <button className="food_event_card_icon_button">
-                                        <CIcon icon={cilColorBorder} className='icon_size_20' />
+                                {!visitor && <Tooltip title='Edit Event Information'>
+                                    <button className="food_event_card_icon_button logo_color_background_hover">
+                                        <CIcon icon={cilColorBorder} className='icon_size_20' onClick={()=> setVisible(true)}/>
                                     </button>
-                                </Tooltip>
-                                <Tooltip title='Save Wishlist Place'>
-                                    {/* <IconButton aria-label='save' sx={{ border: '1px solid gray' }}>
-                                        <CIcon icon={cilBookmark} className='icon_size_20' />
-                                    </IconButton> */}
+                                </Tooltip>}
+                                <Tooltip title='Save Event'>
                                     <button className="food_event_card_icon_button">
                                         <span className="material-symbols-outlined"><FavoriteBorderOutlined /></span>
                                     </button>

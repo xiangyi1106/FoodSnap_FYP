@@ -173,3 +173,74 @@ exports.searchEvent = async (req, res) => {
     }
 };
 
+// Update event controller without validationResult
+exports.updateEvent = async (req, res) => {
+    const { eventName, date, time, endDate, endTime, location, description, eventImage, privacy } = req.body;
+    const eventId = req.params.id;
+
+    try {
+        // Find the event by ID
+        let event = await Event.findById(eventId).populate("organizer", "name picture username gender");
+
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        // Ensure the event has an organizer and the user is the owner of the event
+        if (!event.organizer || event.organizer.id.toString() !== req.user.id) {
+            return res.status(401).json({ message: 'User not authorized' });
+        }
+
+        // Check if another event with the same data already exists in the database
+        // const existingEvent = await Event.findOne({
+        //     eventName: eventName || event.name, // Use the new event name or the current one
+        //     date: date || event.date,
+        //     location: location.latitude ? location.name : location || event.location,
+        //     _id: { $ne: eventId }, // Exclude the current event from the check
+        // });
+
+        // if (existingEvent) {
+        //     return res.status(400).json({ message: 'An event with the same name, date, and location already exists.' });
+        // }
+
+        console.log(location);
+
+        // Update only the fields that are provided (patch-like behavior)
+        if (eventName) event.name = eventName;
+        if (date) event.date = date;
+        if (time) event.time = time;
+        if (endDate) event.endDate = endDate;
+        if (endTime) event.endTime = endTime;
+        // Check if the location has changed and update accordingly
+        if (location) {
+            if (location.name !== event.location.name ||
+                location.latitude !== event.location.latitude ||
+                location.longitude !== event.location.longitude) {
+                // Update the entire location object
+                console.log('test here')
+                event.location = {
+                    name: location.name || event.location.name,
+                    address: location.address || event.location.address,
+                    latitude: location.latitude || event.location.latitude,
+                    longitude: location.longitude || event.location.longitude,
+                    place_id: location.place_id || event.location.place_id,
+                };
+            }
+        }
+        if (description) event.description = description;
+        if (eventImage) event.image = eventImage;
+        if (privacy) event.privacy = privacy;
+
+        // Save the updated event
+        await event.save();
+
+        // Send back the updated event details
+        res.status(200).json({ message: 'Event updated successfully', event });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+

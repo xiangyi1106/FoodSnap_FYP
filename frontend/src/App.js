@@ -67,7 +67,7 @@ function App() {
   });
   useEffect(() => {
     user && getAllPosts();
-  }, []);
+  }, [user]);
   const getAllPosts = async () => {
     try {
       dispatch({
@@ -139,7 +139,7 @@ function App() {
             <Route path="foodEvent" element={<FoodEvent />} />
             <Route path="foodPromotion" element={<FoodPromotion />} />
           </Route>
-          <Route path="/foodEvent/:id/" element={<EventDetails />} exact />
+          <Route path="/foodEvent/:id/" element={<EventDetails user={user} />} exact />
         </Route>
       </Routes>
       <ToastContainer position="bottom-right" />

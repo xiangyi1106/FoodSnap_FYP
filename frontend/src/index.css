@@ -73,6 +73,10 @@ a {
   color: #30BFBF!important;
 }
 
+.logo_color_background_hover:hover{
+  background-color: #30BFBF!important;
+}
+
 .active_color{
   color: #30BFBF!important;
 }

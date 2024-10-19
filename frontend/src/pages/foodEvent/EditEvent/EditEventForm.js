@@ -9,12 +9,13 @@ import debounce from 'lodash/debounce';
 import axios from "axios";
 import { uploadMedias } from "../../../functions/uploadMedia";
 import dataURItoBlob from "../../../helpers/dataURItoBlob";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { handleImage } from "../../../functions/handleImage";
+import { useNavigate } from "react-router-dom";
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
 
-export function AddEventForm({ user, setIsCreateFormVisible }) {
+export function EditEventForm({ user, eventId, setVisible }) {
     const [showEndDate, setShowEndDate] = useState(false);
     const [locationText, setLocationText] = useState('');
     const [locationList, setLocationList] = useState([]);
@@ -25,6 +26,54 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
     const today = new Date();
     const [image, setImage] = useState('');
     const [error, setError] = useState('');
+
+    const [initialValues, setInitialValues] = useState({
+        eventName: "",
+        date: "",
+        time: "",
+        endDate: "",
+        endTime: "",
+        location: "",
+        description: "",
+        eventImage: "",
+        privacy: "public",
+    });
+
+    useEffect(() => {
+        const fetchEventData = async () => {
+            try {
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/event/${eventId}`, {
+                    headers: {
+                        Authorization: `Bearer ${user.token}`,
+                    },
+                });
+                const event = response.data;
+                // Format the date to 'yyyy-MM-dd'
+                const formattedDate = new Date(event.date).toISOString().slice(0, 10);
+                const formattedEndDate = response.data.endDate ? new Date(event.endDate).toISOString().slice(0, 10) : '';
+                // Set initial values from the response
+                setInitialValues({
+                    eventName: event.name,
+                    date: formattedDate,
+                    time: event.time,
+                    endDate: formattedEndDate,
+                    endTime: event.endTime,
+                    location: event.location.name,
+                    description: event.description,
+                    eventImage: event.image,
+                    privacy: event.privacy,
+                });
+                setLocationText(event.location.name);
+                setAddress(event.location); // Set the location in state
+                setImage(event.image); // Set the image in state
+            } catch (error) {
+                console.error("Failed to fetch event data", error);
+                toast.error("Failed to load event data.");
+            }
+        };
+
+        fetchEventData();
+    }, [eventId, user.token]);
 
     const eventFormSchema = Yup.object({
         eventName: Yup.string()
@@ -57,18 +106,8 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                 );
                 return selectedDateTime >= new Date(); // Compare selected date & time to current date & time
             }),
-        // location: Yup.string()
-        //     .min(2, "Location must be at least 2 characters.")
-        //     .max(100, "Location must not exceed 100 characters.")
-        //     .required("Location is required"),
         description: Yup.string()
-            // .min(10, "Description must be at least 10 characters.")
             .max(500, "Description must not exceed 500 characters."),
-        // organizer: Yup.string()
-        //     .min(2, "Organizer name must be at least 2 characters.")
-        //     .max(100, "Organizer name must not exceed 100 characters.")
-        //     .required("Organizer name is required"),
-        // eventType: Yup.string().required("Event type is required"),
         privacy: Yup.string().required("Privacy setting is required"),
     });
 
@@ -89,22 +128,11 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
         }
     };
 
+    const navigate = useNavigate();
+
     const formik = useFormik({
-        initialValues: {
-            eventName: "",
-            date: "",
-            time: "",
-            endDate: "",
-            endTime: "",
-            location: "",
-            description: "",
-            // organizer: "",
-            eventImage: null,
-            // eventType: "faceToFace",
-            privacy: "public",
-            // tags: "",
-            // foodVenue: "",
-        },
+        initialValues,
+        enableReinitialize: true, // Ensures formik updates when initialValues change
         validationSchema: eventFormSchema,
         onSubmit: async (values, { resetForm }) => {
             try {
@@ -112,15 +140,15 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                 if (image) {
                     // Await the promise to resolve
                     const pic = await updatePicture(image);
-        
+
                     if (pic && pic.length > 0 && pic[0].url) {
                         // Directly set the image URL in the values object
                         values.eventImage = pic[0].url;
                     } else {
-                        values.eventImage = null;
+                        values.eventImage = '';
                     }
                 }
-        
+
                 // Now process the location: check if address is selected from suggestions
                 if (!address || !address.latitude || !address.longitude) {
                     const manualAddress = locationText;
@@ -141,19 +169,22 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                 }
 
                 // Finally, post the event data to the backend
-                const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/addEvent`, values, {
+                const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/event/update/${eventId}`, values, {
                     headers: {
                         Authorization: `Bearer ${user.token}`,
                     },
                 });
 
-                //   // Handle success response
-                console.log(response.data);
-                toast.success("Event created successfully!");
-                setIsCreateFormVisible(false);
+                // Ensure the event was successfully updated
+                if (response.status === 200) {
+                    console.log(response.data);
 
-                // Optionally reset the form after successful submission
-                //   resetForm();
+                    toast.success("Event updated successfully!");
+                    // Navigate to the event details page after confirming the update is successful
+                    setVisible(false);
+
+                    navigate(`/foodEvent/${eventId}`, { replace: true });
+                }
             } catch (error) {
                 console.error("Error creating event:", error);
                 toast.error("Failed to create event: " + (error.response?.data?.message || error.message));
@@ -165,11 +196,7 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
 
     const handlePictureChange = (event, setFieldValue, type) => {
         const file = event.target.files[0];
-        // if (file) {
-        //     setFieldValue(type, URL.createObjectURL(file));
-        // }
         if (file) {
-            // setFieldValue(type, file);
             handleImage(file, setError, setImage); // Use the imported handleImage function
         }
     };
@@ -207,7 +234,6 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
         const query = e.target.value;
         setLocationText(query);
         debouncedSearch(query); // Call the memoized debounced search function
-        console.log('Location search input:', query);
     };
 
     const handleItemClick = (index) => {
@@ -217,58 +243,15 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
             place_id: selectedItem.place_id,
             name: selectedItem.display_name,
             address: selectedItem.address,
-            // city: selectedItem.address.city || selectedItem.address.town || selectedItem.address.village || '',
-            // postcode: selectedItem.address.postcode || '',
             latitude: selectedItem.lat,
             longitude: selectedItem.lon,
         };
-
-        // Log the selected address to check city and postcode
-        console.log('Selected Address:', selectedAddress);
 
         setAddress(selectedAddress); // Store the selected address in state
         formik.setFieldValue('location', selectedAddress); // Update formik value
         setLocationText(selectedItem.display_name); // Update input state with selected location
         setLocationList([]); // Clear location list after selection
     };
-
-    // const [foodVenues, setFoodVenues] = useState([]);
-    // const [filteredVenues, setFilteredVenues] = useState([]);
-    // const [selectedVenue, setSelectedVenue] = useState('');
-    // const [searchTerm, setSearchTerm] = useState(''); // Store the input search term
-
-    // // Fetch food venues from the backend when the component mounts
-    // useEffect(() => {
-    //     const fetchFoodVenues = async () => {
-    //         try {
-    //             const response = await axios.get('/api/food-venues'); // Adjust the API endpoint based on your backend route
-    //             setFoodVenues(response.data); // Set the fetched venues
-    //             setFilteredVenues(response.data); // Initialize the filtered venues with the full list
-    //         } catch (error) {
-    //             console.error('Error fetching food venues:', error);
-    //         }
-    //     };
-
-    //     fetchFoodVenues();
-    // }, []);
-
-    // // Handle the input change and filter the food venues based on the search term
-    // const handleInputChange = (e) => {
-    //     const value = e.target.value.toLowerCase();
-    //     setSearchTerm(value);
-
-    //     // Filter the food venues based on the search term
-    //     const filtered = foodVenues.filter(venue =>
-    //         venue.name.toLowerCase().includes(value)
-    //     );
-
-    //     setFilteredVenues(filtered); // Update the filtered venues
-    // };
-
-    // // Handle the select option change
-    // const handleVenueChange = (e) => {
-    //     setSelectedVenue(e.target.value);
-    // };
 
     return (
         <FormikProvider value={formik}>
@@ -319,6 +302,7 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                     placeholder="Enter the event name"
                     formik={formik}
                     description="Provide the name of the event."
+                    value={formik.values.eventName || ''}
                 />
 
                 <TextInput
@@ -329,6 +313,7 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                     formik={formik}
                     description="Select the date of the event."
                     minDate={today}
+                    value={formik.values.date || ''}
                 />
 
                 <TextInput
@@ -338,6 +323,8 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                     type="time"
                     formik={formik}
                     description="Select the time of the event."
+                    value={formik.values.time || ''}
+
                 />
                 <div>
                     <button
@@ -357,6 +344,8 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                                 type="date"
                                 formik={formik}
                                 description="Select the end date of the event."
+                                value={formik.values.endDate || ''}
+
                             />
 
                             <TextInput
@@ -366,55 +355,13 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                                 type="time"
                                 formik={formik}
                                 description="Select the end time of the event."
+                                value={formik.values.endTime || ''}
+
                             />
                         </>
                     )}
 
                 </div>
-                {/* <div>
-                    <FormControl component="fieldset" style={{ marginTop: '20px' }}>
-                        <FormLabel component="legend" style={{ color: 'black', fontSize: '0.9rem', marginBottom: '0.5rem', }}>Event Type</FormLabel>
-                        <RadioGroup
-                            row
-                            aria-label="eventType"
-                            name="eventType"
-                            value={formik.values.eventType}
-                            onChange={formik.handleChange}
-                        >
-                            <FormControlLabel
-                                value="faceToFace"
-                                control={<Radio sx={{
-                                    color: "#30BFBF",
-                                    '&.Mui-checked': {
-                                        color: "#30BFBF",
-                                    }
-                                }} />}
-                                label="Face to Face"
-                            />
-                            <FormControlLabel value="virtual" control={<Radio sx={{
-                                color: "#30BFBF",
-                                '&.Mui-checked': {
-                                    color: "#30BFBF",
-                                }
-                            }} />}
-                                label="Virtual"
-                            />
-
-                        </RadioGroup>
-                    </FormControl>
-                    <p className="profile_form_description">Select the type of the event.</p>
-                </div> */}
-
-                {/* <TextInput
-                    label="Location"
-                    id="location"
-                    name="location"
-                    placeholder="Enter the location of the event"
-                    value={location} // Use local state for the input value
-                    formik={formik} // Ensure formik is being passed correctly
-                    onChange={handleLocationSearch} // Trigger location search
-                    description="Provide the location where the event will take place."
-                /> */}
                 <div className="profile_form_item">
                     <label className="profile_form_label">
                         Location
@@ -461,6 +408,8 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                     placeholder="Enter a brief description of the event"
                     formik={formik}
                     description="Provide details about the event."
+                    value={formik.values.description || ''}
+
                 />
 
                 <div>
@@ -507,48 +456,11 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                     </FormControl>
                     <p className="profile_form_description">Select the privacy of the event.</p>
                 </div>
-
-                {/* <TextInput
-                    label="Organizer"
-                    id="organizer"
-                    name="organizer"
-                    placeholder="Enter the organizer's name"
-                    formik={formik}
-                    description="Provide the name of the event organizer."
-                /> */}
-
-                {/* <TextInput
-                    label="Tags"
-                    id="tags"
-                    name="tags"
-                    placeholder="Enter event tags"
-                    formik={formik}
-                    description="Provide relevant tags for the event."
-                /> */}
-
-                {/* Food venue search and select dropdown */}
-                {/* <div className="profile_form_item">
-                    <label htmlFor="foodVenue" className="profile_form_label">Food Venue</label>
-                    <Autocomplete
-                        id="foodVenue"
-                        options={foodVenues}
-                        getOptionLabel={(option) => option.name} // Display venue name in the combobox
-                        value={selectedVenue} // Controlled value
-                        onChange={(event, newValue) => setSelectedVenue(newValue)} // Handle value change
-                        inputValue={searchTerm} // Controlled input value (typed by user)
-                        onInputChange={(event, newInputValue) => setSearchTerm(newInputValue)} // Handle input change for filtering
-                        renderInput={(params) => (
-                            <TextField {...params} placeholder="Type to search for a venue" />
-                        )}
-                    />
-                    <p className="profile_form_description">Select the food venue of the event if available.</p>
-                </div> */}
-
                 <button
                     type="submit"
                     className="event_form_button profile_form_button"
                 >
-                    Add Event
+                    Update Event
                 </button>
             </form>
         </FormikProvider>
