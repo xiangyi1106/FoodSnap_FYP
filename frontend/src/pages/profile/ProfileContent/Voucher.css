@@ -1,0 +1,47 @@
+
+  .voucher_card {
+    /* width: 350px; */
+    padding: 10px;
+    border-radius: 20px;
+    background: orange;
+    border: none;
+    color: #fff;
+    /* height: 350px; */
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 200px;
+    width: 200px;
+  }
+  
+  /* .voucher_container {
+    height: 100vh;
+  } */
+  
+  .voucher_card h1 {
+    /* font-size: 48px; */
+    font-size: 2rem;
+    margin-bottom: 0px;
+  }
+  
+  .voucher_card span {
+    /* font-size: 28px; */
+    font-size: 1.2rem;
+  }
+  
+  .voucher_image {
+    position: absolute;
+    opacity: 0.1;
+    left: 0;
+    top: 0;
+  }
+  
+  .voucher_image2 {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    opacity: 0.1;
+  }
+  

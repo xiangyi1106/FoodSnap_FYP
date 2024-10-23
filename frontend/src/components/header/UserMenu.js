@@ -97,7 +97,7 @@ export default function UserMenu({ user, setIsShowUserMenu, profileLinkRef }) {
 
   return (
     <div className="user_menu" ref={userMenu}>
-      <Link to="./profile" className="user_menu_header">
+      <Link to={`/profile/${user.username}`} className="user_menu_header">
         <img src={user?.picture} alt="profile-picture"></img>
         <div className="user_menu_col">
           <span>{user?.name}</span>

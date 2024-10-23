@@ -1,18 +1,19 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom';
 
-export default function ProfileSidebar() {
+export default function ProfileSidebar({username}) {
     const location = useLocation();
     
     // Extract the current path to determine the active menu item
     const currentPath = location.pathname;
     const items = [
-        { name: 'intro', label: 'Intro', href: '/profile/intro' },
-        { name: 'posts', label: 'Posts', href: '/profile' },
-        { name: 'photos', label: 'Photos', href: '/profile/photos' },
-        { name: 'following', label: 'Following', href: '/profile/following' },
-        { name: 'followers', label: 'Followers', href: '/profile/followers' },
-        { name: 'myfoodmap', label: 'My Food Map', href: '/profile/myfoodmap' },
+        { name: 'intro', label: 'Intro', href: `/profile/${username}/intro` },
+        { name: 'posts', label: 'Posts', href: `/profile/${username}` },
+        { name: 'photos', label: 'Photos', href: `/profile/${username}/photos` },
+        { name: 'following', label: 'Following', href: `/profile/${username}/following` },
+        { name: 'followers', label: 'Followers', href: `/profile/${username}/followers` },
+        { name: 'myfoodmap', label: 'My Food Map', href: `/profile/${username}/myFoodMap`},
+        { name: 'myVoucher', label: 'My Voucher', href: `/profile/${username}/myVoucher`},
     ];
     return (
         <div className='profile_card'>

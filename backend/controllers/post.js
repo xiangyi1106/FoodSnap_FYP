@@ -114,11 +114,53 @@ exports.createPost = async (req, res) => {
   }
 };
 
+// exports.getAllPosts = async (req, res) => {
+//   try {
+//     const posts = await Post.find()
+//       .populate("user", "name picture username gender")
+//       //get the data from user database
+//       .populate({
+//         path: "sharedPost", // Populate the sharedPost field
+//         populate: {
+//           path: "user", // Populate the user inside sharedPost
+//           select: "name picture username gender _id" // Select fields to retrieve from user
+//         }
+//       })
+//       .sort({ createdAt: -1 });
+//     //sort by newest to oldest
+//     res.json(posts);
+//   } catch (error) {
+//     return res.status(500).json({ message: error.message });
+//   }
+// };
+
 exports.getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find()
+    const page = parseInt(req.query.page) || 1; // Default page 1
+    const limit = parseInt(req.query.limit) || 10; // Default limit 10
+    const skip = (page - 1) * limit;
+
+    const followingTemp = await User.findById(req.user.id).select("following");
+    const following = followingTemp.following;
+
+    const promises = following.map((user) => {
+      return Post.find({ user: user })
+        .populate("user", "name picture username gender")
+        .populate({
+          path: "sharedPost", // Populate the sharedPost field
+          populate: {
+            path: "user", // Populate the user inside sharedPost
+            select: "name picture username gender _id" // Select fields to retrieve from user
+          }
+        })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit);
+    });
+
+    const followingPosts = await (await Promise.all(promises)).flat();
+    const userPosts = await Post.find({ user: req.user.id })
       .populate("user", "name picture username gender")
-      //get the data from user database
       .populate({
         path: "sharedPost", // Populate the sharedPost field
         populate: {
@@ -126,13 +168,38 @@ exports.getAllPosts = async (req, res) => {
           select: "name picture username gender _id" // Select fields to retrieve from user
         }
       })
-      .sort({ createdAt: -1 });
-    //sort by newest to oldest
-    res.json(posts);
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const allPosts = [...followingPosts, ...userPosts];
+
+    // Sort the combined posts by createdAt
+    allPosts.sort((a, b) => b.createdAt - a.createdAt);
+
+    // // Count total posts to check if there are more
+    // const totalPosts = await Post.countDocuments({
+    //   user: { $in: [req.user.id, ...following] },
+    // });
+
+    // // Calculate if more posts are available
+    // const hasMore = skip + limit < totalPosts;
+
+    // // Send back paginated posts and pagination info
+    // res.json({
+    //   posts: allPosts,
+    //   currentPage: page,
+    //   totalPosts: allPosts.length,
+    //   hasMore, // Indicates if there are more posts to load
+    // });
+
+    res.json(allPosts);
+
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 exports.getPublicPosts = async (req, res) => {
   try {
@@ -337,8 +404,8 @@ exports.postsWithLocation = async (req, res) => {
       location: { $ne: [] }, // Ensure location array is not empty
       createdAt: { $gte: startOfMonth, $lt: endOfMonth }, // Filter by date range
     })
-    .populate('user', 'name username picture') // Populate user with specific fields like name and email
-    .exec();
+      .populate('user', 'name username picture') // Populate user with specific fields like name and email
+      .exec();
 
     console.log('Posts found:', postsWithLocation.length);
 

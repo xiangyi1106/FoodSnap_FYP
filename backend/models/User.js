@@ -71,14 +71,16 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         default: false,
     },
-    following: {
-        type: Array,
-        default: [],
-    },
-    followers: {
-        type: Array,
-        default: [],
-    },
+    following: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: []
+    }],
+    followers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: []
+    }],
     search: [
         {
             user: {

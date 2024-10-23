@@ -34,6 +34,13 @@ import VisitedPlaceLayout from "./pages/VisitedPlace/VisitedPlaceLayout";
 import PostDetailsPage from "./pages/PostDetails";
 import EventDetails from "./pages/foodEvent/eventDetails/EventDetails";
 import PromotionDetails from "./pages/foodPromotion/PromotionDetails/PromotionDetails";
+import ProfilePost from "./pages/profile/ProfileContent/ProfilePost";
+import ProfileIntroCarousel from "./pages/profile/ProfileContent/ProfileIntro";
+import ProfilePhoto from "./pages/profile/ProfileContent/ProfilePhoto";
+import ProfileFollowing from "./pages/profile/ProfileContent/ProfileFollowing";
+import ProfileFollower from "./pages/profile/ProfileContent/ProfileFollower";
+import ProfileFoodMap from "./pages/profile/ProfileContent/ProfileFoodMap";
+import ProfileVoucher from "./pages/profile/ProfileContent/ProfileVoucher";
 
 const useAxios = () => {
   const [isExpired, setIsExpired] = useState(false);
@@ -61,37 +68,91 @@ const useAxios = () => {
 function App() {
   const userSelector = (state) => state.user;
   const user = useSelector(userSelector);
+  
+  const [page, setPage] = useState(1); // Track the current page
+  const [hasMore, setHasMore] = useState(true);
+  
   const [{ loading, error, posts }, dispatch] = useReducer(postReducer, {
     loading: false,
     posts: [],
     error: "",
   });
+  // useEffect(() => {
+  //   user && getAllPosts(page);
+  // }, [user]);
+  // Fetch posts when the component mounts or page changes
   useEffect(() => {
-    user && getAllPosts();
-  }, [user]);
-  const getAllPosts = async () => {
+    if (user) {
+      getAllPosts(page); // Fetch posts for the current page
+    }
+  }, [page, user]);
+
+
+  const getAllPosts = async (currentPage) => {
     try {
       dispatch({
         type: "POSTS_REQUEST",
       });
       const { data } = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}/getAllPosts`,
+        // `${process.env.REACT_APP_BACKEND_URL}/getAllPosts`,
+        `${process.env.REACT_APP_BACKEND_URL}/getAllPosts?page=${currentPage}&limit=10`,
         {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
         }
       );
+      // Sort posts by createdAt after fetching
+      const sortedPosts = currentPage === 1 
+      ? data // if it's the first page, just take the posts as they are
+      : [...posts, ...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // sort on subsequent pages
+
       dispatch({
         type: "POSTS_SUCCESS",
-        payload: data,
+        // payload: currentPage === 1 ? data : [...posts, ...data], // Append new posts
+        payload: sortedPosts, // Pass the sorted posts
       });
+      // if (data.length === 0 || data.length < 10) {
+      //   setHasMore(false); // Stop fetching when there are no more posts
+      // }
+      if(data.length === 0){
+        setHasMore(false);
+      }
     } catch (error) {
       dispatch({
         type: "POSTS_ERROR",
-        payload: error.response.data.message,
+        payload: error.response.data.message || 'Error fetching posts',
       });
     }
+  };
+  // const getAllPosts = async () => {
+  //   try {
+  //     dispatch({
+  //       type: "POSTS_REQUEST",
+  //     });
+  //     const { data } = await axios.get(
+  //       // `${process.env.REACT_APP_BACKEND_URL}/getAllPosts`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${user.token}`,
+  //         },
+  //       }
+  //     );
+  //     dispatch({
+  //       type: "POSTS_SUCCESS",
+  //       // payload: data,
+  //     });
+  //   } catch (error) {
+  //     dispatch({
+  //       type: "POSTS_ERROR",
+  //       payload: error.response.data.message,
+  //     });
+  //   }
+  // };
+
+  const fetchMorePosts = () => {
+    setPage((prevPage) => prevPage + 1); // Fetch next page when user scrolls down
+    console.log('Page', page)
   };
 
   const { axiosInstance, isExpired, setIsExpired } = useAxios();
@@ -113,13 +174,28 @@ function App() {
           {/* <Route path="/place/:tab" element={<PlaceDetails />} /> */}
         </Route>
         <Route element={<LoginRoutes />}>
-          <Route path="/profile" element={<Profile />} exact />
+          {/* <Route path="/profile" element={<Profile />} exact /> */}
+          {/* <Route path="/profile" element={<Profile />}>
+            <Route index element={<ProfilePost user={user}/>} />
+            <Route path="intro" element={<ProfileIntroCarousel />} />
+            <Route path="photos" element={<ProfilePhoto />} />
+            <Route path="following" element={<ProfileFollowing />} />
+            <Route path="followers" element={<ProfileFollower />} /> 
+          </Route> */}
           <Route path="/post/:id/:initialIndex" element={<PostDetailsPage user={user}/>} exact />
           <Route
             path="/profile/:username"
             element={<Profile />}
-            exact
-          />
+          >
+            <Route index element={<ProfilePost user={user}/>} />
+            <Route path="intro" element={<ProfileIntroCarousel />} />
+            <Route path="photos" element={<ProfilePhoto />} />
+            <Route path="following" element={<ProfileFollowing />} />
+            <Route path="followers" element={<ProfileFollower />} /> 
+            <Route path="myFoodMap" element={<ProfileFoodMap />} /> 
+            <Route path="myVoucher" element={<ProfileVoucher />} /> 
+          </Route>
+
           <Route path="/settings" element={<Settings />}>
             <Route index element={<SettingsPage />} />
             <Route path="password" element={<PasswordSettingsPage />} />
@@ -132,7 +208,8 @@ function App() {
             <Route path="posts" element={<PlaceProfileRelatedPost user={user} />} />
           </Route>
           <Route path="/" element={<Layout user={user} />}>
-            <Route index element={<Feed posts={posts} user={user} />} />
+            {/* <Route index element={<Feed posts={posts} user={user} />} /> */}
+            <Route index element={<Feed posts={posts} user={user} fetchMorePosts={fetchMorePosts} hasMore={hasMore}/>} />
             <Route path="discover" element={<PublicFeed user={user} />} />
             <Route path="searchVenue" element={<SearchVenue user={user}/>} />
             <Route path="myFoodJourney" element={<VisitedPlaceLayout user={user} />} />

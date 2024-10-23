@@ -30,7 +30,6 @@ const register = async (req, res) => {
 
 
         if (!validateUsername(username)) {
-            console.log("eeeeeeeeeeeeeeeeee");
             return res.status(400).json({
                 message: "Invalid username.",
             });
@@ -317,7 +316,10 @@ const getProfile = async (req, res) => {
         const { username } = req.params;
         const user = await User.findById(req.user.id);
 
-        const profile = await User.findOne({ username }).select("-password").populate('followers following');
+        const profile = await User.findOne({ username })
+        .select("-password")
+        .populate('following', 'username name picture') // Adjust the fields as needed
+        .populate('followers', 'username name picture'); // Adjust the fields as needed
 
         if (!profile) {
             return res.status(404).json({ ok: false, message: "Profile not found" });

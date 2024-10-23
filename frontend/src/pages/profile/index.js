@@ -2,7 +2,7 @@ import Header from "../../components/header";
 import Photos from "./Photos";
 import ProfilePictureInfo from "./ProfilePictureInfo";
 import "./style.css";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect, useReducer, useState } from "react";
 import { profileReducer } from "../../functions/reducers";
@@ -50,7 +50,8 @@ export default function Profile() {
         }
       );
       if (data.ok === false) {
-        navigate("/profile");
+        // navigate("/profile");
+        navigate(`/profile/${userName}`);
       } else {
         try {
           const images = await axios.post(
@@ -81,6 +82,10 @@ export default function Profile() {
   };
 
   const isMobile = useMediaQuery('(max-width:768px)');
+  const location = useLocation();
+  const isMyFoodMap = location.pathname === `/profile/${username}/myFoodMap`; // Check if the route is '/myfoodmap'
+  console.log(location.pathname);
+  console.log(username);
 
   return (
     <div className="profile">
@@ -93,7 +98,7 @@ export default function Profile() {
         </div>
       </div>
       <div className="profile_bottom">
-        <div className="profile_container" style={{maxWidth: '850px', margin: '0 auto'}}>
+        <div className="profile_container" style={{ maxWidth: '850px', margin: '0 auto' }}>
           <div className="bottom_container">
             <div className="profile_grid" style={{ gridTemplateColumns: '0.8fr 1fr' }}>
               <div className="profile_left">
@@ -107,18 +112,23 @@ export default function Profile() {
                   token={user.token}
                   photos={photos}
                 /> */}
-                <ProfileSidebar />
-                <div className="relative_copyright" style={{ display: isMobile ? 'none' : '' }}>
-                  <Link to="/">Privacy </Link>
-                  <span>. </span>
-                  <Link to="/">Terms </Link>
-                  <span>. </span>
-                  <Link to="/">Cookies</Link> <span>. </span>
-                  FoodSnap © 2024
-                </div>
+                { !isMyFoodMap &&
+                  <div>
+                    <ProfileSidebar username={username} />
+                    <div className="relative_copyright" style={{ display: isMobile ? 'none' : '' }}>
+                      <Link to="/">Privacy </Link>
+                      <span>. </span>
+                      <Link to="/">Terms </Link>
+                      <span>. </span>
+                      <Link to="/">Cookies</Link> <span>. </span>
+                      FoodSnap © 2024
+                    </div>
+                  </div>
+                }
               </div>
               <div className="profile_right">
-                <div className="posts">
+                <Outlet context={{ profile, photos }} />
+                {/* <div className="posts">
                   {profile.posts && profile.posts.length ? (
                     profile.posts.map((post) => (
                       <Post post={post} user={user} key={post._id} profile />
@@ -126,7 +136,7 @@ export default function Profile() {
                   ) : (
                     <div className="no_posts">No posts available</div>
                   )}
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
