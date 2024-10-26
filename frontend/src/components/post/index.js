@@ -127,9 +127,9 @@ export default function Post({ post, user, profile }) {
                         {post.media.slice(0, 5).map((mediaItem, i) => (
                             <Fragment key={`media-${i}`}>
                                 {mediaItem.type === "image" ? (
-                                    <img src={mediaItem.url} key={`image-${i}`} alt="" className={`img-${i}`} onClick={() => handleClick(post._id, i)} />
+                                    <img src={mediaItem.url} key={`image-${i}`} alt="" className={`img-${i}`} style={{cursor: 'pointer'}} onClick={() => handleClick(post._id, i)} />
                                 ) : mediaItem.type === "video" ? (
-                                    <video key={`video-${i}`} className={`video-${i}`} controls onClick={() => handleClick(post.id, i)}>
+                                    <video key={`video-${i}`} className={`video-${i}`} style={{cursor: 'pointer'}} controls onClick={() => handleClick(post.id, i)}>
                                         <source src={mediaItem.url} type="video/mp4" />
                                         Your browser does not support the video tag.
                                     </video>

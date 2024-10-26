@@ -420,6 +420,10 @@ body.modal-open {
   padding-right: 0px !important;
 }
 
+.no-scroll{
+  overflow: hidden!important;
+}
+
 @media (max-width: 360px) {
   .post_infos .icon_button{
     margin: 8px;

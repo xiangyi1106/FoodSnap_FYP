@@ -14,6 +14,7 @@ import { getUserSelector } from "../../helpers/selectors";
 import Intro from "../../components/intro";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import ProfileSidebar from "./ProfileSidebar";
+import ProfileFoodMapList from "./ProfileContent/ProfileFoodMapList";
 
 export default function Profile() {
   const { username } = useParams();
@@ -84,8 +85,17 @@ export default function Profile() {
   const isMobile = useMediaQuery('(max-width:768px)');
   const location = useLocation();
   const isMyFoodMap = location.pathname === `/profile/${username}/myFoodMap`; // Check if the route is '/myfoodmap'
-  console.log(location.pathname);
-  console.log(username);
+
+
+  // Sample usage of the ProfileMapList component:
+  const steps = [
+    { title: 'Discovery and assessment', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Information gathering and analysis', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Creating your claim', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Approvals and submission', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { title: 'Receiving your benefit', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    // Add more steps as needed...
+  ];
 
   return (
     <div className="profile">
@@ -94,7 +104,7 @@ export default function Profile() {
         <div className="profile_container">
           <Cover visitor={visitor} cover={profile.cover} />
           <ProfilePictureInfo profile={profile} visitor={visitor} user={user} />
-          {/* <ProfileMenu /> */}
+          {isMyFoodMap && <ProfileMenu username={username}/>}
         </div>
       </div>
       <div className="profile_bottom">
@@ -112,7 +122,7 @@ export default function Profile() {
                   token={user.token}
                   photos={photos}
                 /> */}
-                { !isMyFoodMap &&
+                {!isMyFoodMap ?
                   <div>
                     <ProfileSidebar username={username} />
                     <div className="relative_copyright" style={{ display: isMobile ? 'none' : '' }}>
@@ -123,6 +133,13 @@ export default function Profile() {
                       <Link to="/">Cookies</Link> <span>. </span>
                       FoodSnap © 2024
                     </div>
+                  </div>
+                  :
+                  <div className='profile_card'>
+                    <div className='profile_card_header'>
+                      My Favorite Food Venue List
+                    </div>
+                    <ProfileFoodMapList items={steps} />
                   </div>
                 }
               </div>

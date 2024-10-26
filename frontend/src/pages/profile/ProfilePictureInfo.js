@@ -6,8 +6,12 @@ import UpdateProfilePicture from './UpdateProfilePicture';
 import Modal from '../../components/Modal/Modal';
 import { follow, unfollow } from '../../functions/user'; // Import the follow/unfollow functions
 import CIcon from '@coreui/icons-react';
-import { cilUserFollow, cilThumbUp
+import {
+    cilUserFollow, cilThumbUp,
+    cilZoomIn,
+    cilZoomOut
 } from '@coreui/icons';
+import { PhotoProvider, PhotoView } from 'react-photo-view';
 
 export default function ProfilePictureInfo({ profile, visitor, user }) {
     const [show, setShow] = useState(false);
@@ -18,8 +22,8 @@ export default function ProfilePictureInfo({ profile, visitor, user }) {
     const [profileData, setProfileData] = useState(profile); // Use profileData to manage local profile state
     const [visible, setVisible] = useState(false);
 
-     // Sync profile data with props if they change
-     useEffect(() => {
+    // Sync profile data with props if they change
+    useEffect(() => {
         if (profile) {
             setProfileData(profile);
         }
@@ -58,7 +62,50 @@ export default function ProfilePictureInfo({ profile, visitor, user }) {
         <div className='profile_picture_wrapper'>
             <div className='profile_picture_left'>
                 <div className='profile_picture'>
-                    <div className='profile_picture_bg' ref={pRef} style={{ backgroundSize: "cover", backgroundImage: `url(${profileData.picture})` }}></div>
+                    <PhotoProvider
+                        toolbarRender={({ onScale, scale }) => {
+                            return (
+                                <div style={{ display: 'flex', gap: '10px', color: '#fff' }}>
+                                    {/* Zoom In Button */}
+                                    <button
+                                        style={{
+                                            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '8px 12px',
+                                            cursor: 'pointer',
+                                            borderRadius: '4px',
+                                        }}
+                                        onClick={() => onScale(scale + 1)}
+                                    >
+                                        <CIcon icon={cilZoomIn} className="icon_size_20" />
+
+                                    </button>
+                                    {/* Zoom Out Button */}
+                                    <button
+                                        style={{
+                                            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                                            color: 'white',
+                                            border: 'none',
+                                            padding: '8px 12px',
+                                            cursor: 'pointer',
+                                            borderRadius: '4px',
+                                        }}
+                                        onClick={() => onScale(scale - 1)}
+                                    >
+                                        <CIcon icon={cilZoomOut} className="icon_size_20" />
+                                    </button>
+                                </div>
+                            );
+                        }}
+                    >
+                        <PhotoView src={profileData.picture}>
+                            <div className='profile_picture_bg'
+                                ref={pRef}
+                                style={{ backgroundSize: "cover", backgroundImage: `url(${profileData.picture})` }}>
+                            </div>
+                        </PhotoView>
+                    </PhotoProvider>
                     {!visitor && (
                         <div
                             className="profile_picture_bg_change_circle hover_style_1"
@@ -83,6 +130,7 @@ export default function ProfilePictureInfo({ profile, visitor, user }) {
                             profileData?.follow?.following ? (
                                 <div
                                     className="open_cover_menu_item hover_style_1"
+                                    style={{ backgroundColor: '#30BFBF' }}
                                     onClick={() => setVisible(true)}
                                 >
                                     <img src="../../../icons/unfollowOutlined.png" alt="" />
@@ -91,6 +139,7 @@ export default function ProfilePictureInfo({ profile, visitor, user }) {
                             ) : (
                                 <div
                                     className="open_cover_menu_item hover_style_1"
+                                    style={{ backgroundColor: '#30BFBF' }}
                                     onClick={() => handleFollow()}
                                 >
                                     <CIcon icon={cilUserFollow} className="icon_size_20" />

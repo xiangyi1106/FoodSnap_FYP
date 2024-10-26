@@ -60,11 +60,7 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
         });
     }
 
-    // const [images, setImages] = useState([]);
-
     const [medias, setMedias] = useState([]);
-
-    console.log(medias);
 
     const alertRef = useRef(null);
 
@@ -105,8 +101,6 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
     const [users, setUsers] = useState([]);
     const [selectedNames, setSelectedNames] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
-
-    // const [rating, setRating] = useState(0);
 
     const [isVisible, setIsVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);

@@ -11,6 +11,10 @@ import { updateCover } from '../../functions/updateProfilePicture';
 import { uploadMedias } from '../../functions/uploadMedia';
 import getCroppedImg from '../../helpers/getCroppedImg';
 import PulseLoader from "react-spinners/PulseLoader";
+import CIcon from '@coreui/icons-react';
+import { cilZoomIn, cilZoomOut } from '@coreui/icons';
+import { PhotoProvider, PhotoView } from 'react-photo-view';
+import 'react-photo-view/dist/react-photo-view.css';
 
 export default function Cover({ visitor, cover }) {
     const [showCoverMneu, setShowCoverMenu] = useState(false);
@@ -29,7 +33,7 @@ export default function Cover({ visitor, cover }) {
     useEffect(() => {
         setWidth(coverRef.current.clientWidth);
     }, [window.innerWidth]);
-    
+
 
     const [error, setError] = useState("");
 
@@ -99,6 +103,20 @@ export default function Cover({ visitor, cover }) {
         }
     };
 
+    const [isPhotoOpen, setIsPhotoOpen] = useState(false);
+
+    // Add or remove the 'no-scroll' class based on photo view state
+    useEffect(() => {
+        if (isPhotoOpen) {
+            document.body.classList.add('no-scroll');
+            console.log('eeeeee')
+        } else {
+            document.body.classList.remove('no-scroll');
+        }
+        // Clean up on component unmount
+        return () => document.body.classList.remove('no-scroll');
+    }, [isPhotoOpen]);
+
     return (
         <div className="profile_cover" ref={coverRef}>
             {coverPicture && (
@@ -142,7 +160,51 @@ export default function Cover({ visitor, cover }) {
                     />
                 </div>
             )}
-            {cover && !coverPicture && (<img src={cover} className="cover" alt="profile_cover" ref={cRef}></img>)}
+
+            {cover && !coverPicture && (
+                <PhotoProvider
+                    toolbarRender={({ onScale, scale }) => {
+                        return (
+                            <div style={{ display: 'flex', gap: '10px', color: '#fff' }}>
+                                {/* Zoom In Button */}
+                                <button
+                                    style={{
+                                        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '8px 12px',
+                                        cursor: 'pointer',
+                                        borderRadius: '4px',
+                                    }}
+                                    onClick={() => onScale(scale + 1)}
+                                >
+                                    <CIcon icon={cilZoomIn} className="icon_size_20" />
+
+                                </button>
+                                {/* Zoom Out Button */}
+                                <button
+                                    style={{
+                                        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '8px 12px',
+                                        cursor: 'pointer',
+                                        borderRadius: '4px',
+                                    }}
+                                    onClick={() => onScale(scale - 1)}
+                                >
+                                    <CIcon icon={cilZoomOut} className="icon_size_20" />
+                                </button>
+                            </div>
+                        );
+                    }}
+                >
+                    <PhotoView src={cover} >
+                        <img src={cover} className="cover" alt="profile_cover" ref={cRef} onClick={()=> setIsPhotoOpen(true)} ></img>
+                    </PhotoView>
+                </PhotoProvider>
+            )
+            }
             {!visitor && (
                 <div className="udpate_cover_wrapper" ref={addCoverBtnRef}>
                     <div
