@@ -6,6 +6,7 @@ import LeftMenu from '../../components/home/LeftMenu';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import RollingBanner from '../../components/Banner/RollingBanner';
 
 export default function FoodEvent() {
     // const events = [
@@ -70,9 +71,16 @@ export default function FoodEvent() {
     };
 
     const [isEvent, setIsEvent] = useState(true);
+    const messages = [
+        "Don't waste food! Help reduce food waste and make a difference.",
+        "Remember to compost leftovers and recycle whenever possible.",
+        "Plan your meals to avoid excess food waste!",
+        "Store food properly to keep it fresh for longer.",
+      ];
 
     return (
         <div className='food_event_container'>
+            <RollingBanner messages={messages} />
             <div className='food_event_container_title'>Food Events</div>
             <div className='filter_container'><PromotionFilter onResults={handleResults} isEvent={isEvent}/></div>
             <div className="food_event_card_container">

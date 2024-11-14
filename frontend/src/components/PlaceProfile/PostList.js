@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import { Masonry } from '@mui/lab';
@@ -7,6 +7,8 @@ import { styled } from '@mui/material/styles';
 import Pagination from '@mui/material/Pagination';
 import CIcon from '@coreui/icons-react';
 import { Avatar } from '@mui/material';
+import { getPostsByFoodVenue } from '../../functions/foodVenue';
+import { toast } from 'react-toastify';
 
 import {
     cilLocationPin, cilThumbUp
@@ -21,63 +23,85 @@ const Post = styled(Paper)(({ theme }) => ({
     borderRadius: '8px',
 }));
 
-export default function PostList() {
-    const [page, setPage] = React.useState(1);
-    const itemsPerPage = 12;
+export default function PostList({ user, foodVenue }) {
 
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
+    const [foodVenuePost, setFoodVenuePost] = useState([]);
 
-    // Calculate the items to display for the current page
-    const startIndex = (page - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const currentItems = itemData.slice(startIndex, endIndex);
+    useEffect(() => {
+        if (foodVenue && foodVenue.name) {
+            const fetchFoodVenuePost = async () => {
+                try {
+                    const response = await getPostsByFoodVenue(foodVenue.name, user.token);
+                    setFoodVenuePost(response);
+                    console.log(response);
+                } catch (error) {
+                    toast.error("Error fetching food venue, please try again: " + error.message);
+                }
+            };
+
+            fetchFoodVenuePost();
+        }
+    }, [foodVenue?.name, user.token]);
+
+    // const [page, setPage] = React.useState(1);
+    // const itemsPerPage = 12;
+
+    // const handleChangePage = (event, newPage) => {
+    //     setPage(newPage);
+    // };
+
+    // // Calculate the items to display for the current page
+    // const startIndex = (page - 1) * itemsPerPage;
+    // const endIndex = startIndex + itemsPerPage;
+    // const currentItems = itemData.slice(startIndex, endIndex);
 
     return (
         <Box sx={{ width: '100%', minHeight: 829 }}>
-            <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={2}>
-                {currentItems.map((item, index) => (
-                    <Post key={index}>
-                        {item.img && (
-                            <Box
-                                component="img"
-                                srcSet={`${item.img}?w=162&auto=format&dpr=2 2x`}
-                                src={`${item.img}?w=162&auto=format`}
-                                alt={item.title}
-                                loading="lazy"
-                                sx={{
-                                    borderBottomLeftRadius: 4,
-                                    borderBottomRightRadius: 4,
-                                    display: 'block',
-                                    width: '100%',
-                                }}
-                            />
-                        )}
-                        {item.content && (
-                            <div>
-                                <div className='discover_post_user'>
-                                    <div className='discover_post_user_name'>
-                                        <Avatar alt={item.user.name} src={item.user.avatar} sx={{ width: 18, height: 18 }} />{item.user.name}
+            {foodVenuePost && foodVenuePost?.length > 0 ?
+                <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={2}>
+                    {foodVenuePost?.map((post, index) => (
+                        <Post key={index}>
+                            {post.media && (
+                                <Box
+                                    component="img"
+                                    srcSet={`${post.media[0].url}?w=162&auto=format&dpr=2 2x`}
+                                    src={`${post.media[0].url}?w=162&auto=format`}
+                                    // alt={post.title}
+                                    loading="lazy"
+                                    sx={{
+                                        borderBottomLeftRadius: 4,
+                                        borderBottomRightRadius: 4,
+                                        display: 'block',
+                                        width: '100%',
+                                    }}
+                                />
+                            )}
+                            {(
+                                <div>
+                                    <div className='discover_post_user'>
+                                        <div className='discover_post_user_name'>
+                                            <Avatar alt={post.user.name} src={post.user.picture} sx={{ width: 18, height: 18 }} />{post.user.name}
+                                        </div>
+                                        <div>{post?.likes.length !== 0} <CIcon icon={cilThumbUp} className="icon_size_16 icon_button" style={{ position: 'relative', bottom: '1px', marginLeft: '0' }} /></div>
                                     </div>
-                                    <div>10k+ <CIcon icon={cilThumbUp} className="icon_size_16 icon_button" style={{ position: 'relative', bottom: '1px', marginLeft: '0' }} /></div>
+                                    <div className='discover_post_content'>
+                                        <Typography variant="body2" component="p" gutterBottom>
+                                            {post?.text}
+                                        </Typography>
+                                    </div>
                                 </div>
-                                <div className='discover_post_content'>
-                                    <Typography variant="body2" component="p" gutterBottom>
-                                        {item.content}
-                                    </Typography>
-                                </div>
-                            </div>
-                        )}
-                    </Post>
-                ))}
-            </Masonry>
-            <Pagination
+                            )}
+                        </Post>
+                    ))}
+                </Masonry>
+                : <div></div>
+            }
+            {/* <Pagination
                 count={Math.ceil(itemData.length / itemsPerPage)}
                 page={page}
                 onChange={handleChangePage}
                 sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}
-            />
+            /> */}
         </Box>
     );
 }
@@ -116,7 +140,7 @@ const itemData = [
     {
         title: 'Post 4',
         content: "Lunch at The Tribus was an absolute treat! Their seafood platter is fresh and flavorful, and the portions are generous. 🦐 Great spot to catch up with friends over good food. Can't wait to try more from their menu!",
-        img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6nHHJ3B_UUU7tw-38BCe-h52RHkJn9rjvKw&s',        
+        img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6nHHJ3B_UUU7tw-38BCe-h52RHkJn9rjvKw&s',
         user: users[3]
     },
     {

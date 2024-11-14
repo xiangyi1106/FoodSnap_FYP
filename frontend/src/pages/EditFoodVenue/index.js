@@ -11,6 +11,20 @@ import placeOtherInformation from '../../data/placeOtherInformation';
 import ColorToggleButton from './ToggleButton';
 
 export default function EditPlace({ setVisible }) {
+    useEffect(() => {
+        const fetchFoodVenue = async () => {
+            try {
+                const response = await getFoodVenueDetails(id, user.token);
+                setFoodVenue(response);
+                console.log(response);
+            } catch (error) {
+                toast.error("Error fetching food venue, please try again: " + error.message);
+            }
+        };
+
+        fetchFoodVenue();
+    }, [id]);
+    
     const [formData, setFormData] = useState({
         restaurantName: '',
         address: '',

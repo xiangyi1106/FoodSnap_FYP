@@ -38,9 +38,9 @@ const PostDetailsPage = ({ user }) => {
     if (!post) return <div>Loading...</div>;
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh', overflow: 'hidden'}}>
             {/* Left part - Media */}
-            <Box sx={{ flex: 2, marginRight: 2 }}>
+            <Box sx={{ flex: 2, marginRight: 2}} >
                 <div className='close_button hover_style_2' style={{ left: '12px', right: '0' }}><CIcon icon={cilX} className="icon_size_22 close_button_icon" onClick={() => navigate(-1)} /></div>
                 <PostDetailsCarousel media={post.media} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
             </Box>

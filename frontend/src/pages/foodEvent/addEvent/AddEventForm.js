@@ -165,11 +165,7 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
 
     const handlePictureChange = (event, setFieldValue, type) => {
         const file = event.target.files[0];
-        // if (file) {
-        //     setFieldValue(type, URL.createObjectURL(file));
-        // }
         if (file) {
-            // setFieldValue(type, file);
             handleImage(file, setError, setImage); // Use the imported handleImage function
         }
     };
@@ -217,15 +213,9 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
             place_id: selectedItem.place_id,
             name: selectedItem.display_name,
             address: selectedItem.address,
-            // city: selectedItem.address.city || selectedItem.address.town || selectedItem.address.village || '',
-            // postcode: selectedItem.address.postcode || '',
             latitude: selectedItem.lat,
             longitude: selectedItem.lon,
         };
-
-        // Log the selected address to check city and postcode
-        console.log('Selected Address:', selectedAddress);
-
         setAddress(selectedAddress); // Store the selected address in state
         formik.setFieldValue('location', selectedAddress); // Update formik value
         setLocationText(selectedItem.display_name); // Update input state with selected location

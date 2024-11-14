@@ -4,8 +4,10 @@ const { generateCode } = require("../helpers/generateCode");
 const User = require("../models/User");
 const Code = require("../models/Code");
 const Post = require('../models/Post');
+const FoodVenue = require('../models/FoodVenue');
+const SearchTerm = require('../models/SearchTerm');
 const bcrypt = require("bcrypt");
-
+// const { User, Post, Code } = require("../models/models");
 
 const register = async (req, res) => {
 
@@ -317,9 +319,9 @@ const getProfile = async (req, res) => {
         const user = await User.findById(req.user.id);
 
         const profile = await User.findOne({ username })
-        .select("-password")
-        .populate('following', 'username name picture') // Adjust the fields as needed
-        .populate('followers', 'username name picture'); // Adjust the fields as needed
+            .select("-password")
+            .populate('following', 'username name picture') // Adjust the fields as needed
+            .populate('followers', 'username name picture'); // Adjust the fields as needed
 
         if (!profile) {
             return res.status(404).json({ ok: false, message: "Profile not found" });
@@ -338,10 +340,10 @@ const getProfile = async (req, res) => {
             .populate({
                 path: "sharedPost", // Populate the sharedPost field
                 populate: {
-                  path: "user", // Populate the user inside sharedPost
-                  select: "name picture username gender _id" // Select fields to retrieve from user
+                    path: "user", // Populate the user inside sharedPost
+                    select: "name picture username gender _id" // Select fields to retrieve from user
                 }
-              })
+            })
             .sort({ createdAt: -1 });
 
         // await profile.populate("friends", "first_name last_name username picture");
@@ -430,7 +432,7 @@ const updateCover = async (req, res) => {
     }
 };
 
-const deleteProfileImage= async (req, res) => {
+const deleteProfileImage = async (req, res) => {
     try {
         const { userId } = req.params;
         const user = await User.findById(userId);
@@ -501,6 +503,7 @@ const follow = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 const unfollow = async (req, res) => {
     try {
         if (req.user.id !== req.params.id) {
@@ -529,6 +532,333 @@ const unfollow = async (req, res) => {
     }
 };
 
+const searchTerm = async (req, res) => {
+    try {
+        const searchTermParam = req.params.searchTerm;
+        const userId = req.user.id; // Assuming you get user ID from auth middleware
+
+        // Search in User model for matching users
+        const userResults = await User.find({ name: { $regex: searchTermParam, $options: 'i' } }).select(
+            "name username picture"
+        );
+
+        // Search in SearchTerm model for matching search terms using a regex for partial matches
+        const termResults = await SearchTerm.find({
+            term: { $regex: searchTermParam, $options: 'i' } // Case-insensitive search
+        }).select("term searchCount");
+
+        // Combine results into a single response object
+        const combinedResults = [...userResults, ...termResults];
+        res.json(combinedResults);
+
+    } catch (error) {
+        console.error("Error in searchTerm:", error);  // Log error details
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const saveSearchTerm = async (req, res) => {
+    try {
+        const searchTermParam = req.params.searchTerm;
+        const userId = req.user.id; // Assuming you get user ID from auth middleware
+
+        // Save or update the search term in the SearchTerm model
+        let searchTermDoc = await SearchTerm.findOne({ term: searchTermParam });
+
+        if (searchTermDoc) {
+            // If the term already exists, update the user searches
+            const userSearch = { user: userId, timestamp: new Date() };
+            const existingUserSearch = searchTermDoc.searches.find(search => search.user.toString() === userId);
+
+            if (existingUserSearch) {
+                // If the user already searched this term, update the timestamp
+                existingUserSearch.timestamp = new Date();
+            } else {
+                // If it's a new search by the user, push the new search
+                searchTermDoc.searches.push(userSearch);
+            }
+        } else {
+            // If the term does not exist, create a new entry
+            searchTermDoc = new SearchTerm({
+                term: searchTermParam,
+                searches: [{ user: userId }],
+            });
+        }
+
+        // Save the updated or new search term document
+        await searchTermDoc.save();
+
+        res.json("ok");
+
+    } catch (error) {
+        console.error("Error in searchTerm:", error);  // Log error details
+        res.status(500).json({ message: error.message });
+    }
+}
+
+const addToSearchHistory = async (req, res) => {
+    try {
+        const { searchTerm } = req.body;
+        const search = {
+            searchTerm: searchTerm,
+            createdAt: new Date(),
+        };
+        const user = await User.findById(req.user.id);
+        const check = user.search.find((x) => x.user.toString() === searchTerm);
+        if (check) {
+            await User.updateOne(
+                {
+                    _id: req.user.id,
+                    "search._id": check._id,
+                },
+                {
+                    $set: { "search.$.createdAt": new Date() },
+                }
+            );
+        } else {
+            await User.findByIdAndUpdate(req.user.id, {
+                $push: {
+                    search,
+                },
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const saveSearchTermAndHistory = async (req, res) => {
+    try {
+        const searchTermParam = req.params.searchTerm; // Get the search term from the request params
+        const userId = req.user.id; // Assuming you get user ID from auth middleware
+
+        // Save or update the search term in the SearchTerm model
+        let searchTermDoc = await SearchTerm.findOne({ term: searchTermParam });
+
+        if (searchTermDoc) {
+            // If the term already exists, update the user searches
+            const userSearch = { user: userId, timestamp: new Date() };
+            const existingUserSearch = searchTermDoc.searches.find(search => search.user.toString() === userId);
+
+            if (existingUserSearch) {
+                // If the user already searched this term, update the timestamp
+                existingUserSearch.timestamp = new Date();
+            } else {
+                // If it's a new search by the user, push the new search
+                searchTermDoc.searches.push(userSearch);
+            }
+        } else {
+            // If the term does not exist, create a new entry
+            searchTermDoc = new SearchTerm({
+                term: searchTermParam,
+                searches: [{ user: userId, timestamp: new Date() }], // Initialize with the user's search
+            });
+        }
+
+        // Save the updated or new search term document
+        await searchTermDoc.save();
+
+        // Update user's search history
+        const searchHistoryEntry = {
+            searchTerm: searchTermParam,
+            createdAt: new Date(),
+        };
+
+        const user = await User.findById(userId);
+        const existingHistoryEntry = user.search.find(entry => entry.searchTerm === searchTermParam);
+
+        if (existingHistoryEntry) {
+            // If the search term already exists in user's history, update the timestamp
+            await User.updateOne(
+                {
+                    _id: userId,
+                    "search._id": existingHistoryEntry._id,
+                },
+                {
+                    $set: { "search.$.createdAt": new Date() },
+                }
+            );
+        } else {
+            // If it's a new search, push the new entry into user's search history
+            await User.findByIdAndUpdate(userId, {
+                $push: { search: searchHistoryEntry },
+            });
+        }
+
+        res.json("ok");
+
+    } catch (error) {
+        console.error("Error in saveSearchTermAndHistory:", error);  // Log error details
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const getSearchHistory = async (req, res) => {
+    try {
+        const results = await User.findById(req.user.id)
+            .select("search")
+        res.json(results.search);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const removeFromSearch = async (req, res) => {
+    try {
+        const searchTerm = req.params.searchTerm; // Get the search term from the request params
+        // const { searchTerm } = req.body;
+        const userId = req.user.id;
+
+        console.log("Removing search term:", searchTerm);
+        console.log("User ID:", userId);
+
+        const updateResult = await User.updateOne(
+            { _id: userId },
+            { $pull: { search: { searchTerm: searchTerm } } }
+        );
+
+        if (updateResult.nModified > 0) {
+            res.json({ message: "Search term removed successfully." });
+        } else {
+            res.status(404).json({ message: "Search term not found." });
+        }
+    } catch (error) {
+        console.error("Error in removeFromSearch:", error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const clearSearchHistory = async (req, res) => {
+    try {
+        const userId = req.user.id; // Ensure user ID is retrieved from auth middleware
+
+        // Update the user's document by setting the search array to an empty array
+        await User.findByIdAndUpdate(userId, { search: [] });
+
+        res.json({ message: 'Search history cleared successfully.' });
+    } catch (error) {
+        console.error("Error in clearSearchHistory:", error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const searchResult = async (req, res) => {
+    try {
+        const searchTermParam = req.params.term;
+        console.log(searchTermParam);
+        const userId = req.user.id; // Assuming you get user ID from auth middleware
+
+        // Step 1: Search in User model for matching users
+        const userResults = await User.find({
+            name: { $regex: searchTermParam, $options: 'i' }
+        })
+            .select("name username picture")
+            .lean()
+            .exec();
+
+        // Step 2: Search in Post model for matching posts
+        const postResults = await Post.find({
+            $or: [
+                { text: { $regex: searchTermParam, $options: 'i' } },
+                { hashtag: { $regex: searchTermParam, $options: 'i' } }
+            ]
+        })
+            .populate('user', 'name username picture')
+            .sort({ likes: -1, createdAt: -1 })  // Sort by likes and recency for relevance
+            .lean()
+            .exec();
+
+        // Step 3: Combine results and sort by custom relevance criteria
+        const combinedResults = [
+            ...userResults.map(user => ({ ...user, type: 'user' })),
+            ...postResults.map(post => ({ ...post, type: 'post' }))
+        ];
+
+        res.json(combinedResults);
+        console.log(combinedResults);
+
+    } catch (error) {
+        console.error("Error in searchTerm:", error);  // Log error details
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const addToFoodVenueWishlist = async (req, res) => {
+    try {
+        const userId = req.user.id; // Assuming you get user ID from auth middleware
+        const { id } = req.params;
+    
+        //Add attribute if database does not have
+        // await User.updateMany({ foodVenueWishlist: { $exists: false } }, { foodVenueWishlist: [] });
+        console.log("userid", userId);
+        console.log("id", id);
+
+        const user = await User.findByIdAndUpdate(
+          userId,
+          { $addToSet: { foodVenueWishlist: id } }, // Avoids duplicates
+          { new: true }
+        ).populate("foodVenueWishlist");
+    
+        res.status(200).json(user.foodVenueWishlist);
+        console.log(user.foodVenueWishlist);
+
+      } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: "Error adding to wishlist" });
+      }
+};
+
+const removeFromFoodVenueWishlist = async (req, res) => {
+    try {
+        const  userId  = req.user.id; // Assuming authentication middleware
+        const { id } = req.params;
+    
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { $pull: { foodVenueWishlist: id } },
+            { new: true }
+          ).populate("foodVenueWishlist");
+    
+        res.status(200).json(user.foodVenueWishlist);
+      } catch (error) {
+        res.status(500).json({ message: "Error adding to wishlist" });
+      }
+};
+
+const getFoodVenueWishlist = async (req, res) => {
+    try {
+      // Assuming user is authenticated and we have req.user.id
+      const user = await User.findById(req.user.id).populate("foodVenueWishlist"); // Populate wishlist with restaurant details
+      if (!user) return res.status(404).json({ message: "User not found" });
+  
+      res.json(user.foodVenueWishlist); // Respond with populated wishlist
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
+
+  // In your wishlist controller file
+const checkFoodVenueInWishlist = async (req, res) => {
+    try {
+      const { id } = req.params; // ID of the food venue to check
+      const userId = req.user.id; // Authenticated user's ID
+  
+      const user = await User.findById(userId);
+  
+      if (!user) return res.status(404).json({ message: "User not found" });
+  
+      // Check if the foodVenue ID exists in the user's wishlist
+      const isInWishlist = user.foodVenueWishlist.includes(id);
+  
+      res.json({ isInWishlist });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Error checking wishlist" });
+    }
+  };
+
+  
 module.exports = {
     register,
     login,
@@ -544,5 +874,17 @@ module.exports = {
     getListImages,
     follow,
     unfollow,
+    searchTerm,
+    saveSearchTerm,
+    addToSearchHistory,
+    saveSearchTermAndHistory,
+    getSearchHistory,
+    removeFromSearch,
+    clearSearchHistory,
+    searchResult,
+    addToFoodVenueWishlist,
+    removeFromFoodVenueWishlist,
+    getFoodVenueWishlist,
+    checkFoodVenueInWishlist,
     // auth,
 };

@@ -42,7 +42,8 @@ const postSchema = new mongoose.Schema(
         mentions: [
             {
               name: String,
-              userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+              userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+              username: String
             }
           ],
         location: [{

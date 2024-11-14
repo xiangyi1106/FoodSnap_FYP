@@ -15,13 +15,13 @@ export default function ProfileMenu({ username }) {
         <Link to={`/profile/${username}`} className={currentPath === `/profile/${username}` ? 'logo_color_text' : 'logo_color_hover'}>
           Posts
         </Link>
-        <Link to={`/profile/${username}/following`}className={currentPath === `/profile/${username}/photos` ? 'logo_color_text' : 'logo_color_hover'}>
+        <Link to={`/profile/${username}/following`}className={currentPath === `/profile/${username}/following` ? 'logo_color_text' : 'logo_color_hover'}>
           Following
         </Link>
-        <Link to={`/profile/${username}/followers`} className={currentPath === `/profile/${username}/following` ? 'logo_color_text' : 'logo_color_hover'}>
+        <Link to={`/profile/${username}/followers`} className={currentPath === `/profile/${username}/followers` ? 'logo_color_text' : 'logo_color_hover'}>
           Followers
         </Link>
-        <Link to={`/profile/${username}/photos`} className={currentPath === `/profile/${username}/followers` ? 'logo_color_text' : 'logo_color_hover'}>
+        <Link to={`/profile/${username}/photos`} className={currentPath === `/profile/${username}/photos` ? 'logo_color_text' : 'logo_color_hover'}>
           Photos
         </Link>
         <Link to={`/profile/${username}/myFoodMap`} className={currentPath === `/profile/${username}/myFoodMap` ? 'logo_color_text' : 'logo_color_hover'}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import StarRating from '../searchVenue/StarRating';
@@ -6,49 +6,75 @@ import { IconButton, Tooltip } from '@mui/material';
 import CIcon from '@coreui/icons-react';
 import { cilColorBorder, cilBookmark } from '@coreui/icons';
 import EditPlaceInfo from './EditPlaceInfo';
+import { addToFoodVenueWishlist, checkFoodVenueInWishlist, getFoodVenueWishlist, removeFromFoodVenueWishlist } from '../../functions/user';
 
-export default function PlaceProfilePictureInfo({
-  imageUrl,
-  placeName,
-  rating,
-  reviewCount,
-  priceLevel,
-  categories,
-  // setVisible,
-  // visible,
-}) {
+export default function PlaceProfilePictureInfo({ foodVenue, user }) {
   const [visible, setVisible] = useState(false);
+
+  const [wishlist, setWishlist] = useState([]);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+
+  useEffect(() => {
+    const checkWishlistStatus = async () => {
+      const isInWishlist = await checkFoodVenueInWishlist(foodVenue._id, user.token);
+      setIsWishlisted(isInWishlist);
+    };
+  
+    checkWishlistStatus();
+  }, []);
+
+
+  const handleWishlistToggle = async () => {
+    // const result = isWishlisted
+    //   ? await removeFromFoodVenueWishlist(foodVenue._id, user.token)
+    //   : await addToFoodVenueWishlist(foodVenue._id, user.token);
+    // setIsWishlisted((prev)=> );
+    // console.log(result);
+    try {
+      // Toggle wishlist state
+      const newWishlistStatus = !isWishlisted;
+      setIsWishlisted(newWishlistStatus);
+
+      if (newWishlistStatus) {
+        await addToFoodVenueWishlist(foodVenue._id, user.token); // Assume this is your API call
+      } else {
+        await removeFromFoodVenueWishlist(foodVenue._id, user.token); // Assume this is your API call
+      }
+    } catch (error) {
+      console.error('Error updating wishlist', error);
+    }
+  };
+
   return (
     <div className='profile_picture_wrapper' style={{ padding: '0 4rem' }}>
-      {visible && <EditPlaceInfo setVisible={setVisible} />}
+      {visible && <EditPlaceInfo setVisible={setVisible} id={foodVenue._id} user={user} />}
       <div className='profile_picture_left'>
         <div className='profile_picture'>
           <div
             className='profile_picture_bg'
             style={{
               backgroundSize: 'cover',
-              cursor: 'default',
-              backgroundImage: `url(${imageUrl})`,
+              backgroundImage: `url(${foodVenue?.picture || 'https://cdn.pixabay.com/photo/2016/02/09/05/29/simply-1188338_1280.jpg'})`,
             }}
           ></div>
         </div>
         <div className='profile_col'>
           <div className='place_profile'>
-            <span className='place_profile_name'>{placeName}</span>
+            <span className='place_profile_name'>{foodVenue?.name}</span>
             <span>
               <div className='place-ratings'>
-                <StarRating rating={rating} />
+                <StarRating rating={foodVenue?.rating} />
                 <span className='rating-text' style={{ marginRight: '10px' }}>
-                  {rating}
+                  {foodVenue?.rating}
                 </span>
-                <span className='rating-text'>{`(${reviewCount})`}</span>
-                <span className='price-level'>{priceLevel}</span>
+                {/* <span className='rating-text'>{`(${reviewCount})`}</span> */}
+                <span className='price-level'>{foodVenue?.priceRange}</span>
               </div>
             </span>
             <div className='badge_category_container source-sans-3-bold'>
-              {categories.map((category) => (
-                <span className='badge_category' key={category}>
-                  {category}
+              {foodVenue && foodVenue.dishesType.length > 0 && foodVenue.dishesType.map((c) => (
+                <span className='badge_category' key={c}>
+                  {c}
                 </span>
               ))}
             </div>
@@ -65,7 +91,13 @@ export default function PlaceProfilePictureInfo({
           </IconButton>
         </Tooltip>
         <Tooltip title='Save Wishlist Place'>
-          <IconButton aria-label='save' sx={{ border: '1px solid gray' }}>
+          <IconButton aria-label='save'
+            sx={{
+              border: '1px solid gray',
+              backgroundColor: isWishlisted ? '#30BFBF' : 'white',
+              transition: 'background-color 0.3s ease',
+            }}
+            onClick={handleWishlistToggle}>
             <CIcon icon={cilBookmark} className='icon_size_20' />
           </IconButton>
         </Tooltip>

@@ -1,12 +1,12 @@
 import React from 'react'
 import PostList from './PostList'
-import PlaceProfilePostList from './PlaceProfilePostList'
+import { useOutletContext } from 'react-router-dom';
 
 export default function PlaceProfileRelatedPost({user}) {
+  const { foodVenue } = useOutletContext(); // Fetch the user profile data from context
   return (
     <div className='place_profile_photos'>
-        <PostList />
-        {/* <PlaceProfilePostList user={user}/> */}
+        <PostList user={user} foodVenue={foodVenue}/>
     </div>
   )
 }

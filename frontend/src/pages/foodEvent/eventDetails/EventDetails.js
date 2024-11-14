@@ -41,7 +41,6 @@ const EventDetails = ({ user }) => {
             <Header />
             <div className="place_details_wrapper">
                 {visible && <EditEvent eventId={event?._id} user={user} setVisible={setVisible}/>}
-                {/* {visible && <EditFoodVenueForm />} */}
                 <CustomBreadcrumbs breadcrumbs={breadcrumbs} />
                 <div className="profile_top" style={{ marginTop: '0' }}>
                     <div className="profile_container" style={{ maxWidth: "none" }}>

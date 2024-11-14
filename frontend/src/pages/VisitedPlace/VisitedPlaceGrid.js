@@ -2,10 +2,6 @@ import React, { useState } from 'react';
 import './style.css';
 
 const VisitedPlaceGrid = ({ year, month, visits, onDayClick  }) => {
-    // Correct calculation for the number of days in the month
-    // const daysInMonth = new Date(year, month, 0).getDate();
-    // Get the day of the week of the first day of the month (0 = Sunday, 6 = Saturday)
-    // const firstDayOfMonth = new Date(year, month - 1, 1).getDay();
 
     // Correct calculation for the number of days in the month (month should be zero-indexed)
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -32,7 +28,6 @@ const VisitedPlaceGrid = ({ year, month, visits, onDayClick  }) => {
     const handleDayClick = (day) => {
         setSelectedDate(selectedDate === day ? null : day); // Toggle selection
         onDayClick(day); // Pass the clicked day to the parent
-        console.log(day);
     };
 
     // Render the grid

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CIcon from '@coreui/icons-react';
 import { cilArrowLeft, cilCheckAlt, cilX } from '@coreui/icons';
 import './EditPlaceInfo.css';
@@ -10,42 +10,81 @@ import OpeningHours from './OpeningHours';
 import placeOtherInformation from '../../data/placeOtherInformation';
 import ColorToggleButton from './ToggleButton';
 import { foodVenueTypes } from '../../data/foodVenueTypes';
+import { getFoodVenueDetails } from '../../functions/foodVenue';
+import { toast } from 'react-toastify';
+import OtherInfoToggleButtons from './OtherInfoToggleButtons ';
 
-export default function EditPlaceInfo({ setVisible }) {
+export default function EditPlaceInfo({ setVisible, id, user }) {
+
     const [formData, setFormData] = useState({
         restaurantName: '',
-        category: {type: 'Restaurant'},
+        category: { type: 'Restaurant' },
         address: '',
-        postalCode: '',
-        city: '',
-        state: 'Johor',
+        // postalCode: '',
+        // city: '',
+        // state: 'Johor',
         latitude: '',
         longitude: '',
         phone: '',
         openingHours: {},
+        priceRange: '',
         website: '',
         description: '',
-        otherInfo: placeOtherInformation.reduce((acc, info) => ({ ...acc, [info]: 'noInfo' }), {}),
         serviceCharge: 0,
         sstCharge: 0,
         profilePicture: null,
         coverPicture: null,
         type: [],
-        // otherInfo: {
-        //     halalOptions: 'noInfo',
-        //     vegetarianOptions: 'noInfo',
-        //     airConditioning: 'noInfo',
-        //     freeWiFi: 'noInfo',
-        //     offersTakeout: 'noInfo',
-        //     needsReservations: 'noInfo',
-        //     alcoholicDrinks: 'noInfo',
-        //     wheelchairAccessible: 'noInfo',
-        //     dogsAllowed: 'noInfo',
-        //     acceptsDebitCards: 'noInfo',
-        //     acceptsCreditCards: 'noInfo',
-        //     acceptsTngBoostQrPayment: 'noInfo',
-        // }
+        otherInfo: [{ // Initialize otherInfo as an array with an object
+            acceptsCreditCards: "No", // Default value
+            acceptsDebitCards: "No", // Default value
+            acceptsTNGBoostQRPayment: "No", // Default value
+            airConditioning: "No", // Default value
+            alcoholicDrinks: "No", // Default value
+            dogsAllowed: "No", // Default value
+            halalOptions: "No", // Default value
+            needsReservations: "No", // Default value
+            offersTakeout: "No", // Default value
+            vegetarianOptions: "No", // Default value
+            wheelchairAccessible: "No", // Default value
+            wifi: "No" // Default value
+        }],
     });
+
+    useEffect(() => {
+        const fetchFoodVenue = async () => {
+            try {
+                const response = await getFoodVenueDetails(id, user.token);
+
+                setFormData({
+                    restaurantName: response.name || '',
+                    address: response.address || '',
+                    // postalCode: response.postalCode || '',
+                    // city: response.city || '',
+                    // state: response.state || 'Johor',
+                    phone: response.phone || '',
+                    website: response.website || '',
+                    description: response.description || '',
+                    otherInfo: response.otherinfo[0],
+                    serviceCharge: response.serviceCharge || 0,
+                    sstCharge: response.sstCharge || 0,
+                    profilePicture: response.picture || null,
+                    coverPicture: response.cover || null,
+                    priceRange: response.priceRange || '',
+                    openingHours: response.openingHours || {}
+                });
+
+                console.log(response);
+                console.log(response.openingHours);
+            } catch (error) {
+                toast.error("Error fetching food venue, please try again: " + error.message);
+            }
+        };
+
+        fetchFoodVenue();
+    }, [id, user.token]);
+
+
     const [errors, setErrors] = useState({});
     const pictureInput = useRef(null);
     const coverInput = useRef(null);
@@ -63,19 +102,6 @@ export default function EditPlaceInfo({ setVisible }) {
         matchFrom: 'start',
         stringify: (option) => option,
     });
-
-    //Handle input change for otherInfo
-    const handleOtherInfoToggle = useCallback((info) => (event, newValue) => {
-        if (newValue !== null) {
-            setFormData(prevFormData => ({
-                ...prevFormData,
-                otherInfo: {
-                    ...prevFormData.otherInfo,
-                    [info]: newValue,
-                },
-            }));
-        }
-    }, [setFormData]);
 
     //Handle Input Change for serviceCharge and SST 
     const handleChargeChange = (event) => {
@@ -137,13 +163,13 @@ export default function EditPlaceInfo({ setVisible }) {
     };
 
 
-    const handleCityChange = (event, newValue) => {
-        setFormData((prevData) => ({
-          ...prevData,
-          city: newValue || "", // Update city value from Autocomplete
-        }));
-      };
-      
+    // const handleCityChange = (event, newValue) => {
+    //     setFormData((prevData) => ({
+    //         ...prevData,
+    //         city: newValue || "", // Update city value from Autocomplete
+    //     }));
+    // };
+
 
     const validatePhoneNumber = (phone) => {
         const cleanedPhone = phone.replace(/-/g, ''); // Remove hyphens for validation
@@ -258,7 +284,7 @@ export default function EditPlaceInfo({ setVisible }) {
                                 </div>
                             </div>
 
-                            <div className="edit_place_info_basic_row">
+                            {/* <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">
                                     Category
                                 </div>
@@ -278,7 +304,8 @@ export default function EditPlaceInfo({ setVisible }) {
                                         required
                                     />
                                 </div>
-                            </div>
+                            </div> */}
+
                             <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">
                                     Address
@@ -296,7 +323,7 @@ export default function EditPlaceInfo({ setVisible }) {
 
                                 </div>
                             </div>
-                            <div className="edit_place_info_basic_row">
+                            {/* <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">
                                     City
                                 </div>
@@ -307,7 +334,6 @@ export default function EditPlaceInfo({ setVisible }) {
                                         getOptionLabel={(option) => option}
                                         filterOptions={filterOptions}
                                         sx={{ width: 340 }}
-                                        // sx={{ width: '100%' }}
                                         value={formData.city}
                                         onChange={handleCityChange}
                                         name="city"
@@ -335,7 +361,7 @@ export default function EditPlaceInfo({ setVisible }) {
                                     {errors.postalCode && <span className="error_message">{errors.postalCode}</span>}
 
                                 </div>
-                            </div>
+                            </div> */}
                             <div className="edit_place_info_basic_row" >
                                 <div className="edit_place_info_basic_label">
                                     Latitude
@@ -368,7 +394,7 @@ export default function EditPlaceInfo({ setVisible }) {
                                     <p style={{ color: 'gray', fontSize: '0.85rem' }}>Provide latitude and longitude to perform a better accuracy on the map.</p>
                                 </div>
                             </div>
-                            <div className="edit_place_info_basic_row" >
+                            {/* <div className="edit_place_info_basic_row" >
                                 <div className="edit_place_info_basic_label">
                                     State
                                 </div>
@@ -380,7 +406,7 @@ export default function EditPlaceInfo({ setVisible }) {
                                     onChange={handleChange}
                                     style={{ width: '35%' }}
                                 />
-                            </div>
+                            </div> */}
                             <div className="edit_place_info_basic_row" >
                                 <div className="edit_place_info_basic_label" >
                                     Phone
@@ -411,11 +437,25 @@ export default function EditPlaceInfo({ setVisible }) {
                                     />
                                 </div>
                             </div>
+                            <div className="edit_place_info_basic_row" >
+                                <div className="edit_place_info_basic_label">
+                                    Price Range
+                                </div>
+                                <div className="edit_place_info_basic_col full_width" style={{ width: '35%' }}>
+                                    <input
+                                        className="edit_place_info_basic_input "
+                                        name="latitude"
+                                        value={formData.priceRange}
+                                        onChange={handleChange}
+                                    />
+                                    {errors.priceRange && <span className="error_message">{errors.priceRange}</span>}
+                                </div>
+                            </div>
                             <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">
                                     Opening Hours
                                 </div>
-                                <OpeningHours formData={formData} setFormData={setFormData} />
+                                <OpeningHours openingHours={formData.openingHours} setFormData={setFormData} />
                             </div>
                             <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">
@@ -429,19 +469,16 @@ export default function EditPlaceInfo({ setVisible }) {
                                     style={{ resize: 'none', height: '120px' }}
                                 />
                             </div>
-                            <div className="edit_place_info_basic_row">
+                            {/* <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">
                                     Dish / Restaurant Type
                                 </div>
                                 <div style={{ width: '70%' }}>
-                                    {/* <div style={{ display: 'flex', justifyContent: 'center' }}> */}
                                     <Autocomplete
                                         multiple
                                         id="tags-standard"
                                         options={restaurantTypes}
                                         getOptionLabel={(option) => option}
-                                        // filterOptions={filterOptions}
-                                        // value={formData.type || []} // Set the value from formData
                                         onChange={handleDishTypeChange} // Handle change
                                         renderInput={(params) => (
                                             <TextField
@@ -450,22 +487,22 @@ export default function EditPlaceInfo({ setVisible }) {
                                             />
                                         )}
                                     />
-                                    {/* </div> */}
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                         <div className="edit_place_info_basic">
-                            {placeOtherInformation.map((info, index) => (
+                            {/* {placeOtherInformation.map((info, index) => (
                                 <div className="edit_place_info_basic_row" key={index}>
                                     <div className="edit_place_info_basic_label">
                                         {info}
                                     </div>
                                     <div className='' style={{ width: '70%' }}>
-                                        <ColorToggleButton value={formData.otherInfo[info]}
+                                        <ColorToggleButton value={formData.otherinfo[info]}
                                             onChange={handleOtherInfoToggle(info)} />
                                     </div>
                                 </div>
-                            ))}
+                            ))} */}
+                            <OtherInfoToggleButtons formData={formData} setFormData={setFormData} />
                             <div className="edit_place_info_basic_row" >
                                 <div className="edit_place_info_basic_label">
                                     Service Charge

@@ -2,10 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export default function PlaceProfileOverviewInfoRight({
-    telephone,
-    website,
-    address,
-    openingHours,
+    foodVenue
 }) {
     return (
         <div className="profile_card">
@@ -13,7 +10,7 @@ export default function PlaceProfileOverviewInfoRight({
             <div className="info_profile">
                 <div className="info_profile_title logo_color_text source-sans-3-bold">Telephone</div>
             </div>
-            <span className="info_profile_title_text">{telephone}</span>
+            <span className="info_profile_title_text">{foodVenue?.phone || "-"}</span>
             <div className="divider_split"></div>
 
             {/* Website */}
@@ -21,17 +18,16 @@ export default function PlaceProfileOverviewInfoRight({
                 <div className="info_profile_title logo_color_text source-sans-3-bold">Website</div>
             </div>
             <span className="info_profile_title_text">
-                <a href={website} target="_blank" rel="noopener noreferrer">
-                    {website}
+                <a href={foodVenue?.website} target="_blank" rel="noopener noreferrer">
+                    {foodVenue?.website || "-"}
                 </a>
             </span>
             <div className="divider_split"></div>
-
             {/* Address */}
             <div className="info_profile">
                 <div className="info_profile_title logo_color_text source-sans-3-bold">Address</div>
             </div>
-            <span className="info_profile_title_text">{address}</span>
+            <span className="info_profile_title_text">{foodVenue?.address || "-"}</span>
             <div className="divider_split"></div>
 
             {/* Opening Hours */}
@@ -39,20 +35,22 @@ export default function PlaceProfileOverviewInfoRight({
                 <div className="info_profile_title logo_color_text source-sans-3-bold">Opening Hours</div>
             </div>
             <div className="opening_hour">
-                <div className="opening_hour_days">
-                    {openingHours.map((day, index) => (
-                        <div key={index} className="opening_hour_day">
-                            {day.day}
+                {Object.entries(foodVenue?.openingHours || {}).map(([day, times], index) => (
+                    <div key={index} className="opening_hour_row">
+                        <div className="opening_hour_day">{day.charAt(0).toUpperCase() + day.slice(1)}</div>
+                        <div className="opening_hour_time">
+                            {times.length > 0 ? (
+                                times.map((time, idx) => (
+                                    <div key={idx}>
+                                        {time.open} - {time.close}
+                                    </div>
+                                ))
+                            ) : (
+                                <span>Closed</span>
+                            )}
                         </div>
-                    ))}
-                </div>
-                <div className="opening_hour_days">
-                    {openingHours.map((day, index) => (
-                        <div key={index} className="opening_hour_time">
-                            {day.time}
-                        </div>
-                    ))}
-                </div>
+                    </div>
+                ))}
             </div>
         </div>
     );

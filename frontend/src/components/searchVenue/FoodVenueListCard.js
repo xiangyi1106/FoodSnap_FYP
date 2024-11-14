@@ -1,16 +1,16 @@
 import React from "react";
 import StarRating from "./StarRating";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-const PlaceDetail = ({ place, setVisible }) => {
+const FoodVenueListCard = ({ place }) => {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate('/venue'); // Change the path to the desired settings link
+    navigate(`/foodVenue/${place._id}`); // Change the path to the desired settings link
   };
   return (
     // <div className="place-detail" onClick={() => setVisible(true)}>
-    <div className="place-detail" onClick={handleNavigate}>
+    <Link to={`/foodVenue/${place._id}`} className="place-detail">
       <div className="place-header">
         <div className="place-info">
           <div className="place-title">
@@ -18,8 +18,8 @@ const PlaceDetail = ({ place, setVisible }) => {
           </div>
           <div className="place-ratings">
             <StarRating rating={place.rating} />
-            <span className="rating-text">{`(${place.review_count})`}</span>
-            <span className="price-level">{place.price_level}</span>
+            {/* <span className="rating-text">{`(${place.review_count})`}</span> */}
+            <span className="price-level">{place.priceRange}</span>
           </div>
           <div className="open-status">{place.opening_status}</div>
           {place?.dietary_restrictions && (
@@ -34,8 +34,8 @@ const PlaceDetail = ({ place, setVisible }) => {
           <img
             className="place-image"
             src={
-              place.photo
-                ? place.photo.images.large.url
+              place.picture
+                ? place.picture
                 : "https://explorelompoc.com/wp-content/uploads/2021/06/food_placeholder.jpg"
             }
             alt={place.name}
@@ -48,8 +48,8 @@ const PlaceDetail = ({ place, setVisible }) => {
           <span className="address-text">{place.address}</span>
         </div>
       )}
-    </div>
+    </Link>
   );
 };
 
-export default PlaceDetail;
+export default FoodVenueListCard;

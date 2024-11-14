@@ -3,7 +3,7 @@ import CIcon from '@coreui/icons-react';
 import { cilArrowLeft, cilCheckAlt, cilX } from '@coreui/icons';
 
 export const InfoItem = ({ status, text }) => {
-    const icon = status === 'yes' ? cilCheckAlt : cilX;
+    const icon = status === 'Yes' ? cilCheckAlt : cilX;
   
     return (
       <div className="other_info_text_wrapper">

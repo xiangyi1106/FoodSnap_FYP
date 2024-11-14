@@ -1,6 +1,4 @@
-const User = require("../models/User");
 const Event = require("../models/Event");
-const FoodVenue = require("../models/FoodVenue");
 
 exports.addEvent = async (req, res) => {
     const {

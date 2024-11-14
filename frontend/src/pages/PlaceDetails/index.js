@@ -1,62 +1,108 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../../components/header'
 import CustomBreadcrumbs from '../../components/BreadCrumbs'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Outlet, useLocation, useParams } from 'react-router-dom'
 import PlaceProfilePictureInfo from '../../components/PlaceProfile/PlaceProfilePictureInfo'
 import PlaceProfileMenu from '../../components/PlaceProfile/PlaceProfileMenu'
 import './style.css'
 import PlaceDetailsNav from '../../components/PlaceDetails/PlaceDetailsNav'
 import { generateBreadcrumbs } from '../../functions/generateBreadCrumbs'
-import EditFoodVenueForm from '../EditFoodVenue/EditFoodVenueForm'
+import { getFoodVenueDetails } from '../../functions/foodVenue'
+import { toast } from 'react-toastify'
 
-export default function PlaceDetailsLayout() {
+export default function PlaceDetailsLayout({ user }) {
 
     const location = useLocation();
 
     // Generate breadcrumbs using the reusable function
-    const breadcrumbs = generateBreadcrumbs(location, 'SearchVenue', '/searchVenue');
+    // const breadcrumbs = generateBreadcrumbs(location, 'SearchVenue', '/searchVenue');
+
+    const { id } = useParams();
+    const [foodVenue, setFoodVenue] = useState(null);
+
+    // Generate breadcrumbs using the reusable function
+    const breadcrumbs = generateBreadcrumbs(location, 'Search Venue', '/searchVenue', foodVenue?.name);
+
+    useEffect(() => {
+        const fetchFoodVenue = async () => {
+            try {
+                const response = await getFoodVenueDetails(id, user.token);
+                setFoodVenue(response);
+                console.log(response);
+            } catch (error) {
+                toast.error("Error fetching food venue, please try again: " + error.message);
+            }
+        };
+
+        fetchFoodVenue();
+    }, [id]);
+
+    const [loading, setLoading] = useState(true);
+    const [isMounted, setIsMounted] = useState(true); // Track if the component is mounted
+
+    // useEffect(() => {
+    //     const fetchFoodVenue = async () => {
+    //         setLoading(true); // Start loading
+    //         try {
+    //             const response = await getFoodVenueDetails(id, user.token);
+    //             if (isMounted) {
+    //                 setFoodVenue(response);
+    //             }
+    //         } catch (error) {
+    //             if (isMounted) {
+    //                 toast.error("Error fetching food venue, please try again: " + error.message);
+    //             }
+    //         } finally {
+    //             if (isMounted) {
+    //                 setLoading(false); // Stop loading
+    //             }
+    //         }
+    //     };
+
+    //     fetchFoodVenue();
+
+    //     return () => {
+    //         setIsMounted(false); // Cleanup function to mark the component as unmounted
+    //     };
+    // }, [id, user.token]); // Add user.token if needed
 
     const menuItems = [
-        { name: 'overview', label: 'Overview', href: '/venue' },
-        { name: 'reviews', label: 'Reviews', href: '/venue/reviews' },
-        { name: 'posts', label: 'Posts', href: '/venue/posts' },
-        { name: 'photos', label: 'Photos', href: '/venue/photos' },
-        { name: 'menu', label: 'Menu', href: '/venue/menu' },
-        { name: 'promotions', label: 'Promotions', href: '/venue/promotions' },
-        { name: 'events', label: 'Events', href: '/venue/events' },
+        { name: 'overview', label: 'Overview', href: `/foodVenue/${id}` },
+        { name: 'reviews', label: 'Reviews', href: `/foodVenue/${id}/reviews` },
+        { name: 'posts', label: 'Posts', href: `/foodVenue/${id}/posts` },
+        { name: 'photos', label: 'Photos', href: `/foodVenue/${id}/photos` },
+        { name: 'menu', label: 'Menu', href: `/foodVenue/${id}/menu` },
+        { name: 'promotions', label: 'Promotions', href: `/foodVenue/${id}/promotions` },
+        { name: 'events', label: 'Events', href: `/foodVenue/${id}/events` },
     ];
 
-    const [visible, setVisible] = useState(false);
+    // if (loading) {
+    //     return <div>Loading...</div>; // Add your loading indicator here
+    // }
 
     return (
         <div className="profile place_detail_information">
             <Header />
             <div className="place_details_wrapper">
-                {/* {visible && <EditFoodVenueForm />} */}
                 <CustomBreadcrumbs breadcrumbs={breadcrumbs} />
                 <div className="profile_top" style={{ marginTop: '0' }}>
                     <div className="profile_container" style={{ maxWidth: "none" }}>
                         <div className="profile_cover">
-                            <img src={'https://scontent.fkul15-1.fna.fbcdn.net/v/t39.30808-6/444904586_842473537917351_7715127171235446297_n.jpg?stp=dst-jpg_s960x960&_nc_cat=105&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=7c79fWvSVywQ7kNvgEgbf90&_nc_ht=scontent.fkul15-1.fna&oh=00_AYD9zOAl4-pQh09VwnQxWfSGFFD1_12FYcbR2vSK9x5OWQ&oe=66CA46B4'} className="cover" alt="profile_cover"></img>
+                            <img
+                                src={foodVenue?.cover || 'https://cdn.pixabay.com/photo/2023/02/25/20/26/abstract-7814187_1280.jpg'}
+                                className="cover"
+                                style={{ objectFit: 'cover' }}
+                                alt="profile_cover"
+                            />
                         </div>
-                        {/* <PlaceProfilePictureInfo /> */}
-                        <PlaceProfilePictureInfo
-                            imageUrl="https://lh5.googleusercontent.com/p/AF1QipNkg5kyWMn-zicbUQuSyB0ge4TMTAyzGfxfWmW4=w408-h306-k-no"
-                            placeName="Restaurant The Tribus"
-                            rating={4.3}
-                            reviewCount={713}
-                            priceLevel="$$"
-                            categories={['Western','Mexican','Mediterranean']}
-                            setVisible={setVisible}
-                            visible={visible}
-                        />
+                        {foodVenue && <PlaceProfilePictureInfo foodVenue={foodVenue} user={user} />}
                         <PlaceDetailsNav items={menuItems} />
                     </div>
                 </div>
                 <div className="profile_bottom">
                     <div className="profile_container" style={{ maxWidth: "none" }}>
                         <div className="bottom_container" style={{ padding: "10px 4rem" }}>
-                            <Outlet />
+                            <Outlet context={{ foodVenue }}/>
                         </div>
                     </div>
                 </div>

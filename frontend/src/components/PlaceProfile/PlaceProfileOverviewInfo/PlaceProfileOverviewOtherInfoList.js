@@ -1,9 +1,8 @@
 import { InfoItem } from "./InfoItem";
 
-export const InfoList = ({ items }) => {
+export const PlaceProfileOverviewOtherInfoList = ({ items }) => {
     // Filter out items with noInfo status
     const filteredItems = items.filter(item => item.status !== 'noInfo');
-  
     return (
       <div className="other_info">
         <div className="other_info_left">

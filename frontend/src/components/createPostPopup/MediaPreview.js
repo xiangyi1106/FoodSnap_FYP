@@ -37,13 +37,11 @@ export default function MediaPreview({ medias, setMedias, setPage, setError }) {
 
     const mediainputref = useRef(null);
     const handleMedias = (e) => {
-        console.log("Handling medias...");
         let files = Array.from(e.target.files);
         files.forEach((file) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = (readerEvent) => {
-                //setMedias((medias) => [...medias, { data: readerEvent.target.result, type: file.type }]);
                 // Add each media item at the end of the array
                 setMedias((prevMedias) => [...prevMedias, { data: readerEvent.target.result, type: file.type }]);
             }

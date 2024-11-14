@@ -13,6 +13,7 @@ import { MDBBtn, MDBIcon } from 'mdb-react-ui-kit';
 import Tooltip from '@mui/material/Tooltip';
 import AddEvent from "../../pages/foodEvent/addEvent/addEvent";
 import AddPromotion from "../../pages/foodPromotion/AddPromotion/AddPromotion";
+import SearchBar from "./SearchBar";
 
 export default function Header({ setVisible, visible, page, currentPath }) {
     const userSelector = (state) => state.user;
@@ -21,11 +22,11 @@ export default function Header({ setVisible, visible, page, currentPath }) {
     // Memoize the selector function
     const memoizedUserSelector = useMemo(() => userSelector, []);
 
-    const [isShowMenu, setIsShowMenu] = useState(false);
+    // const [isShowMenu, setIsShowMenu] = useState(false);
     const [isShowUserMenu, setIsShowUserMenu] = useState(false);
 
-    const searchInput = useRef(null);
-    const searchRef = useRef(null);
+    // const searchInput = useRef(null);
+    // const searchRef = useRef(null);
 
     const handleProfileLinkClick = () => {
         setIsShowUserMenu((prev) => !prev);
@@ -35,6 +36,8 @@ export default function Header({ setVisible, visible, page, currentPath }) {
 
     const [isCreateFormVisible, setIsCreateFormVisible] = useState(false);
     const [isCreatePromotionVisible, setIsCreatePromotionVisible] = useState(false);
+
+    // const [searchTerm, setSearchTerm] = useState("");
 
     return (
         <header>
@@ -53,11 +56,12 @@ export default function Header({ setVisible, visible, page, currentPath }) {
                 </Link>
             </div>
             <div className="header_middle">
-                <div className="search search1" ref={searchRef} onClick={() => { setIsShowMenu(true); searchInput.current.focus(); }}>
+                {/* <div className="search search1" ref={searchRef} onClick={() => { setIsShowMenu(true); searchInput.current.focus(); }}>
                     <input type="text" placeholder="Search" className="hide_input" ref={searchInput}></input>
                     <button type="submit" className="search_button"> <CIcon icon={cilSearch} className="icon_size_18" /></button>
                 </div>
-                {isShowMenu && <SearchMenu setIsShowMenu={setIsShowMenu} searchRef={searchRef} />}
+                {isShowMenu && <SearchMenu setIsShowMenu={setIsShowMenu} searchRef={searchRef} />} */}
+                <SearchBar user={user} />
             </div>
             <div className="header_right">
                 {currentPath === "/" && <Tooltip title="Create Post"><MDBBtn outline href='#' className="btn_create_post" onClick={() => setVisible(true)}>

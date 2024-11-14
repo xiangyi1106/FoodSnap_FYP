@@ -8,8 +8,10 @@ import { cilShare, cilThumbUp, cilCommentBubble, cilBookmark, cilPeople, cilLock
 import CreateComment from "./CreateComment";
 import { linkifyMentionsAndHashtags } from "../../functions/linkify";
 import PostMenu from "./PostMenu";
+import PostInteraction from "../PostInteraction/PostInteraction";
+import FeedComment from "./FeedComment";
 
-export default function Post({ post, user, profile }) {
+export default function Post({ post, user, profile, skip, onShowFeedComment, depth = 1 }) {
     const [visible, setVisible] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const [checkSaved, setCheckSaved] = useState();
@@ -21,34 +23,46 @@ export default function Post({ post, user, profile }) {
     };
 
     // Create a map of names to user IDs
+    // const mentionMap = (post.mentions || []).reduce((acc, mention) => {
+    //     if (!acc[mention.name]) {
+    //         acc[mention.name] = [];
+    //     }
+    //     acc[mention.name].push(mention.userId);
+    //     return acc;
+    // }, {});
     const mentionMap = (post.mentions || []).reduce((acc, mention) => {
-        if (!acc[mention.name]) {
-            acc[mention.name] = [];
+        const { name, userId, username } = mention;
+        if (!acc[name]) {
+            acc[name] = [];
         }
-        acc[mention.name].push(mention.userId);
+        acc[name].push({ userId, username }); // Store both userId and username
         return acc;
     }, {});
 
-    const formattedText = linkifyMentionsAndHashtags(post.text, mentionMap);
+    const formattedText = linkifyMentionsAndHashtags(post.text, mentionMap, user);
 
     const postRef = useRef(null);
     const dotRef = useRef(null);
 
     const [showDot, setShowDot] = useState(true);
     const [isOriginalPostAvailable, setIsOriginalPostAvailable] = useState(true);
+    const [isPost, setIsPost] = useState(true);
 
-
-    useEffect(() => {
-        // If post is a shared post, hide the Dots button for the original post
-        if (post.sharedPost) {
-            setShowDot(true);
-        } else {
-            setShowDot(false);
-        }
-    }, [post.sharedPost]);
+    // useEffect(() => {
+    //     // If post is a shared post, hide the Dots button for the original post
+    //     if (post.sharedPost) {
+    //         setShowDot(true);
+    //         // setNotShow(false);
+    //     } else {
+    //         setShowDot(false);
+    //         // setNotShow(true);
+    //     }
+    // }, [post.sharedPost]);
+    const [notShow, setNotShow] = useState(true);
 
     return (
         <div className={`post`} style={{ width: `${profile && "100%"}`, }} ref={postRef} >
+
             <div className="post_header">
                 <Link
                     to={`/profile/${post.user?.username}`}
@@ -85,7 +99,7 @@ export default function Post({ post, user, profile }) {
                         </div>
                     </div>
                 </Link>
-                {showDot && <div
+                {!skip && <div
                     className="post_header_right hover_style_1"
                     onClick={() => setShowMenu((prev) => !prev)}
                     ref={dotRef}
@@ -98,11 +112,14 @@ export default function Post({ post, user, profile }) {
                 <div className="post_text"><p>{formattedText}</p></div>
 
                 {/* Render shared post if it exists and is available */}
-                {post.sharedPost && isOriginalPostAvailable && (
+                {post.sharedPost && isOriginalPostAvailable && depth < 2 && (
                     <div className="shared_post">
-                        <Post post={post.sharedPost} user={post.sharedPost.user} />
+                        <Post post={post.sharedPost} user={post.sharedPost.user} skip={true} depth={depth + 1}/>
                     </div>
+                    
                 )}
+                
+
 
                 {/* Handle case where original post is not available */}
                 {post.sharedPost && !isOriginalPostAvailable && (
@@ -110,6 +127,7 @@ export default function Post({ post, user, profile }) {
                         <p>This post is no longer available.</p>
                     </div>
                 )}
+
                 {post.media && post.media.length > 0 && (
                     <div
                         className={
@@ -127,9 +145,9 @@ export default function Post({ post, user, profile }) {
                         {post.media.slice(0, 5).map((mediaItem, i) => (
                             <Fragment key={`media-${i}`}>
                                 {mediaItem.type === "image" ? (
-                                    <img src={mediaItem.url} key={`image-${i}`} alt="" className={`img-${i}`} style={{cursor: 'pointer'}} onClick={() => handleClick(post._id, i)} />
+                                    <img src={mediaItem.url} key={`image-${i}`} alt="" className={`img-${i}`} style={{ cursor: 'pointer' }} onClick={() => handleClick(post._id, i)} />
                                 ) : mediaItem.type === "video" ? (
-                                    <video key={`video-${i}`} className={`video-${i}`} style={{cursor: 'pointer'}} controls onClick={() => handleClick(post.id, i)}>
+                                    <video key={`video-${i}`} className={`video-${i}`} style={{ cursor: 'pointer' }} controls onClick={() => handleClick(post.id, i)}>
                                         <source src={mediaItem.url} type="video/mp4" />
                                         Your browser does not support the video tag.
                                     </video>
@@ -144,118 +162,10 @@ export default function Post({ post, user, profile }) {
                         )}
                     </div>
                 )}
-                {/* {post.media && post.media.length > 0 && (
-                    <div
-                        className={
-                            post.media.length === 1
-                                ? "grid_1"
-                                : post.media.length === 2
-                                    ? "grid_2"
-                                    : post.media.length === 3
-                                        ? "grid_3"
-                                        : post.media.length === 4
-                                            ? "grid_4"
-                                            : post.media.length >= 5 && "grid_5"
-                        }
-                    > */}
-                {/* {post.media.slice(0, 5).map((m, i) => (
-                            m.type === "image" ? (
-                                <img src={m.url} key={i} alt="" className={`img-${i}`} />
-                            ) : <video controls >
-                                <source src={m.url} />
-                            </video> // Handle other media types if necessary
-                        ))} */}
-                {/* {post.media.slice(0, 5).map((m, i) => renderMedia(m, i))} */}
-                {/* {post.media.slice(0, 5).map((mediaArray, index) => (
-                            <Fragment key={`media-${index}`}>
-                                {renderMedia(mediaArray)}
-                            </Fragment>
-                        ))} */}
-                {/* {post.media.slice(0, 5).map((mArray, i) => (
-                            <Fragment key={`media-${i}`}>
-                                {Array.isArray(mArray) && mArray.length > 0 ? (
-                                    mArray.map((m, innerIndex) => (
-                                        <Fragment key={`inner-media-${innerIndex}`}>
-                                            {m.type === "image" ? (
-                                                <img src={m.url} key={`image-${innerIndex}`} alt="" className={`img-${i}`} />
-                                            ) : m.type === "video" ? (
-                                                <video key={`video-${innerIndex}`} className={`img-${i}`} controls>
-                                                    <source src={m.url} type="video/mp4" />
-                                                    Your browser does not support the video tag.
-                                                </video>
-                                            ) : null}
-                                        </Fragment>
-                                    ))
-                                ) : mArray && mArray.type ? (
-                                    mArray.type === "image" ? (
-                                        <img src={mArray.url} key={`image-${i}`} alt="" className={`img-${i}`} />
-                                    ) : mArray.type === "video" ? (
-                                        <video key={`video-${i}`} className={`video-${i}`} controls>
-                                            <source src={mArray.url} type="video/mp4" />
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    ) : null
-                                ) : null}
-                            </Fragment>
-                        ))}
-
-
-                        {post.media.length > 5 && (
-                            <div className="more-pics-shadow">
-                                +{post.media.length - 5}
-                            </div>
-                        )} */}
-
-                {/* <CCarousel controls indicators dark interval={null} className="carousel">
-                            {post.media.map((innerArray, index) => (
-                                <CCarouselItem key={`carousel-${index}`}>
-                                    {innerArray.map((media, innerIndex) => (
-                                        <div key={`media-${innerIndex}`} className="carousel_size">
-                                            {media.type === 'image' ? (
-                                                <img className="d-block w-100" src={media.url} alt={`slide ${innerIndex}`} />
-                                            ) : media.type === 'video' ? (
-                                                <video className="d-block w-100" controls>
-                                                    <source src={media.url} type="video/mp4" />
-                                                    Your browser does not support the video tag.
-                                                </video>
-                                            ) : null}
-                                        </div>
-                                    ))}
-                                </CCarouselItem>
-                            ))}
-                        </CCarousel> */}
-                {/* </div>
-                )} */}
             </>
-            {post.type !== 'shared' && (<>
-                <div className="post_infos">
-                    <div className="reacts_count">
-                        <div className="reacts_count_imgs">
-                            <CIcon icon={cilThumbUp} className="icon_size_22 icon_button" />
-                        </div>
-                        <div className="reacts_count_imgs">
-                            <CIcon icon={cilCommentBubble} className="icon_size_22 icon_button" />
-                        </div>
-                        <div className="reacts_count_imgs">
-                            <CIcon icon={cilShare} className="icon_size_22 icon_button" />
-                        </div>
-                        {/* <div className="reacts_count_imgs">
-                            <CIcon icon={cilBookmark} className="icon_size_22 icon_button" />
-                        </div> */}
-                        {/* <div className="reacts_count_num">Like</div> */}
-                    </div>
-                    <div className="to_right">
-                        <div className="comments_count">13 likes</div>
-                        <div className="comments_count">13 comments</div>
-                        <div className="share_count">1 share</div>
-                    </div>
-                </div>
-                <div className="comments_wrap">
-                    <div className="comments_order"></div>
-                    <CreateComment user={user} />
-                </div>
-            </>
-            )}
+
+            {!skip && <PostInteraction post={post} user={user} isPost={isPost} onShowFeedComment={onShowFeedComment} />}
+
             {showMenu && (
                 <PostMenu
                     userId={user.id}

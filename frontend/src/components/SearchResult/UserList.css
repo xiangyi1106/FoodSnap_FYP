@@ -1,0 +1,87 @@
+.userlists-section {
+    /* margin: 20px; */
+    margin: 15px;
+  }
+  
+  .userlists-title {
+    font-size: 24px;
+    font-weight: bold;
+    align-self: flex-start;
+  }
+  
+  .userlists-subtitle {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+    align-self: flex-start;
+  }
+  
+  .userlist-cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  
+  .userlist-card {
+    width: 150px;
+    flex: 0 0 auto;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s; /* Optional: smooth transition */
+    border-radius: 8px; /* Rounded corners */
+  }
+  .userlist-card:hover {
+    transform: scale(1.05); /* Optional: slight scale effect */
+}
+  
+  .userlist-image {
+    width: 100%;
+    height: 150px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+  
+  .userlist-info {
+    margin-top: 10px;
+  }
+  
+  .userlist-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+  }
+
+  .userlist-card:hover .userlist-title{
+    color: #30BFBF;
+  }
+  
+  .userlist-creator {
+    font-size: 12px;
+    color: #666;
+  }
+  
+  .usergrid-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Responsive columns */
+    gap: 20px;
+  }
+
+  .show-more-button {
+    display: block;
+    margin: 20px 0;
+    padding: 10px 20px;
+    font-size: 16px;
+    /* color: white; */
+    color: gray;
+    background-color: transparent;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.show-more-button:hover {
+    /* background-color: var(--bg-primary); */
+    color: black;
+}

@@ -47,7 +47,6 @@ a {
   bottom: 0;
   background: rgba(255, 255, 255, 0.968);
   background: gray;
-
   /* background: #7f7f7f;
   opacity: 0.6; */
   z-index: 99;
@@ -422,6 +421,11 @@ body.modal-open {
 
 .no-scroll{
   overflow: hidden!important;
+}
+
+.flex-center{
+  display: flex;
+  justify-content: center;
 }
 
 @media (max-width: 360px) {

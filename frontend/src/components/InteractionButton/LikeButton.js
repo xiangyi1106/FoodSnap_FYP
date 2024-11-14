@@ -5,15 +5,8 @@ import { cilThumbUp } from '@coreui/icons';
 import { toast } from 'react-toastify';
 import './interactionButton.css'
 const LikeButton = ({ postId, user, setLikesCount, isLiked, setIsLiked}) => {
-    // const [isLiked, setIsLiked] = useState(false);
-    const handleLike = async () => {
-        // if (isLiked || !user?.token) {
-        //     if (!user?.token) {
-        //         toast.error('User not authenticated');
-        //     }
-        //     return;
-        // }
 
+    const handleLike = async () => {
         try {
             const response = await axios.put(
                 `${process.env.REACT_APP_BACKEND_URL}/likePost/${postId}`,
@@ -29,7 +22,6 @@ const LikeButton = ({ postId, user, setLikesCount, isLiked, setIsLiked}) => {
             setIsLiked(!isLiked);
             setLikesCount(response.data.likes); // Update the likes count from the server response
 
-            // toast.success(isLiked ? 'Unliked successfully!' : 'Liked successfully!');
         } catch (error) {
             toast.error('Error liking post: ' + error.message);
         }

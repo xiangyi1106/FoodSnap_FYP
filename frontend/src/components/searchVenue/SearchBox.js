@@ -9,7 +9,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { City, Country, State } from "country-state-city";
 import Selector from './Selector';
 import LocationSelector from './LocationSelector';
-import FoodVenueFinder from './FoodVenueFinder';
+import FoodVenueList from './FoodVenueList';
 import PlaceDetails from '../PlaceProfile';
 import EditPlaceInfo from '../PlaceProfile/EditPlaceInfo';
 import FoodSuggestion from '../AIRecommendation';
@@ -18,34 +18,7 @@ import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import ChangeLocationModal from './ChangeLocationModal';
 import SearchFoodCategoryModal from './SearchFoodCategoryModal';
 
-export default function SearchBox({setVisible, user}) {
-    // const countryData = Country.getAllCountries();
-    // const [stateData, setStateData] = useState([]);
-    // const [cityData, setCityData] = useState([]);
-
-    // const [country, setCountry] = useState(countryData[0] || '');
-    // const [state, setState] = useState('');
-    // const [city, setCity] = useState('');
-
-    // useEffect(() => {
-    //     const states = State.getStatesOfCountry(country?.isoCode) || [];
-    //     setStateData(states);
-    //     if (states.length > 0) {
-    //         setState(states[0]?.name || '');
-    //     } else {
-    //         setState('');
-    //     }
-    // }, [country]);
-
-    // useEffect(() => {
-    //     const cities = City.getCitiesOfState(country?.isoCode, state?.isoCode) || [];
-    //     setCityData(cities);
-    //     if (cities.length > 0) {
-    //         setCity(cities[0]?.name || '');
-    //     } else {
-    //         setCity('');
-    //     }
-    // }, [state]);
+export default function SearchBox({setVisible, user, foodVenues, error}) {
 
     const [isPlaceDetailsVisible, setPlaceDetailsVisible] = useState(false);
     const [isFoodVenueFinderVisible, setFoodVenueFinderVisible] = useState(false);
@@ -70,6 +43,7 @@ export default function SearchBox({setVisible, user}) {
         };
     }, [isPlaceDetailsVisible]);
 
+    console.log("foodve", foodVenues)
     return (
         <Card sx={{ width: '100%', marginLeft: "auto", marginRight: "auto" }}>
             {isPlaceDetailsVisible && <PlaceDetails setVisible={setPlaceDetailsVisible} />}
@@ -93,7 +67,8 @@ export default function SearchBox({setVisible, user}) {
                         <TipsAndUpdatesIcon style={{ color: '#F5A762' }} />
                     </IconButton>
                 </div>
-                <FoodVenueFinder setVisible={setPlaceDetailsVisible} />
+                {(foodVenues || foodVenues.length > 0) && <FoodVenueList setVisible={setPlaceDetailsVisible} foodVenues={foodVenues} />}
+                {(!foodVenues || foodVenues.length === 0) && error && <p style={{ textAlign: 'center', color: 'gray', marginTop: '20px' }}>Sorry, there is no food venue found. Please change to another location to find another food venue.</p>}
             </CardContent>
             <SearchFoodCategoryModal setVisible={setIsFiterVisible} visible={isFilterVisible} setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory} />
         </Card>

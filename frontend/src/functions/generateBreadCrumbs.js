@@ -17,8 +17,9 @@ export const generateBreadcrumbs = (location, mainLabel, mainHref, lastName='') 
         const routeTo = `/${pathnames.slice(0, index + 1).join('/')}`;
         // Only exclude the last segment if it looks like an ID
         const isLastSegment = index === pathnames.length - 1;
+
         // Avoid adding segments that include the mainHref or are redundant
-        if (!(isLastSegment && idPattern.test(segment)) && routeTo !== mainHref && !routeTo.includes(mainHref)) {
+        if (!routeTo.includes("foodVenue") && !(isLastSegment && idPattern.test(segment)) && routeTo !== mainHref && !routeTo.includes(mainHref)) {
             breadcrumbs.push({
                 label: pathnames[index].charAt(0).toUpperCase() + pathnames[index].slice(1),
                 href: routeTo,

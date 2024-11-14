@@ -118,12 +118,17 @@
 .comment_dropdown_menu li:hover {
     background-color: #f9fafb;
 }
-
+.comment_col{
+    margin: 0px 10px;
+}
 .comment_text {
     color: #6b7280;
     /* font-size: 0.875rem; */
     font-size: 0.95rem;
-    margin-bottom: 1rem;
+}
+
+.comment_name{
+    margin-bottom: 3px;
 }
 
 .comment_actions {
@@ -165,4 +170,23 @@
     outline: none;
     border-color: none; /* Optional, if you want to remove border change on focus */
     box-shadow: none;
+}
+
+.subcomment{
+    border: 1px solid gray;
+    margin: 20px;
+    border-radius: 4px;
+}
+
+.see_more_btn{
+    margin: 10px 50px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: #30BFBF;
+    
+}
+
+.profile_review_section{
+    padding: 10px 10px;
 }

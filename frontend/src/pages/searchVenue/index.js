@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import "./style.css";
 import Map from '../../components/searchVenue/Map';
 import SearchBox from '../../components/searchVenue/SearchBox';
 import ChangeLocationModal from '../../components/searchVenue/ChangeLocationModal';
+import { getFoodVenueData } from '../../functions/foodVenue';
 export default function SearchVenue({user}) {
     // Usage example
     const addresses = [
@@ -14,6 +15,29 @@ export default function SearchVenue({user}) {
 
     const [visible, setVisible] = useState(false);
     const [selected, setSelected] = useState(localStorage.getItem('currentLocation') || '');
+    const [foodVenues, setFoodVenues] = useState([]);
+    const [error, setError] = useState("");
+
+    const getFoodVenuesList = async () => {
+        const response = await getFoodVenueData(selected, user.token);
+        if (response.notFound) {
+            // Handle the "No food venues found" message
+            console.log(response.message); // or set a state to show the message in your UI
+            setError(response.message); // Example: set it in a state variable called `error`
+            setFoodVenues([]); // Clear any previous food venues if desired
+        } else {
+            setFoodVenues(response);
+            setError(null); // Clear any previous error message
+        }
+    };
+
+    useEffect(()=>{
+        getFoodVenuesList();
+    }, [])
+
+    useEffect(()=>{
+        getFoodVenuesList();
+    }, [selected])
 
     return (
         <div className='search_venue'>
@@ -21,7 +45,7 @@ export default function SearchVenue({user}) {
                 <Map addresses={addresses} selected={selected}/>
             </div>
             <div className='search_box'>
-                <SearchBox setVisible={setVisible} user={user} />
+                <SearchBox setVisible={setVisible} user={user} foodVenues={foodVenues} error={error} />
             </div>
             {visible && <ChangeLocationModal setVisible={setVisible} visible={visible} setSelected={setSelected} selected={selected} />}
         </div>

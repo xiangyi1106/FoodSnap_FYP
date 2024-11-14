@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import List from '@mui/material/List';
-import PlaceDetail from './PlaceDetail';
+import FoodVenueListCard from './FoodVenueListCard';
 
 const samplePlaces = [
   {
@@ -59,18 +59,16 @@ const samplePlaces = [
   },
 ];
 
-const FoodVenueFinder = ({ places, setVisible}) => {
-
-
+const FoodVenueList = ({ foodVenues, setVisible}) => {
   return (
     <div className="restaurant-finder-page">
-      <List sx={{ width: '100%', overflow: 'auto',
+      <List sx={{ width: '100%', overflowY: 'auto',
         maxHeight: '80vh', }}>
-        {samplePlaces &&
-          samplePlaces.map((place, i) => <PlaceDetail place={place} key={i} setVisible={setVisible} />)}
+        {foodVenues &&
+          foodVenues.map((place, i) => <FoodVenueListCard place={place} key={i} setVisible={setVisible} />)}
       </List>
     </div>
   );
 };
 
-export default FoodVenueFinder;
+export default FoodVenueList;

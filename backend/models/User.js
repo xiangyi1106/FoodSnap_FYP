@@ -2,6 +2,7 @@ const { text } = require("express");
 const { url } = require("inspector");
 const mongoose = require("mongoose");
 const { type } = require("os");
+const { searchTerm } = require("../controllers/search");
 
 const { ObjectId } = mongoose.Schema;
 
@@ -83,10 +84,23 @@ const userSchema = mongoose.Schema({
     }],
     search: [
         {
-            user: {
-                type: ObjectId,
-                ref: 'User',
-            }
+            // termType: {
+            //     type: String,
+            //     required: true,
+            //     enum: ['user', 'term'], // Restrict to specific categories
+            // },
+            // termValue: {
+            //     type: String,
+            //     required: true,
+            // },
+            searchTerm: {
+                type: String,
+                required: true,
+            },
+            createdAt: {
+                type: Date,
+                default: Date.now,
+            },
         }
     ],
     details: {
@@ -131,6 +145,7 @@ const userSchema = mongoose.Schema({
     }],
     profileImageList: [ImageSchema],  // Replaces `picture` field with a list of profile images
     coverImageList: [ImageSchema],  // Replaces `cover` field with a list of cover images
+    foodVenueWishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'FoodVenue', default: [] }],
     role: {
         type: String,
         enum: ['user', 'admin', 'businessOwner'],
@@ -141,3 +156,6 @@ const userSchema = mongoose.Schema({
 });
 
 module.exports = mongoose.model("User", userSchema);
+
+// const User = mongoose.model("User", userSchema);
+// module.exports = User;

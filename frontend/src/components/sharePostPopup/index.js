@@ -1,24 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import useClickOutside from "../../helpers/clickOutside";
 import Picker from "emoji-picker-react";
 import CIcon from '@coreui/icons-react';
 import { cilX, cilSmile, cilImage, cilTag, cilLocationPin, cilStar, cilUserFollow } from '@coreui/icons';
 import Tooltip from '@mui/material/Tooltip';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import classNames from 'classnames';
 import CircularProgress from '@mui/material/CircularProgress';
 import { createPost } from "../../functions/post";
-import { useDispatch } from "react-redux";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import PostInput from "../createPostPopup/PostInput";
 import PostTextArea from "../createPostPopup/PostTextArea";
+import { postReducer } from "../../functions/reducers";
 
 export default function SharePostPopUp({ setVisible, user, post }) {
     //Display the picker and media preview
@@ -61,9 +55,13 @@ export default function SharePostPopUp({ setVisible, user, post }) {
 
     const [privacy, setPrivacy] = useState("followers");
 
-    const dispatch = useDispatch();
-
     // const [shareText, setShareText] = useState("");
+
+    const [{ loading, error }, dispatch] = useReducer(postReducer, {
+        loading: false,
+        // posts: [],
+        error: "",
+    });
 
     const handleSharePost = async () => {
         try {
@@ -83,11 +81,23 @@ export default function SharePostPopUp({ setVisible, user, post }) {
 
             // Handle the server response
             setVisible(false);
-            console.log(text);
             console.log(response.data); // Log the result from the server
+            toast.success(response.data.message);
+            // Log before dispatch to check if it's being called
+            console.log("Dispatching POST_ADDED with payload:", response.data.post);
+            // Dispatch the new post to the reducer
+            dispatch({
+                type: "ADD_POST",
+                payload: response.data.post,
+            });
+            // setComments((prevComments) => [comments, ...prevComments]);
+
+
         } catch (error) {
             // Handle any errors that occur during the request
             console.error("Failed to share the post:", error.message);
+            toast.error("Failed to share the post:", error.message);
+
         }
     };
 
@@ -107,7 +117,7 @@ export default function SharePostPopUp({ setVisible, user, post }) {
                         {/* <div className="post_content" style={{ minHeight: "320px" }}>
                             <textarea autoFocus={true} disabled={isLoading} placeholder="Share something..." id="post_input" ref={textRef} maxLength={22000} value={text} style={{ minHeight: "320px" }} onChange={(e) => setText(e.target.value)} className="post_input" ></textarea>
                         </div> */}
-                        <PostInput setText={setText} text={text} isLoading={isLoading} user={user} textRef={textRef}/>
+                        <PostInput setText={setText} text={text} isLoading={isLoading} user={user} textRef={textRef} />
                         {/* <PostTextArea setText={setText} text={text} isLoading={isLoading} user={user}/> */}
                     </div>
                     <div className="create_post_popup_footer">

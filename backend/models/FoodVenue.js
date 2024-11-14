@@ -12,6 +12,11 @@ const { ObjectId } = Schema;
 //     timestamps: true,
 // });
 
+const openingHoursSchema = new mongoose.Schema({
+    open: String,
+    close: String
+});
+
 // Define the FoodVenue schema with embedded Menu
 const foodVenueSchema = new Schema({
     name: { type: String, required: true }, // Name of the food venue
@@ -20,28 +25,33 @@ const foodVenueSchema = new Schema({
     phone: { type: String }, // Contact phone number
     website: { type: String }, // Website URL
     description: { type: String }, // Description of the venue
-
-    address: [{
-        street: { type: String },
-        city: { type: String },
-        state: { type: String },
-        postalCode: { type: Number },
-        country: { type: String },
-        fullAddress: { type: String } // Full address as a single string
-    }],
+    address: { type: String }, // Description of the venue
+    // address: [{
+    //     street: { type: String },
+    //     city: { type: String },
+    //     state: { type: String },
+    //     postalCode: { type: Number },
+    //     country: { type: String },
+    //     fullAddress: { type: String } // Full address as a single string
+    // }],
 
     latitude: { type: Number },
     longitude: { type: Number },
 
-    openingHour: [{
-        openTime: { type: String }, // e.g., "09:00 AM"
-        closeTime: { type: String } // e.g., "09:00 PM"
-    }],
+    openingHours: {
+        mon: [openingHoursSchema],
+        tue: [openingHoursSchema],
+        wed: [openingHoursSchema],
+        thu: [openingHoursSchema],
+        fri: [openingHoursSchema],
+        sat: [openingHoursSchema],
+        sun: [openingHoursSchema]
+    },
 
     rating: { type: Number, default: 0 }, // Rating of the venue
-    priceLevel: { type: String }, // Price level (e.g., "$", "$$", "$$$")
-    category: [{ type: String }], // Categories (e.g., "Restaurant", "Cafe")
-    dishesType: [{ type: String }], 
+    priceRange: { type: String }, // Price level (e.g., "$", "$$", "$$$")
+    category: [{ type: String }], //tags
+    dishesType: [{ type: String, default: [] }],
     otherinfo: [{
         halalOptions: { type: String, default: 'No' }, // Halal options (e.g., "Yes", "No")
         vegetarianOptions: { type: String, default: 'No' }, // Vegetarian options (e.g., "Yes", "No")
@@ -70,4 +80,5 @@ const foodVenueSchema = new Schema({
 // Create and export the FoodVenue model
 const FoodVenue = model('FoodVenue', foodVenueSchema);
 
-module.exports = { FoodVenue };
+module.exports = FoodVenue;
+

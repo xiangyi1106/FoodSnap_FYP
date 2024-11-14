@@ -1,36 +1,11 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PlaceProfileWriteReview from './PlaceProfileWriteReview'
 import PlaceCommentSection from '../PlaceComment/PlaceCommentSection'
+import { useOutletContext } from 'react-router-dom';
+import { addFoodVenueComment, getFoodVenueComments } from '../../functions/foodVenue';
 
-export default function PlaceProfileReview({user}) {
-    const comments = [
-        {
-            "id": 1,
-            "author": "John Doe",
-            "date": "2024-08-12",
-            "text": "This is a comment.",
-            "avatarUrl": "https://flowbite.com/docs/images/people/profile-picture-5.jpg",
-            "replies": [
-                {
-                    "id": 2,
-                    "author": "Jane Smith",
-                    "date": "2024-08-12",
-                    "text": "This is a reply to the comment.",
-                    "avatarUrl": "https://flowbite.com/docs/images/people/profile-picture-5.jpg",
-                    "replies": [
-                        {
-                            "id": 3,
-                            "author": "Alice Brown",
-                            "date": "2024-08-12",
-                            "text": "This is a nested reply.",
-                            "avatarUrl": "https://flowbite.com/docs/images/people/profile-picture-5.jpg",
-                            "replies": []
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
+export default function PlaceProfileReview({ user }) {
+    const { foodVenue } = useOutletContext(); // Fetch the user profile data from context
 
     const initialComments = [
         {
@@ -86,13 +61,48 @@ export default function PlaceProfileReview({user}) {
             ]
         }
     ];
-    
+
+    const [comments, setComments] = useState([]);
+
+    useEffect(() => {
+        const fetchFoodVenueComments = async () => {
+            if (foodVenue && foodVenue._id) {  // Check if foodVenue and _id are defined
+                const response = await getFoodVenueComments(foodVenue._id, user.token);
+                setComments(response);
+            }
+        };
+
+        fetchFoodVenueComments();
+    }, [foodVenue, user.token]);
+
+    const handleAddComment = async (text, parentCommentId) => {
+        try {
+            const response = await addFoodVenueComment(foodVenue._id, user, text, parentCommentId)
+            if (parentCommentId) {
+                const updatedComments = comments.map(comment => {
+                    if (comment._id === parentCommentId) {
+                        return response;
+                    }
+                    return comment;
+                });
+                setComments(updatedComments);
+            } else {
+                setComments([...comments, response]);
+            }
+        } catch (error) {
+            console.error('Error adding comment:', error);
+        }
+    };
 
     return (
         <div className='profile_review'>
             <div className='profile_review_wrapper'>
-                <PlaceProfileWriteReview user={user}/>
-                <PlaceCommentSection initialComments={initialComments}/>
+                <PlaceProfileWriteReview user={user} foodVenue={foodVenue} />
+                <div className='profile_review_section'>
+                    <p>All Review ({comments && comments.length})</p>
+                    <PlaceCommentSection initialComments={initialComments} comments={comments} user={user} onAddComment={handleAddComment} setComments={setComments} />
+
+                </div>
             </div>
         </div>
     )

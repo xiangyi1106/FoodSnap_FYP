@@ -1,0 +1,36 @@
+/* RollingBanner.css */
+.banner_container {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+    background-color: #ffefc1; /* Light yellow background */
+    background-color: #30BFBF; /* Light yellow background */
+    color: #b5651d; /* Dark brown font color */
+    color: rgba(255, 255, 255, 0.925); /* Dark brown font color */
+    font-size: 1.2rem;
+    font-weight: 400;
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    word-spacing: 1rem;
+  }
+  
+  .banner_content {
+    display: inline-flex;
+    animation: scroll 30s linear infinite;
+  }
+  
+  .banner_content span {
+    margin-right: 50px; /* Spacing between messages */
+  }
+  
+  /* Animation keyframes for horizontal scrolling */
+  @keyframes scroll {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+  

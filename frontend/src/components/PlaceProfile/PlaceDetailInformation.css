@@ -68,19 +68,6 @@
   padding: 10px 25px 20px 25px;
 }
 
-.opening_hour {
-  /* display: flex;
-    gap: 30px; */
-    display: flex;
-    gap: 15px;
-}
-
-.opening_hour_days {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
 .place_detail_information .profile_menu a {
   font-size: 1rem;
 }
@@ -100,10 +87,20 @@
   justify-content: space-between;
 }
 
+.opening_hour_row{
+  display: flex;
+  gap: 30px;
+}
 .other_info_text_wrapper,
 .opening_hour_day,
 .opening_hour_time {
   padding: 8px 0px;
+}
+
+.opening_hour_day,
+.opening_hour_time {
+  display: flex;
+  flex-direction: column;
 }
 
 .close_button {
@@ -180,7 +177,7 @@
   flex: 1;
   height: 120px;
   width: 100%;
-  padding: 0 10px;
+  padding: 10px 15px;
   color: var(--color-primary);
   /* background: transparent; */
   background-color: var(--bg-forth);

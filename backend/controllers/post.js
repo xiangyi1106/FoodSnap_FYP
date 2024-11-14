@@ -2,6 +2,7 @@ const Post = require("../models/Post");
 const Hashtag = require("../models/Hashtag");
 const User = require("../models/User");
 
+// const { User, Post, Hashtag } = require("../models/models");
 
 const extractHashtags = (text) => {
   const hashtagRegex = /#(\w+)/g;
@@ -290,17 +291,42 @@ exports.getLikeStatus = async (req, res) => {
   }
 };
 
+// Extracts mentions and adds usernames based on userId
+const addUsernamesToMentions = async (mentions) => {
+  const userIds = mentions.map((mention) => mention.userId);
+
+  // Find users with matching IDs and return their usernames
+  const users = await User.find({ _id: { $in: userIds } }).select('username _id');
+
+  // Map userIds to usernames for easier lookup
+  const userMap = users.reduce((map, user) => {
+    map[user._id] = user.username;
+    return map;
+  }, {});
+
+  // Add usernames to mentions
+  return mentions.map((mention) => ({
+    ...mention,
+    username: userMap[mention.userId] || null, // Use null if user not found
+  }));
+};
+
 // Share post logic
 exports.sharePost = async (req, res) => {
   try {
     const { postId } = req.params;
-    const { text, privacy } = req.body;
+    var { text, privacy } = req.body;
     const userId = req.user.id;
 
     // Extract hashtags from text
     const hashtags = extractHashtags(text);
 
-    const mentions = extractMentions(text);
+    // const mentions = extractMentions(text);
+
+    // Extract and add usernames to mentions
+    const rawMentions = extractMentions(text); // Extract mentions without usernames
+    const mentions = await addUsernamesToMentions(rawMentions); // Add usernames
+    console.log(mentions);
     // Clean mentions before saving
     text = cleanMentions(text);
 
@@ -337,7 +363,18 @@ exports.sharePost = async (req, res) => {
     originalPost.shares.push(userId);
     await originalPost.save();
 
-    res.status(201).json({ message: 'Post shared successfully' });
+    // Re-fetch the post with the required populations
+    const populatedPost = await Post.findById(originalPost._id)
+      .populate("user", "picture name username")
+      .populate({
+        path: "sharedPost", // Populate the sharedPost field
+        populate: {
+          path: "user", // Populate the user inside sharedPost
+          select: "name picture username gender _id" // Select fields to retrieve from user
+        }
+      });
+
+    res.status(201).json({ message: 'Post shared successfully', post: populatedPost });
   } catch (error) {
     // Log error details for debugging
     console.error("Error sharing post:", error.message);
@@ -385,7 +422,7 @@ exports.deletePost = async (req, res) => {
 };
 
 // Get all posts that have a location
-exports.postsWithLocation = async (req, res) => {
+exports.getPostsWithLocation = async (req, res) => {
   const { userId } = req.params;
   const { month, year } = req.query; // month and year will be passed as query params
 
@@ -393,21 +430,17 @@ exports.postsWithLocation = async (req, res) => {
     // Calculate the start and end of the month with time
     const startOfMonth = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0)); // First day of the month, 00:00:00 UTC
     const endOfMonth = new Date(Date.UTC(year, month, 0, 23, 59, 59)); // Last day of the month, 23:59:59 UTC
-    console.log(month, year);
-    console.log('Start of month:', startOfMonth, 'End of month:', endOfMonth);
-    console.log('User ID:', userId);
 
     // Find posts with a location for the specified user and month
     const postsWithLocation = await Post.find({
       user: userId, // Filter by user ID
       // location: { $exists: true, $ne: null }, // Ensure location exists and is not null
-      location: { $ne: [] }, // Ensure location array is not empty
+      // location: { $ne: [] }, // Ensure location array is not empty
+      location: { $nin: [null, []] },
       createdAt: { $gte: startOfMonth, $lt: endOfMonth }, // Filter by date range
     })
       .populate('user', 'name username picture') // Populate user with specific fields like name and email
       .exec();
-
-    console.log('Posts found:', postsWithLocation.length);
 
     // Check if posts are found
     if (postsWithLocation.length === 0) {
@@ -417,6 +450,31 @@ exports.postsWithLocation = async (req, res) => {
     res.json(postsWithLocation);
   } catch (err) {
     res.status(500).json({ error: 'Error fetching posts with locations for the user' });
+  }
+};
+
+exports.getPostsByFoodVenue = async (req, res) => {
+  try {
+    // const foodVenueName = req.query.name;
+    // const name = decodeURIComponent(req.query.name);
+    const foodVenueName = decodeURIComponent(req.query.name);
+    // console.log(name);
+    // const foodVenueName = name.match(/[a-zA-Z]+/g); 
+
+    const posts = await Post.find({
+      $or: [
+        { text: { $regex: foodVenueName, $options: 'i' } }, // Match in text
+        { location: { $elemMatch: { name: { $regex: foodVenueName, $options: 'i' } } } } // Match in location array's name field
+      ],
+      sharedPost: null // Exclude shared posts
+    })
+      .populate("user", "name picture username gender")
+      .sort({ createdAt: -1 }); // Sort by newest to oldest
+
+    console.log("post", posts);
+    res.json(posts);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
 };
 

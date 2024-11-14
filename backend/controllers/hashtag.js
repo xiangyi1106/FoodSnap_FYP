@@ -59,7 +59,8 @@ exports.addHashtag = async (hashtagName) => {
 
         const formattedUsers = filteredUsers.map(user => ({
             id: user._id.toString(),
-            display: user.name
+            display: user.name,
+            // username: user.username,
         }));
 
         res.json(formattedUsers);

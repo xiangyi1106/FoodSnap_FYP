@@ -1,13 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import Picker from "emoji-picker-react";
 import Settings from "@mui/icons-material/Settings";
+import dataURItoBlob from "../../helpers/dataURItoBlob";
+import { ClipLoader } from "react-spinners";
+import { uploadMedias } from "../../functions/uploadMedia";
+import { addComment } from "../../functions/post";
 
-export default function CreateComment({ user }) {
+export default function CreateComment({ user, postId, setComments, setCount, setCommentCount, focusInput }) {
     const [picker, setPicker] = useState(false);
     const [text, setText] = useState("");
     const [error, setError] = useState("");
     const [commentImage, setCommentImage] = useState("");
     const [cursorPosition, setCursorPosition] = useState(null);
+    const [loading, setLoading] = useState(false);
     const textRef = useRef(null);
     const imgInput = useRef(null);
 
@@ -44,6 +49,49 @@ export default function CreateComment({ user }) {
         };
     };
 
+    const handleComment = async (e) => {
+        if (e.key === "Enter") {
+            if (commentImage != "") {
+                setLoading(true);
+                const img = dataURItoBlob(commentImage);
+                const path = `${user.username}/comment_images/${postId}`;
+                let formData = new FormData();
+                formData.append("path", path);
+                formData.append("file", img);
+                const imgComment = await uploadMedias(formData, path, user.token);
+
+                const comments = await addComment(
+                    postId,
+                    user.id,
+                    text,
+                    imgComment[0].url,
+                    user.token
+                );
+                setComments((prevComments) => [comments, ...prevComments]);
+                setCount((prev) => ++prev);
+                setCommentCount((prev) => ++prev);
+                setLoading(false);
+                setText("");
+                setCommentImage("");
+            } else {
+                setLoading(true);
+
+                const comments = await addComment(postId, user.id, text, "", user.token);
+                setComments((prevComments) => [comments, ...prevComments]);
+                setCommentCount((prev) => ++prev);
+                setCount((prev) => ++prev);
+                setLoading(false);
+                setText("");
+                setCommentImage("");
+            }
+        }
+    };
+
+    useEffect(() => {
+        if (focusInput) {
+            textRef.current.focus();
+        }
+    }, [focusInput]);
     return (
         <div className="create_comment_wrap">
             <div className="create_comment">
@@ -75,6 +123,7 @@ export default function CreateComment({ user }) {
                         value={text}
                         placeholder="Write a comment..."
                         onChange={(e) => setText(e.target.value)}
+                        onKeyUp={handleComment}
                     />
                     <div
                         className="comment_circle_icon hover_style_2"
@@ -89,7 +138,7 @@ export default function CreateComment({ user }) {
                     </div>
                     <div
                         className="comment_circle_icon hover_style_2"
-                        onClick={() => {imgInput.current.click(); picker && setPicker(false)}}
+                        onClick={() => { imgInput.current.click(); picker && setPicker(false) }}
                     >
                         <i className="camera_icon"></i>
                     </div>

@@ -31,6 +31,7 @@
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    margin: 0 20px;
   }
   
   .restaurant_wishlist_card_body {
@@ -136,6 +137,13 @@
     display: flex;
     justify-content: space-between;
   }
+
+  .restaurant_wishlist_detail_img{
+    width: 200px;
+    height: 200px;
+    border-radius: 10px;
+    margin: 10px auto;
+  }
   
   .restaurant_wishlist_checkout_btn {
     width: 100%;
@@ -153,5 +161,18 @@
   .restaurant_wishlist_arrow_right::before {
     content: '\f30b';
     font-family: 'Font Awesome 5 Free';
+  }
+
+  .btn_view{
+    padding: 10px 15px;
+    border-radius: 4px;
+    color: #30BFBF;
+    background-color: #fff;
+    outline: none;
+    border: none;
+  }
+
+  .btn_view:hover{
+    background-color: var(--bg-forth);
   }
   

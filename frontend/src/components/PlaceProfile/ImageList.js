@@ -1,17 +1,33 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { useMediaQuery } from 'react-responsive';
 import Pagination from '@mui/material/Pagination';
+import { getPostsByFoodVenue } from '../../functions/foodVenue';
+import { toast } from 'react-toastify';
 
-export default function MasonryImageList() {
-  const [page, setPage] = React.useState(1);
+export default function MasonryImageList({user, foodVenue}) {
+  const [foodVenuePost, setFoodVenuePost] = useState([]);
+  const [page, setPage] = useState(1);
   const itemsPerPage = 12;
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  useEffect(() => {
+    if (foodVenue && foodVenue.name) {
+      const fetchFoodVenuePost = async () => {
+        try {
+          const response = await getPostsByFoodVenue(foodVenue.name, user.token);
+          setFoodVenuePost(response);
+          console.log(response);
+        } catch (error) {
+          toast.error("Error fetching food venue, please try again: " + error.message);
+        }
+      };
+
+      fetchFoodVenuePost();
+    }
+  }, [foodVenue?.name, user.token]);
 
   const query769px = useMediaQuery({
     query: "(max-width: 769px)",
@@ -23,28 +39,37 @@ export default function MasonryImageList() {
 
   const cols = query564px ? 1 : query769px ? 2 : 3;
 
+  // Extract all image URLs from the media array of each post
+  const allImages = foodVenuePost
+    .flatMap(post => post.media) // Get all media arrays from posts
+    .filter(mediaItem => mediaItem.type === "image") // Filter to keep only image media
+    .map(mediaItem => mediaItem.url); // Extract the URLs
+
   // Calculate the items to display for the current page
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentItems = itemData.slice(startIndex, endIndex);
+  const currentItems = allImages.slice(startIndex, endIndex);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
 
   return (
-    // <Box sx={{ width: '100%', height: 450, overflowY: 'scroll' }}>
     <Box sx={{ width: '100%' }}>
       <ImageList variant="masonry" cols={cols} gap={8}>
-        {currentItems.map((item) => (
-          <ImageListItem key={item.img}>
+        {currentItems.map((imgUrl, index) => (
+          <ImageListItem key={index}>
             <img
-              srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-              src={`${item.img}?w=248&fit=crop&auto=format`}
-              alt={item.title}
+              srcSet={`${imgUrl}?w=248&fit=crop&auto=format&dpr=2 2x`}
+              src={`${imgUrl}?w=248&fit=crop&auto=format`}
+              alt="Food venue media"
               loading="lazy"
             />
           </ImageListItem>
         ))}
       </ImageList>
       <Pagination
-        count={Math.ceil(itemData.length / itemsPerPage)}
+        count={Math.ceil(allImages.length / itemsPerPage)}
         page={page}
         onChange={handleChangePage}
         sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}
@@ -52,54 +77,3 @@ export default function MasonryImageList() {
     </Box>
   );
 }
-
-const itemData = [
-  {
-    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSWZ5IYfEczUFQvL-cPAOjwYKHiFkkda5muw&s',
-    title: 'Bed',
-  },
-  {
-    img: 'https://www.tribus.com.my/faci/faci002.jpg',
-    title: 'Books',
-  },
-  {
-    img: 'https://www.tribus.com.my/img/bg01.jpg',
-    title: 'Sink',
-  },
-  {
-    img: 'https://fastly.4sqi.net/img/general/600x600/564566936_k16QklEvjCiTUQnPGcNW9EcYgz3EG0sVGzCqAT8rEvg.jpg',
-    title: 'Kitchen',
-  },
-  {
-    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIVumjW5PQ7WGl1w4QBy14tEEphlrhGTXRig&s',
-    title: 'Blinds',
-  },
-  {
-    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6nHHJ3B_UUU7tw-38BCe-h52RHkJn9rjvKw&s',
-    title: 'Chairs',
-  },
-  // {
-  //   img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoaAvjtbLmXGnbXJT1e8SNWSIEbwOZ7OUQKA&s',
-  //   title: 'Laptop',
-  // },
-  {
-    img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRykOSL5EmnZ6pAG7R_2HdQrnk_NFtFhXqejw&s',
-    title: 'Doors',
-  },
-  // {
-  //   img: 'https://images.unsplash.com/photo-1517487881594-2787fef5ebf7',
-  //   title: 'Coffee',
-  // },
-  // {
-  //   img: 'https://images.unsplash.com/photo-1516455207990-7a41ce80f7ee',
-  //   title: 'Storage',
-  // },
-  // {
-  //   img: 'https://images.unsplash.com/photo-1597262975002-c5c3b14bbd62',
-  //   title: 'Candle',
-  // },
-  // {
-  //   img: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4',
-  //   title: 'Coffee table',
-  // },
-];

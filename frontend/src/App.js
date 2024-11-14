@@ -41,6 +41,10 @@ import ProfileFollowing from "./pages/profile/ProfileContent/ProfileFollowing";
 import ProfileFollower from "./pages/profile/ProfileContent/ProfileFollower";
 import ProfileFoodMap from "./pages/profile/ProfileContent/ProfileFoodMap";
 import ProfileVoucher from "./pages/profile/ProfileContent/ProfileVoucher";
+import SearchResult from "./pages/searchResult/SearchResult";
+import PlaceProfileEvents from "./components/PlaceProfile/PlaceProfileEvents";
+import PlaceProfilePromotions from "./components/PlaceProfile/PlaceProfilePromotions";
+import WishlistPlaceDetailsLayout from "./pages/PlaceDetails/WishlistPlaceDetailsLayout";
 
 const useAxios = () => {
   const [isExpired, setIsExpired] = useState(false);
@@ -115,6 +119,7 @@ function App() {
       // if (data.length === 0 || data.length < 10) {
       //   setHasMore(false); // Stop fetching when there are no more posts
       // }
+
       if(data.length === 0){
         setHasMore(false);
       }
@@ -170,18 +175,8 @@ function App() {
           <Route path="/login" element={<Login />} exact />
           <Route path="/register" element={<Register />} exact />
           <Route path="/resetpassword" element={<ResetPassword />} exact />
-
-          {/* <Route path="/place/:tab" element={<PlaceDetails />} /> */}
         </Route>
         <Route element={<LoginRoutes />}>
-          {/* <Route path="/profile" element={<Profile />} exact /> */}
-          {/* <Route path="/profile" element={<Profile />}>
-            <Route index element={<ProfilePost user={user}/>} />
-            <Route path="intro" element={<ProfileIntroCarousel />} />
-            <Route path="photos" element={<ProfilePhoto />} />
-            <Route path="following" element={<ProfileFollowing />} />
-            <Route path="followers" element={<ProfileFollower />} /> 
-          </Route> */}
           <Route path="/post/:id/:initialIndex" element={<PostDetailsPage user={user}/>} exact />
           <Route
             path="/profile/:username"
@@ -200,12 +195,23 @@ function App() {
             <Route index element={<SettingsPage />} />
             <Route path="password" element={<PasswordSettingsPage />} />
           </Route>
-          <Route path="/venue" element={<PlaceDetailsLayout />}>
+          <Route path="/foodVenue/:id" element={<PlaceDetailsLayout user={user}/>}>
             <Route index element={<PlaceProfileOverview />} />
             <Route path="reviews" element={<PlaceProfileReview user={user} />} />
-            <Route path="photos" element={<PlaceProfilePhotos />} />
+            <Route path="photos" element={<PlaceProfilePhotos user={user} />} />
             <Route path="menu" element={<PlaceProfileFoodMenu />} />
             <Route path="posts" element={<PlaceProfileRelatedPost user={user} />} />
+            <Route path="events" element={<PlaceProfileEvents user={user} />} />
+            <Route path="promotions" element={<PlaceProfilePromotions user={user} />} />
+          </Route>
+          <Route path="/myWishlistVenue/:id" element={<WishlistPlaceDetailsLayout user={user}/>}>
+            <Route index element={<PlaceProfileOverview />} />
+            <Route path="reviews" element={<PlaceProfileReview user={user} />} />
+            <Route path="photos" element={<PlaceProfilePhotos user={user} />} />
+            <Route path="menu" element={<PlaceProfileFoodMenu />} />
+            <Route path="posts" element={<PlaceProfileRelatedPost user={user} />} />
+            <Route path="events" element={<PlaceProfileEvents user={user} />} />
+            <Route path="promotions" element={<PlaceProfilePromotions user={user} />} />
           </Route>
           <Route path="/" element={<Layout user={user} />}>
             {/* <Route index element={<Feed posts={posts} user={user} />} /> */}
@@ -213,9 +219,10 @@ function App() {
             <Route path="discover" element={<PublicFeed user={user} />} />
             <Route path="searchVenue" element={<SearchVenue user={user}/>} />
             <Route path="myFoodJourney" element={<VisitedPlaceLayout user={user} />} />
-            <Route path="myWishlistVenue" element={<MyFoodMap />} />
+            <Route path="myWishlistVenue" element={<MyFoodMap user={user}/>} />
             <Route path="foodEvent" element={<FoodEvent />} />
             <Route path="foodPromotion" element={<FoodPromotion />} />
+            <Route path="searchResult/:term" element={<SearchResult user={user} />} />
           </Route>
           <Route path="/foodEvent/:id/" element={<EventDetails user={user} />} exact />
           <Route path="/foodPromotion/:id/" element={<PromotionDetails user={user} />} exact />

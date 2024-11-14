@@ -104,6 +104,7 @@
 
 .profile_picture {
   position: relative;
+  cursor: pointer;
 }
 
 .profile_picture_bg {
@@ -493,7 +494,7 @@
   }
 
   .profile_grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr!important;
   }
 }
 

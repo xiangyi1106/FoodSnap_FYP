@@ -39,14 +39,11 @@ export default function VisitedPlaceLayout({ user }) {
             if(response.data){
                 const newVisitedDates = response.data.map((post) => new Date(post.createdAt).getDate());
                 setVisitedDates(newVisitedDates); // Set the visited dates state
-                console.log(newVisitedDates); // Log the correct dates
-                  // Set the first visited date as the default selected day if any exist
-                //   if (newVisitedDates.length > 0 && !selectedDay) {
+                // console.log(newVisitedDates); // Log the correct dates
+                //   // Set the first visited date as the default selected day if any exist
+                // if (newVisitedDates.length > 0) {
                 //     setSelectedDay(newVisitedDates[0]);
                 // }
-                if (newVisitedDates.length > 0) {
-                    setSelectedDay(newVisitedDates[0]);
-                }
             }else{
                 //Clear if the data is empty
                 setVisitedDates([]);
@@ -81,6 +78,14 @@ export default function VisitedPlaceLayout({ user }) {
             }
         }
     };
+
+    useEffect(() => {
+        if (visitedDates.length === 1) {
+            setSelectedDay(visitedDates[0]);  // Set the first visited date as default selected day
+        } else {
+            setSelectedDay(null);  // Reset if no visited dates
+        }
+    }, [visitedDates]);
 
     useEffect(() => {
         fetchPosts();

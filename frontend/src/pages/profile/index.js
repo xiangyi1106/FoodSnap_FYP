@@ -104,7 +104,7 @@ export default function Profile() {
         <div className="profile_container">
           <Cover visitor={visitor} cover={profile.cover} />
           <ProfilePictureInfo profile={profile} visitor={visitor} user={user} />
-          {isMyFoodMap && <ProfileMenu username={username}/>}
+          {(isMyFoodMap || isMobile) && <ProfileMenu username={username}/>}
         </div>
       </div>
       <div className="profile_bottom">
@@ -124,7 +124,7 @@ export default function Profile() {
                 /> */}
                 {!isMyFoodMap ?
                   <div>
-                    <ProfileSidebar username={username} />
+                    {!isMobile && <ProfileSidebar username={username} />}
                     <div className="relative_copyright" style={{ display: isMobile ? 'none' : '' }}>
                       <Link to="/">Privacy </Link>
                       <span>. </span>
