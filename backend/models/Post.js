@@ -115,9 +115,9 @@ const postSchema = new mongoose.Schema(
                 default: new Date(),
             }
         }],
-        comments: [{ 
-            type: ObjectId,
-            ref: 'Comment' }],
+        // comments: [{ 
+        //     type: ObjectId,
+        //     ref: 'Comment' }],
         // comments: [{
         //     comment: {
         //         type: String,

@@ -47,11 +47,11 @@ const PromotionDetails = ({ user }) => {
                         <div className="profile_cover">
                             <img src={promotion?.image ? promotion?.image : `${process.env.PUBLIC_URL}/images/no-picture.png`} className="cover" alt="profile_cover"></img>
                         </div>
-                        <div className='profile_picture_wrapper' style={{ padding: '0 4rem', height: '250px', alignItems: 'flex-start' }}>
+                        <div className='event_profile_picture_wrapper'>
                             {/* {visible && <EditPromotionDetails setVisible={setVisible} />} */}
-                            <div className='profile_picture_left'>
-                                <div className='profile_col'>
-                                    <div className='place_profile'>
+                            <div className='event_profile_picture_left'>
+                                <div className='event_profile_col'>
+                                    <div className='event_place_profile'>
                                         <span className='place_profile_name'>{promotion?.name}</span>
                                         <span>
                                             <div className='place-ratings' style={{ color: 'gray', fontWeight: 'normal' }}>
@@ -88,11 +88,11 @@ const PromotionDetails = ({ user }) => {
                                         <CIcon icon={cilColorBorder} className='icon_size_20' onClick={()=> setVisible(true)}/>
                                     </button>
                                 </Tooltip>}
-                                <Tooltip title='Save Promotion'>
+                                {/* <Tooltip title='Save Promotion'>
                                     <button className="food_event_card_icon_button">
                                         <span className="material-symbols-outlined"><FavoriteBorderOutlined /></span>
                                     </button>
-                                </Tooltip>
+                                </Tooltip> */}
                             </div>
                         </div>
                     </div>

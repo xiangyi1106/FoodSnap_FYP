@@ -1,5 +1,5 @@
 export function postReducer(state, action) {
-  console.log("Reducer action:", action); // Check if this log appears
+  // console.log("Reducer action:", action); // Check if this log appears
   switch (action.type) {
     case "POSTS_REQUEST":
       return { ...state, loading: true, error: "" };
@@ -14,7 +14,6 @@ export function postReducer(state, action) {
       return { ...state, loading: false, error: action.payload };
 
     case "ADD_POST":
-      console.log("her");
       const updatedPosts = [action.payload, ...state];
       console.log("Updated posts in reducer:", updatedPosts); // Check if the new post is added
       return {

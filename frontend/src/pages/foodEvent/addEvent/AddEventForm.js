@@ -11,20 +11,20 @@ import { uploadMedias } from "../../../functions/uploadMedia";
 import dataURItoBlob from "../../../helpers/dataURItoBlob";
 import { ToastContainer, toast } from 'react-toastify';
 import { handleImage } from "../../../functions/handleImage";
+import { getAllFoodVenues } from "../../../functions/foodVenue";
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
 
-export function AddEventForm({ user, setIsCreateFormVisible }) {
+export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEvents, user, foodVenue }) {
     const [showEndDate, setShowEndDate] = useState(false);
     const [locationText, setLocationText] = useState('');
     const [locationList, setLocationList] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [tags, setTags] = useState('');
-    const [foodVenue, setFoodVenue] = useState(''); // Optional food venue from DB
     const [address, setAddress] = useState([]);
     const today = new Date();
     const [image, setImage] = useState('');
     const [error, setError] = useState('');
+    const [locationError, setLocationError] = useState(false);
 
     const eventFormSchema = Yup.object({
         eventName: Yup.string()
@@ -57,31 +57,20 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                 );
                 return selectedDateTime >= new Date(); // Compare selected date & time to current date & time
             }),
-        // location: Yup.string()
-        //     .min(2, "Location must be at least 2 characters.")
-        //     .max(100, "Location must not exceed 100 characters.")
-        //     .required("Location is required"),
         description: Yup.string()
-            // .min(10, "Description must be at least 10 characters.")
             .max(500, "Description must not exceed 500 characters."),
-        // organizer: Yup.string()
-        //     .min(2, "Organizer name must be at least 2 characters.")
-        //     .max(100, "Organizer name must not exceed 100 characters.")
-        //     .required("Organizer name is required"),
-        // eventType: Yup.string().required("Event type is required"),
-        privacy: Yup.string().required("Privacy setting is required"),
+        // privacy: Yup.string().required("Privacy setting is required"),
     });
 
     const updatePicture = async (img) => {
         try {
             let blob = await fetch(img).then((b) => b.blob());
-            const path = `${user.username}/event`;
+            const path = foodVenue ? `${foodVenue._id}/event` : `${user.username}/event`;
             let formData = new FormData();
             formData.append("file", blob);
             formData.append("path", path);
 
             const res = await uploadMedias(formData, path, user.token);
-            console.log(res);
             return res;
 
         } catch (error) {
@@ -102,8 +91,7 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
             eventImage: null,
             // eventType: "faceToFace",
             privacy: "public",
-            // tags: "",
-            // foodVenue: "",
+            foodVenue: null,
         },
         validationSchema: eventFormSchema,
         onSubmit: async (values, { resetForm }) => {
@@ -112,7 +100,7 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                 if (image) {
                     // Await the promise to resolve
                     const pic = await updatePicture(image);
-        
+
                     if (pic && pic.length > 0 && pic[0].url) {
                         // Directly set the image URL in the values object
                         values.eventImage = pic[0].url;
@@ -120,24 +108,41 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                         values.eventImage = null;
                     }
                 }
-        
-                // Now process the location: check if address is selected from suggestions
-                if (!address || !address.latitude || !address.longitude) {
-                    const manualAddress = locationText;
-                    const addressText = {
-                        fullAddress: manualAddress,
-                    };
 
-                    // Set the manually entered location data
+                if (!foodVenue && (locationText === "" || locationText === null)) {
+                    setLocationError(true);
+                    return;
+                }
+                if (foodVenue) {
                     const locationData = {
-                        name: manualAddress,
-                        address: addressText,
-                        latitude: null, // No latitude available
-                        longitude: null, // No longitude available
+                        name: foodVenue.name,
+                        address: foodVenue.location,
+                        latitude: foodVenue.latitude || null, // No latitude available
+                        longitude: foodVenue.longitude || null, // No longitude available
                     };
-
                     // formik.setFieldValue('location', locationData);
                     values.location = locationData;
+                    values.foodVenue = foodVenue._id;
+                } else {
+                    // Now process the location: check if address is selected from suggestions
+                    if (!address || !address.latitude || !address.longitude) {
+                        const manualAddress = locationText;
+                        const addressText = {
+                            fullAddress: manualAddress,
+                        };
+
+                        // Set the manually entered location data
+                        const locationData = {
+                            name: manualAddress,
+                            address: addressText,
+                            latitude: null, // No latitude available
+                            longitude: null, // No longitude available
+                        };
+
+                        // formik.setFieldValue('location', locationData);
+                        values.location = locationData;
+                        // user.role === 'business_account' && values.foodVenue = user.foodVenue;
+                    }
                 }
 
                 // Finally, post the event data to the backend
@@ -149,8 +154,17 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
 
                 //   // Handle success response
                 console.log(response.data);
+                setEvents((prevEvents) => [
+                    response.data,         // Add the new data
+                    ...prevEvents,  // Spread the previous promotions
+                ]);
+
+                setFilteredEvents((prevEvents) => [
+                    response.data,         // Add the new data
+                    ...prevEvents,  // Spread the previous promotions
+                ]);
                 toast.success("Event created successfully!");
-                setIsCreateFormVisible(false);
+                setIsCreateEventVisible(false);
 
                 // Optionally reset the form after successful submission
                 //   resetForm();
@@ -222,43 +236,22 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
         setLocationList([]); // Clear location list after selection
     };
 
-    // const [foodVenues, setFoodVenues] = useState([]);
-    // const [filteredVenues, setFilteredVenues] = useState([]);
-    // const [selectedVenue, setSelectedVenue] = useState('');
-    // const [searchTerm, setSearchTerm] = useState(''); // Store the input search term
-
+    // const [foodVenues, setFoodVenues] = useState([]); // State to store fetched food venues
+    // const [selectedVenues, setSelectedVenues] = useState(null); // State for selected venues
+    // const [searchTerm, setSearchTerm] = useState(""); // Input value for search term
     // // Fetch food venues from the backend when the component mounts
     // useEffect(() => {
     //     const fetchFoodVenues = async () => {
     //         try {
-    //             const response = await axios.get('/api/food-venues'); // Adjust the API endpoint based on your backend route
-    //             setFoodVenues(response.data); // Set the fetched venues
-    //             setFilteredVenues(response.data); // Initialize the filtered venues with the full list
+    //             const response = await getAllFoodVenues(user.token); // Replace with your backend endpoint
+    //             setFoodVenues(response); // Assuming the response is an array of food venues
     //         } catch (error) {
-    //             console.error('Error fetching food venues:', error);
+    //             console.error("Error fetching food venues:", error);
     //         }
     //     };
 
     //     fetchFoodVenues();
-    // }, []);
-
-    // // Handle the input change and filter the food venues based on the search term
-    // const handleInputChange = (e) => {
-    //     const value = e.target.value.toLowerCase();
-    //     setSearchTerm(value);
-
-    //     // Filter the food venues based on the search term
-    //     const filtered = foodVenues.filter(venue =>
-    //         venue.name.toLowerCase().includes(value)
-    //     );
-
-    //     setFilteredVenues(filtered); // Update the filtered venues
-    // };
-
-    // // Handle the select option change
-    // const handleVenueChange = (e) => {
-    //     setSelectedVenue(e.target.value);
-    // };
+    // }, []); // Empty dependency array ensures this runs once when the component mounts
 
     return (
         <FormikProvider value={formik}>
@@ -394,18 +387,7 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                     </FormControl>
                     <p className="profile_form_description">Select the type of the event.</p>
                 </div> */}
-
-                {/* <TextInput
-                    label="Location"
-                    id="location"
-                    name="location"
-                    placeholder="Enter the location of the event"
-                    value={location} // Use local state for the input value
-                    formik={formik} // Ensure formik is being passed correctly
-                    onChange={handleLocationSearch} // Trigger location search
-                    description="Provide the location where the event will take place."
-                /> */}
-                <div className="profile_form_item">
+                {!foodVenue && <div className="profile_form_item">
                     <label className="profile_form_label">
                         Location
                     </label>
@@ -416,8 +398,10 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                         value={locationText} // Use local state for the input value
                         onChange={handleLocationSearch} // Trigger location search
                     />
+                    {locationError && <div className="profile_form_message">Location is required.</div>}
                     <p className="profile_form_description">{"Provide the location where the event will take place."}</p>
                 </div>
+                }
 
                 {isLoading ? (
                     <CircularProgress />
@@ -453,7 +437,7 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                     description="Provide details about the event."
                 />
 
-                <div>
+                {/* <div>
                     <FormControl component="fieldset" style={{ marginTop: '20px' }}>
                         <FormLabel component="legend" style={{ color: 'black', fontSize: '0.9rem', marginBottom: '0.5rem', }}>Privacy</FormLabel>
                         <RadioGroup
@@ -496,7 +480,7 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                         </RadioGroup>
                     </FormControl>
                     <p className="profile_form_description">Select the privacy of the event.</p>
-                </div>
+                </div> */}
 
                 {/* <TextInput
                     label="Organizer"
@@ -533,6 +517,36 @@ export function AddEventForm({ user, setIsCreateFormVisible }) {
                     />
                     <p className="profile_form_description">Select the food venue of the event if available.</p>
                 </div> */}
+
+                {/* {!foodVenue && <div className="profile_form_item">
+                    <label htmlFor="foodVenue" className="profile_form_label">Food Venue</label>
+                    <Autocomplete
+                        id="foodVenue"
+                        multiple={false} // Single selection
+                        options={foodVenues} // Array of available food venues
+                        getOptionLabel={(option) => option.name} // Display venue name
+                        value={selectedVenues} // Controlled value (single object or null)
+                        onChange={(event, newValue) => {
+                            console.log(newValue);
+                            setSelectedVenues(newValue); // Update the selected venue
+                            formik.setFieldValue("foodVenue", newValue ? newValue._id : null); // Update Formik's state with selected venue ID
+                        }}
+                        inputValue={searchTerm} // Controlled input value (typed by user)
+                        onInputChange={(event, newInputValue) => setSearchTerm(newInputValue)} // Handle input change for filtering
+                        filterOptions={(options, state) =>
+                            options.filter((option) =>
+                                option.name.toLowerCase().startsWith(state.inputValue.toLowerCase()) // Filter options based on input
+                            )
+                        }
+                        renderInput={(params) => (
+                            <TextField {...params} placeholder="Type to search for a venue" />
+                        )}
+                        isOptionEqualToValue={(option, value) => option.id === value?.id} // Compare by 'id'
+                    />
+
+
+                    <p className="profile_form_description">Select the food venue of the promotion to show it on food venue's promotion page.</p>
+                </div>} */}
 
                 <button
                     type="submit"

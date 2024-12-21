@@ -50,10 +50,10 @@
         margin-left: 38px;
     }
 
-    .post,
+    /* .post,
     .send_verification {
         width: calc(100vw - 50px) !important;
-    }
+    } */
 
     /* .post,
     .send_verification {
@@ -86,7 +86,7 @@
     }
 } */
 
-@media(max-width: 620px) {
+@media(max-width: 481px) {
     .left_menu {
         display: none;
     }

@@ -9,8 +9,8 @@ import CreatePostPopUp from "../../components/createPostPopup";
 
 export default function Layout({user}) {
     const location = useLocation();
-    const width768 = useMediaQuery({
-        query: "(max-width: 769px)"
+    const width481 = useMediaQuery({
+        query: "(max-width: 481px)"
     });
 
     // Extract the current path to determine the active page
@@ -24,7 +24,7 @@ export default function Layout({user}) {
             <LeftMenu />
             {visible && <CreatePostPopUp setVisible={setVisible} setIsPostLoading={setIsPostLoading} user={user} />}
             <Outlet />
-            {width768 && <MobileBottomNavigation />}
+            {width481 && <MobileBottomNavigation />}
         </div>
     );
 }

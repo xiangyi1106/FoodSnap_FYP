@@ -7,7 +7,7 @@
 }
 
 .liked:hover{
-    color: #30BFBF;
+    color: #30BFBF!important;
 }
 
 .unliked:hover{

@@ -4,6 +4,9 @@ import { getFoodVenueWishlist, removeFromFoodVenueWishlist } from '../../functio
 import CIcon from '@coreui/icons-react';
 import { cilTrash } from '@coreui/icons';
 import { useNavigate } from 'react-router-dom';
+import StarRating from '../../components/searchVenue/StarRating';
+import Tooltip from '@mui/material/Tooltip';
+
 
 const RestaurantWishlist = ({ onRemove, user }) => {
 
@@ -18,7 +21,8 @@ const RestaurantWishlist = ({ onRemove, user }) => {
     useEffect(() => {
         const fetchWishlist = async () => {
             const wishlistData = await getFoodVenueWishlist(user.token);
-            setWishlist(wishlistData); // Set state with fetched data
+            // setWishlist(wishlistData); // Set state with fetched data
+            setWishlist(Array.isArray(wishlistData) ? wishlistData : []);
             wishlistData.length > 0 && setSelectedRestaurant(wishlistData[0]);
         };
 
@@ -48,13 +52,45 @@ const RestaurantWishlist = ({ onRemove, user }) => {
         });
     };
 
-    
-  const navigate = useNavigate();
 
-  const handleClick = (id) => {
-    navigate(`/myWishlistVenue/${id}`);
+    const navigate = useNavigate();
 
-  };
+    const handleClick = (id) => {
+        navigate(`/foodVenueWishlist/${id}`);
+
+    };
+
+    // Helper function to open Google Maps in a new tab
+    const handleGetDirection = () => {
+
+        if (selectedRestaurant?.latitude && selectedRestaurant?.longitude) {
+            const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${selectedRestaurant.latitude},${selectedRestaurant.longitude}`;
+            window.open(mapsUrl, '_blank', 'noopener noreferrer');
+        } else {
+            alert('Coordinates not available for this location.');
+        }
+        
+        // let mapsUrl;
+
+        // // Check if name is available
+        // if (selectedRestaurant.name) {
+        //     mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedRestaurant.name)}`;
+        // }
+
+        // // Fallback to latitude and longitude if no name or search fails
+        // if (!mapsUrl && selectedRestaurant?.latitude && selectedRestaurant?.longitude) {
+        //     mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${selectedRestaurant.latitude},${selectedRestaurant.longitude}&travelmode=driving`;
+        // }
+
+        // // If no valid data is available
+        // if (!mapsUrl) {
+        //     alert('Location details are not available.');
+        //     return;
+        // }
+
+        // // Open the generated URL
+        // window.open(mapsUrl, '_blank', 'noopener noreferrer');
+    };
 
     return (
         <section className="restaurant_wishlist_section">
@@ -72,7 +108,7 @@ const RestaurantWishlist = ({ onRemove, user }) => {
                                         <hr />
                                         <div className="restaurant_wishlist_header">
                                             <div>
-                                                {wishlist.length > 0 ?
+                                                {wishlist && wishlist.length > 0 ?
                                                     <p className="restaurant_wishlist_subtitle">
                                                         You have {wishlist.length} {wishlist.length === 1 ? "food venue" : "food venues"} in your wishlist
                                                     </p>
@@ -86,11 +122,12 @@ const RestaurantWishlist = ({ onRemove, user }) => {
                                         </div>
 
                                         {/* List of restaurants */}
-                                        {wishlist.length > 0 && wishlist.map((restaurant, index) => (
+                                        {wishlist && wishlist.length > 0 && wishlist.map((restaurant, index) => (
                                             <RestaurantItem
                                                 key={index}
                                                 imgSrc={restaurant.picture}
                                                 name={restaurant.name}
+                                                rating={restaurant.rating}
                                                 desc={restaurant.description}
                                                 location={restaurant.address}
                                                 price={restaurant.priceRange}
@@ -124,21 +161,21 @@ const RestaurantWishlist = ({ onRemove, user }) => {
                                                                 <div className="info_profile_title source-sans-3-bold" style={{ color: 'white', fontSize: '1.2rem' }}>Price Range</div>
                                                             </div>
                                                             <p className="restaurant_wishlist_price">
-                                                                {selectedRestaurant.priceRange}
+                                                                {selectedRestaurant.priceRange || "No details"}
                                                             </p>
-                                                            <div className="info_profile">
+                                                            {/* <div className="info_profile">
                                                                 <div className="info_profile_title source-sans-3-bold" style={{ color: 'white', fontSize: '1.2rem' }}>Contact Number</div>
                                                             </div>
                                                             <p className="restaurant_wishlist_price">
                                                                 {selectedRestaurant.phone || "-"}
-                                                            </p>
+                                                            </p> */}
                                                             <div className="info_profile">
                                                                 <div className="info_profile_title source-sans-3-bold" style={{ color: 'white', fontSize: '1.2rem' }}>Opening Hours</div>
                                                             </div>
                                                             <div className="opening_hour">
                                                                 {Object.entries(selectedRestaurant?.openingHours || {}).map(([day, times], index) => (
                                                                     <div key={index} className="opening_hour_row">
-                                                                        <div className="opening_hour_day">{day.charAt(0).toUpperCase() + day.slice(1)}</div>
+                                                                        <div className="opening_hour_day" style={{minWidth: '50px'}}>{day.charAt(0).toUpperCase() + day.slice(1)}</div>
                                                                         <div className="opening_hour_time">
                                                                             {times.length > 0 ? (
                                                                                 times.map((time, idx) => (
@@ -153,8 +190,14 @@ const RestaurantWishlist = ({ onRemove, user }) => {
                                                                     </div>
                                                                 ))}
                                                             </div>
-                                                            <div className='flex-center' style={{marginTop: '20px'}}>
-                                                                <button className='btn_view' onClick={() => selectedRestaurant && handleClick(selectedRestaurant._id)}>View Details</button>
+                                                            <div className='flex-center' style={{ marginTop: '20px', gap: '20px' }}>
+                                                                <Tooltip title="See Food Venue Details in Venue Page">
+                                                                    <button className='btn_view' onClick={() => selectedRestaurant && handleClick(selectedRestaurant._id)}>View Details</button>
+                                                                </Tooltip>
+                                                                {selectedRestaurant?.latitude && selectedRestaurant?.longitude && 
+                                                                <Tooltip title="Get Direction From Google Maps">
+                                                                    <button className='btn_view' onClick={handleGetDirection}>Get Direction</button>
+                                                                </Tooltip>}
                                                             </div>
                                                         </div>
                                                     }
@@ -173,7 +216,7 @@ const RestaurantWishlist = ({ onRemove, user }) => {
     );
 };
 
-const RestaurantItem = ({ imgSrc, name, desc, location, onSelect, onRemove, id, date }) => (
+const RestaurantItem = ({ imgSrc, name, desc, rating, location, onSelect, onRemove, id, date }) => (
 
     <div className="restaurant_wishlist_item hover_style_3" onClick={onSelect}>
         <div className="restaurant_wishlist_item_body">
@@ -181,7 +224,8 @@ const RestaurantItem = ({ imgSrc, name, desc, location, onSelect, onRemove, id, 
                 <img src={imgSrc} alt={name} className="restaurant_wishlist_item_img" />
                 <div className="restaurant_wishlist_item_details">
                     <h5>{name}</h5>
-                    <p>{desc}</p>
+                    {/* <p>{desc}</p> */}
+                    <StarRating rating={rating} />
                     <p className="restaurant_wishlist_location">{location}</p>
                     <p style={{ color: 'gray', fontSize: '0.85rem' }}>Saved at: {new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 </div>

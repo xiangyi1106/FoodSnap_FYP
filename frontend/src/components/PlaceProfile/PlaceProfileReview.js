@@ -97,9 +97,9 @@ export default function PlaceProfileReview({ user }) {
     return (
         <div className='profile_review'>
             <div className='profile_review_wrapper'>
-                <PlaceProfileWriteReview user={user} foodVenue={foodVenue} />
+                <PlaceProfileWriteReview user={user} foodVenue={foodVenue} setComments={setComments}/>
                 <div className='profile_review_section'>
-                    <p>All Review ({comments && comments.length})</p>
+                    <p style={{margin: '10px 25px'}}>All Review ({comments && comments.length})</p>
                     <PlaceCommentSection initialComments={initialComments} comments={comments} user={user} onAddComment={handleAddComment} setComments={setComments} />
 
                 </div>

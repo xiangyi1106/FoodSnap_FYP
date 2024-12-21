@@ -22,23 +22,21 @@ export default function PostInteraction({ post, user, isPost, onShowFeedComment,
 
     useEffect(() => {
         const getPostLikes = async () => {
-            const res = await fetchLikeStatus(post._id, user.token);
+            const res = await fetchLikeStatus(post?._id, user?.token);
             setIsLiked(res.isLiked);
             // setCheckSaved(res.checkSaved);
-            console.log(post._id, res);
             setLikesCount(post.likes.length);
             setSharesCount(post.shares.length);
         };
         const getPostComments = async () => {
-            const res = await fetchComments(post._id, user.token);
+            const res = await fetchComments(post?._id, user.token);
             setComments(res);
             res.length > 0 && setCommentCount(res.length);
-            console.log("comment", res);
         };
 
         getPostLikes();
         getPostComments();
-    }, []);
+    }, [post?._id]);
 
     const showMore = () => {
         setCount((prev) => prev + 3);
@@ -48,7 +46,6 @@ export default function PostInteraction({ post, user, isPost, onShowFeedComment,
     const [focusCommentInput, setFocusCommentInput] = useState(false);
 
     const handleCommentIconClick = () => {
-        console.log("here");
         setFocusCommentInput(true); // Toggle focus
     };
 
@@ -58,7 +55,7 @@ export default function PostInteraction({ post, user, isPost, onShowFeedComment,
                 <div className="reacts_count">
                     <div className="reacts_count_imgs">
                         <LikeButton
-                            postId={post._id}
+                            postId={post?._id}
                             user={user}
                             setLikesCount={setLikesCount} // Pass setLikesCount function
                             currentLikes={likesCount}     // Pass current likes count
@@ -87,7 +84,7 @@ export default function PostInteraction({ post, user, isPost, onShowFeedComment,
                     <div className="comments_order"></div>
                     <CreateComment
                         user={user}
-                        postId={post._id}
+                        postId={post?._id}
                         setComments={setComments}
                         setCount={setCount}
                         setCommentCount={setCommentCount}

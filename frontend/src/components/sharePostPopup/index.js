@@ -55,14 +55,6 @@ export default function SharePostPopUp({ setVisible, user, post }) {
 
     const [privacy, setPrivacy] = useState("followers");
 
-    // const [shareText, setShareText] = useState("");
-
-    const [{ loading, error }, dispatch] = useReducer(postReducer, {
-        loading: false,
-        // posts: [],
-        error: "",
-    });
-
     const handleSharePost = async () => {
         try {
             // Send a request to share the post using axios
@@ -83,15 +75,6 @@ export default function SharePostPopUp({ setVisible, user, post }) {
             setVisible(false);
             console.log(response.data); // Log the result from the server
             toast.success(response.data.message);
-            // Log before dispatch to check if it's being called
-            console.log("Dispatching POST_ADDED with payload:", response.data.post);
-            // Dispatch the new post to the reducer
-            dispatch({
-                type: "ADD_POST",
-                payload: response.data.post,
-            });
-            // setComments((prevComments) => [comments, ...prevComments]);
-
 
         } catch (error) {
             // Handle any errors that occur during the request

@@ -32,7 +32,7 @@ function ResetCenterView({ position }) {
     return null;
 }
 
-export default function Map({ addresses, selected }) {
+export default function Map({ addresses, selected, foodVenues }) {
     const johorBahruCoordinates = [1.4927, 103.7414]; // Default to Johor Bahru
     const [position, setPosition] = useState(johorBahruCoordinates); // Default to Johor Bahru
 
@@ -183,10 +183,20 @@ export default function Map({ addresses, selected }) {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             {position && <ResetCenterView position={position} />}
-            {locations.map((location, index) => (
+            {/* {locations.map((location, index) => (
                 <Marker key={index} position={[location.latitude, location.longitude]} icon={customMarkerIcon}>
                     <Popup>{location.name}</Popup>
                 </Marker>
+            ))} */}
+            {foodVenues.map((location, index) => (
+                location.latitude && location.longitude ? (
+                    <Marker key={index} position={[location.latitude, location.longitude]} icon={customMarkerIcon}>
+                        <Popup className="">
+                            <h6>{location?.name}</h6>
+                            <p>{location?.priceRange}</p>
+                            </Popup>
+                    </Marker>
+                ) : null
             ))}
         </MapContainer>
     );

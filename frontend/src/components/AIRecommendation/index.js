@@ -184,19 +184,19 @@ export default function FoodSuggestion({ setVisible, user }) {
                                 </div>
                             </div>
                             <div className="preference_group">
-                                <p>Are there any specific ingredients you love?</p>
+                                <p>Are there any specific food you love?</p>
                                 <div className="button_group" >
                                     <input type='text' name='' className='' placeholder='e.g., cheese, chocolate, seafood' onChange={handleLoveIngredientsChange} ></input>
                                 </div>
                             </div>
                             <div className="preference_group">
-                                <p>Are there any specific ingredients you want to avoid?</p>
+                                <p>Are there any specific food you want to avoid?</p>
                                 <div className="button_group" >
                                     <input type='text' name='' className='' placeholder='e.g., nuts, dairy, soy' onChange={handleAvoidIngredientsChange} ></input>
                                 </div>
                             </div>
                             <div className='preference_group'>
-                                <button className="glow-on-hover" type="button" onClick={handleClickFood}>Search</button>
+                                <button className="glow-on-hover" type="button" onClick={handleClickFood}>Suggest</button>
                             </div>
                             {isLoading && <div className='preference_group'>
                                 <div className='loader'></div>

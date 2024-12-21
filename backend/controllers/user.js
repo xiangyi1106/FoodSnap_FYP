@@ -7,6 +7,7 @@ const Post = require('../models/Post');
 const FoodVenue = require('../models/FoodVenue');
 const SearchTerm = require('../models/SearchTerm');
 const bcrypt = require("bcrypt");
+const Notification = require("../models/Notification");
 // const { User, Post, Code } = require("../models/models");
 
 const register = async (req, res) => {
@@ -321,7 +322,42 @@ const getProfile = async (req, res) => {
         const profile = await User.findOne({ username })
             .select("-password")
             .populate('following', 'username name picture') // Adjust the fields as needed
-            .populate('followers', 'username name picture'); // Adjust the fields as needed
+            .populate('followers', 'username name picture') // Adjust the fields as needed
+            .populate({
+                path: 'savedPosts', // Populate savedPosts
+                populate: {
+                    path: 'post', // Populate the post inside savedPosts
+                    populate: [
+                        {
+                            path: 'user', // Populate user inside post
+                            select: 'name picture username _id', // Choose fields to select
+                        },
+                        {
+                            path: 'sharedPost', // Populate sharedPost inside post
+                            populate: {
+                                path: 'user', // Populate user inside sharedPost
+                                select: 'name picture username _id', // Choose fields to select
+                            },
+                        },
+                    ],
+                },
+            });
+            // .populate({
+            //     path: 'savedPosts', // Populate savedPosts
+            //     populate: [
+            //         { 
+            //             path: 'post', // Populate user inside savedPosts
+            //             // select: 'name picture username _id' 
+            //         },
+            //         // { 
+            //         //     path: 'sharedPost', // Populate sharedPost inside savedPosts
+            //         //     populate: {
+            //         //         path: 'user', // Populate user inside sharedPost
+            //         //         select: 'name picture username _id'
+            //         //     }
+            //         // }
+            //     ]
+            // });
 
         if (!profile) {
             return res.status(404).json({ ok: false, message: "Profile not found" });
@@ -492,6 +528,17 @@ const follow = async (req, res) => {
                 await sender.updateOne({
                     $push: { following: receiver._id },
                 });
+
+                // Add notification for the followed user
+                const notification = {
+                    userId: receiver._id,
+                    type: 'new_follower',
+                    fromUserId: sender._id,
+                    message: `${sender.name} started following you.`,
+                };
+
+                await Notification.create(notification);
+
                 res.json({ message: "Following successfully" });
             } else {
                 return res.status(400).json({ message: "Already following" });
@@ -787,78 +834,113 @@ const addToFoodVenueWishlist = async (req, res) => {
     try {
         const userId = req.user.id; // Assuming you get user ID from auth middleware
         const { id } = req.params;
-    
+
         //Add attribute if database does not have
         // await User.updateMany({ foodVenueWishlist: { $exists: false } }, { foodVenueWishlist: [] });
         console.log("userid", userId);
         console.log("id", id);
 
         const user = await User.findByIdAndUpdate(
-          userId,
-          { $addToSet: { foodVenueWishlist: id } }, // Avoids duplicates
-          { new: true }
+            userId,
+            { $addToSet: { foodVenueWishlist: id } }, // Avoids duplicates
+            { new: true }
         ).populate("foodVenueWishlist");
-    
+
         res.status(200).json(user.foodVenueWishlist);
         console.log(user.foodVenueWishlist);
 
-      } catch (error) {
+    } catch (error) {
         console.log(error.message);
         res.status(500).json({ message: "Error adding to wishlist" });
-      }
+    }
 };
 
 const removeFromFoodVenueWishlist = async (req, res) => {
     try {
-        const  userId  = req.user.id; // Assuming authentication middleware
+        const userId = req.user.id; // Assuming authentication middleware
         const { id } = req.params;
-    
+
         const user = await User.findByIdAndUpdate(
             userId,
             { $pull: { foodVenueWishlist: id } },
             { new: true }
-          ).populate("foodVenueWishlist");
-    
+        ).populate("foodVenueWishlist");
+
         res.status(200).json(user.foodVenueWishlist);
-      } catch (error) {
+    } catch (error) {
         res.status(500).json({ message: "Error adding to wishlist" });
-      }
+    }
 };
 
 const getFoodVenueWishlist = async (req, res) => {
     try {
-      // Assuming user is authenticated and we have req.user.id
-      const user = await User.findById(req.user.id).populate("foodVenueWishlist"); // Populate wishlist with restaurant details
-      if (!user) return res.status(404).json({ message: "User not found" });
-  
-      res.json(user.foodVenueWishlist); // Respond with populated wishlist
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Server error" });
-    }
-  };
+        // Assuming user is authenticated and we have req.user.id
+        const user = await User.findById(req.user.id).populate("foodVenueWishlist"); // Populate wishlist with restaurant details
+        if (!user) return res.status(404).json({ message: "User not found" });
 
-  // In your wishlist controller file
+        res.json(user.foodVenueWishlist); // Respond with populated wishlist
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+// In your wishlist controller file
 const checkFoodVenueInWishlist = async (req, res) => {
     try {
-      const { id } = req.params; // ID of the food venue to check
-      const userId = req.user.id; // Authenticated user's ID
-  
-      const user = await User.findById(userId);
-  
-      if (!user) return res.status(404).json({ message: "User not found" });
-  
-      // Check if the foodVenue ID exists in the user's wishlist
-      const isInWishlist = user.foodVenueWishlist.includes(id);
-  
-      res.json({ isInWishlist });
+        const { id } = req.params; // ID of the food venue to check
+        const userId = req.user.id; // Authenticated user's ID
+
+        const user = await User.findById(userId);
+
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        // Check if the foodVenue ID exists in the user's wishlist
+        const isInWishlist = user.foodVenueWishlist.includes(id);
+
+        res.json({ isInWishlist });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Error checking wishlist" });
+        console.error(error);
+        res.status(500).json({ message: "Error checking wishlist" });
+    }
+};
+
+const getFoodVenueMapList = async (req, res) => {
+    try {
+        // Assuming user is authenticated and we have req.user.id
+        const user = await User.findById(req.user.id); // Populate wishlist with restaurant details
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        res.json(user.foodVenueMaplist); // Respond with populated wishlist
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" + error });
+    }
+};
+
+const getSavedPost = async (req, res) => {
+    try {
+      // Find the user by their ID and populate the saved posts' post details
+      const user = await User.findById(req.user.id)
+        .populate('savedPost.post');  // Populate the post field within savedPost
+        // .exec();
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // You may want to transform the data before sending it back
+      const savedPosts = user.savedPost.map(saved => ({
+        post: saved.post,  // This is the populated post document
+        savedAt: saved.savedAt
+      }));
+  
+      res.json({ savedPosts });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
   };
 
-  
 module.exports = {
     register,
     login,
@@ -886,5 +968,7 @@ module.exports = {
     removeFromFoodVenueWishlist,
     getFoodVenueWishlist,
     checkFoodVenueInWishlist,
+    getFoodVenueMapList,
+    getSavedPost,
     // auth,
 };

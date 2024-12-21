@@ -68,7 +68,7 @@ export const getPostsByFoodVenue = async (name, token) => {
     try {
         // Encode the `name` parameter to handle spaces and special characters
         const encodedName = encodeURIComponent(name);
-        
+
         // Pass `name` as a query parameter in the URL
         const { data } = await axios.get(
             `${process.env.REACT_APP_BACKEND_URL}/getPostsByFoodVenue?name=${encodedName}`,
@@ -107,11 +107,11 @@ export const addFoodVenueComment = async (placeId, user, text, parentCommentId) 
     try {
         const { data } = await axios.post(
             `${process.env.REACT_APP_BACKEND_URL}/${placeId}/comments/${parentCommentId || ''}`,
-            { 
+            {
                 author: user.name,
                 text,
                 avatarUrl: user.picture,
-             },
+            },
 
             {
                 headers: {
@@ -127,18 +127,18 @@ export const addFoodVenueComment = async (placeId, user, text, parentCommentId) 
     }
 };
 
-export const addFoodVenueReview = async (placeId, user, text, rating, media ) => {
+export const addFoodVenueReview = async (placeId, user, text, rating, media) => {
     try {
         const { data } = await axios.post(
             `${process.env.REACT_APP_BACKEND_URL}/${placeId}/addReview`,
-            { 
+            {
                 // author: user.name,
                 userID: user.id,
                 text,
                 // avatarUrl: user.picture,
                 rating,
                 media
-             },
+            },
             {
                 headers: {
                     Authorization: `Bearer ${user.token}`,
@@ -153,16 +153,16 @@ export const addFoodVenueReview = async (placeId, user, text, rating, media ) =>
     }
 };
 
-export const addFoodVenueReviewReply = async (user, text, reviewId ) => {
-    
+export const addFoodVenueReviewReply = async (user, text, reviewId) => {
+
     try {
         const { data } = await axios.post(
             `${process.env.REACT_APP_BACKEND_URL}/comment/${reviewId}/reply`,
-            { 
+            {
                 // author: user.name,
                 userID: user.id,
                 text,
-             },
+            },
             {
                 headers: {
                     Authorization: `Bearer ${user.token}`,
@@ -174,5 +174,139 @@ export const addFoodVenueReviewReply = async (user, text, reviewId ) => {
     } catch (error) {
         console.log(error.response.data.message);
         return error.response.data.message;
+    }
+};
+
+export const updateFoodVenue = async (
+    id,
+    formData,
+    user
+) => {
+
+    try {
+        const { data } = await axios.put(
+            `${process.env.REACT_APP_BACKEND_URL}/api/food-venue/update/${id}`,
+                formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            }
+        );
+        return data;
+
+    } catch (error) {
+        // console.log(error.response.data.message);
+        // return error.response.data.message;
+        console.log(error.response.data.message);
+        return error.response.data.message;
+    }
+};
+
+// export const createFoodVenue = async (
+//     formData,
+//     user
+// ) => {
+
+//     try {
+//         const { data } = await axios.post(
+//             `${process.env.REACT_APP_BACKEND_URL}/createFoodVenue`,
+//             {
+//                 formData
+//             },
+//             {
+//                 headers: {
+//                     Authorization: `Bearer ${user.token}`,
+//                 },
+//             }
+//         );
+//         return data;
+
+//     } catch (error) {
+//         console.log(error.response.data.message);
+//         return error.response.data.message;
+//     }
+// };
+export const createFoodVenue = async (formData, user) => {
+    try {
+        const { data } = await axios.post(
+            `${process.env.REACT_APP_BACKEND_URL}/createFoodVenue`,
+            formData, // Send formData directly
+            {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            }
+        );
+        return data;
+    } catch (error) {
+        console.log(error.response?.data?.message || "Error occurred");
+        return error.response?.data?.message || "Error occurred";
+    }
+};
+
+
+export const updateFoodVenueMenu = async (placeId, medias, user) => {
+    try {
+        const { data } = await axios.put(
+            `${process.env.REACT_APP_BACKEND_URL}/api/food-venue/menu/update/${placeId}`,
+            {
+                medias,
+            },
+
+            {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            }
+        );
+        return data;
+
+    } catch (error) {
+        console.log(error.response.data.message);
+        return error.response.data.message;
+    }
+};
+
+export const searchFoodVenue = async (term, location, token) => {
+    try {
+        // Pass `term` as a query parameter in the URL
+        const { data } = await axios.get(
+            `${process.env.REACT_APP_BACKEND_URL}/api/search/foodVenue`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                params: {
+                    term: term,
+                    location: location,  // This will append the term to the query string
+                }
+            }
+        );
+        return data;
+    } catch (error) {
+        console.error("Error:", error.response?.data?.message || "Unknown error");
+        return error.response?.data?.message;
+    }
+};
+
+export const getAllFoodVenues = async (token) => {
+    try {
+        const { data } = await axios.get(
+            `${process.env.REACT_APP_BACKEND_URL}/getAllFoodVenues`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return data;
+
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            return [];
+        }
+        // Handle other errors here if needed
+        console.error("Error:", error.response?.data?.message || "Unknown error");
+        return { message: "Failed to retrieve food venues." };
     }
 };

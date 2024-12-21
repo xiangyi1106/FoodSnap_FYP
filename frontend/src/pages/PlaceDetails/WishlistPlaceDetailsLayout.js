@@ -20,7 +20,7 @@ export default function WishlistPlaceDetailsLayout({ user }) {
     const [foodVenue, setFoodVenue] = useState(null);
 
     // Generate breadcrumbs using the reusable function
-    const breadcrumbs = generateBreadcrumbs(location, "My Wishlist Venue", "/myWishlistVenue",  foodVenue?.name);
+    const breadcrumbs = generateBreadcrumbs(location, "My Wishlist Venue", "/foodVenueWishlist",  foodVenue?.name);
 
     useEffect(() => {
         const fetchFoodVenue = async () => {

@@ -33,17 +33,6 @@ export const linkifyMentionsAndHashtags = (text = '', mentionMap, user) => {
             // const userIds = mentionMap[name];
             const mentionDetails = mentionMap[name];
             return (
-                // <Fragment key={index}>
-                //     {userIds && userIds.length > 0 ? (
-                //         userIds.map((userId, userIndex) => (
-                //             <Link key={`${userId}-${userIndex}`} to={`/profile/${userId}`} style={{ backgroundColor: 'lightblue', textDecoration: 'none' }}>
-                //                 {name}
-                //             </Link>
-                //         ))
-                //     ) : (
-                //         <span>{word}</span>
-                //     )}
-                // </Fragment>
                 <Fragment key={index}>
                     {mentionDetails && mentionDetails.length > 0 ? (
                         mentionDetails.map(({ userId, username }, userIndex) => (
@@ -52,7 +41,7 @@ export const linkifyMentionsAndHashtags = (text = '', mentionMap, user) => {
                                 to={`/profile/${username}`}
                                 style={{ backgroundColor: 'lightblue', textDecoration: 'none' }}
                             >
-                                {name} {/* Display username if available */}
+                                {name}
                             </Link>
                         ))
                     ) : (

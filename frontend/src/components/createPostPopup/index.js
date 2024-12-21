@@ -33,6 +33,7 @@ import { createPost } from "../../functions/post";
 import { useDispatch } from "react-redux";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PostInput from "./PostInput";
 
 export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLoading, user }) {
     //Display the picker and media preview
@@ -242,9 +243,10 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
                                 <Link onClick={() => { setPage(1); setListPlace(locationList); }}> {location.name} </Link>
                             </div>
                         }
-                        <div className="post_content" style={{ minHeight: `${isShowImage ? "110px" : "320px"}` }}>
+                        <PostInput setText={setText} text={text} isLoading={isLoading} user={user} textRef={textRef} isShowImage={isShowImage}/>
+                        {/* <div className="post_content" style={{ minHeight: `${isShowImage ? "110px" : "320px"}` }}>
                             <textarea autoFocus={true} disabled={isLoading} placeholder="Share something..." id="post_input" ref={textRef} maxLength={22000} value={text} style={{ minHeight: `${isShowImage ? "110px" : "320px"}` }} onChange={(e) => setText(e.target.value)} className="post_input" ></textarea>
-                        </div>
+                        </div> */}
                         {isShowImage && <MediaPreview medias={medias} setMedias={setMedias} setPage={setPage} setIsVisible={setIsVisible} />}
 
                     </div>
@@ -258,16 +260,14 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
                             })} ref={emojiPickerIconRef} onClick={() => { setIsShowPicker((prev) => !prev); handleButtonClick("emoji"); }} /></Tooltip>
                             <Tooltip title="Add Image"><CIcon icon={cilImage} className={classNames("icon_size_22", "icon_button", {
                                 "active_color": activeButtons.has('image')
-                            })} onClick={() => { setIsShowImage(!isShowImage); document.getElementById('post_input').focus(); handleButtonClick("image"); }} /></Tooltip>
+                            // })} onClick={() => { setIsShowImage(!isShowImage); document.getElementById('post_input').focus(); handleButtonClick("image"); }} /></Tooltip>
+                            })} onClick={() => { setIsShowImage(prev => !prev); handleButtonClick("image"); }} /></Tooltip>
                             <Tooltip title="Add Location"><CIcon icon={cilLocationPin} className={classNames("icon_size_22", "icon_button", {
                                 "active_color": location
                             })} onClick={() => { setPage(1); }} /></Tooltip>
                             <Tooltip title="Tag People"><CIcon icon={cilTag} className={classNames("icon_size_22", "icon_button", {
                                 "active_color": selectedNames.length > 0
                             })} onClick={() => { setPage(2); }} /></Tooltip>
-                            {/* <Tooltip title="Add Rating"><CIcon icon={cilStar} className={classNames("icon_size_22", "icon_button", {
-                                "active_color": activeButtons.has('rating')
-                            })} onClick={() => { handleButtonClick("rating"); }} /></Tooltip> */}
                         </div>
                         <div className="create_post_popup_footer_privacy">
                             <select name="select"

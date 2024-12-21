@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
 
-const PostTextArea = ({ text, setText, user }) => {
+const PostTextArea = ({ text, setText, user, isShowImage }) => {
     const [suggestions, setSuggestions] = useState([]);
     const [isMentioning, setIsMentioning] = useState(false);
     const [mentionText, setMentionText] = useState('');
@@ -108,7 +108,7 @@ const PostTextArea = ({ text, setText, user }) => {
     }, [text]);
 
     return (
-        <div className="post_content" style={{ minHeight: '320px' }}>
+        <div className="post_content" style={{ minHeight: `${isShowImage ? "110px" : "320px"}` }}>
             <textarea
                 autoFocus={true}
                 disabled={isLoading}
@@ -117,7 +117,8 @@ const PostTextArea = ({ text, setText, user }) => {
                 ref={textRef}
                 maxLength={22000}
                 value={text}
-                style={{ minHeight: '320px' }}
+                // style={{ minHeight: '320px' }}
+                style={{ minHeight: `${isShowImage ? "110px" : "320px"}` }}
                 onChange={handleInputChange}
                 className="post_input"
             />

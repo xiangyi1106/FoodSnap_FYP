@@ -22,9 +22,9 @@ export default function FoodEventCard({ event, isEvent }) {
       </div>
       <div className="food_event_card_card_header">
         <div className='food_event_card_card_header_title'>{event.name}</div>
-        <button className="food_event_card_icon_button">
+        {/* <button className="food_event_card_icon_button">
           <span className="material-symbols-outlined"><FavoriteBorderIcon /></span>
-        </button>
+        </button> */}
       </div>
       <div className="food_event_card_card_meta">
         <p>{event.location.name}</p>

@@ -24,6 +24,8 @@ const {
     removeFromFoodVenueWishlist,
     getFoodVenueWishlist,
     checkFoodVenueInWishlist,
+    getFoodVenueMapList,
+    getSavedPost,
 } = require("../controllers/user");
 
 const { authUser } = require("../middleware/auth");
@@ -78,5 +80,8 @@ router.get('/getFoodVenueWishlist', authUser, getFoodVenueWishlist);
 
 router.get("/checkFoodVenueInWishlist/:id", authUser, checkFoodVenueInWishlist );
 
+router.get('/getFoodVenueMapList', authUser, getFoodVenueMapList);
+
+router.get("/getSavedPost", authUser, getSavedPost);
 
 module.exports = router;

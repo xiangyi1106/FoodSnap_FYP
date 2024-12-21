@@ -9,11 +9,12 @@ import PlaceDetailsNav from '../../components/PlaceDetails/PlaceDetailsNav'
 import { generateBreadcrumbs } from '../../functions/generateBreadCrumbs'
 import { getFoodVenueDetails } from '../../functions/foodVenue'
 import { toast } from 'react-toastify'
+// import './PlaceDetailInformation.css';
+import '../../components/PlaceProfile/PlaceDetailInformation.css'
 
 export default function PlaceDetailsLayout({ user }) {
 
     const location = useLocation();
-
     // Generate breadcrumbs using the reusable function
     // const breadcrumbs = generateBreadcrumbs(location, 'SearchVenue', '/searchVenue');
 
@@ -72,8 +73,8 @@ export default function PlaceDetailsLayout({ user }) {
         { name: 'posts', label: 'Posts', href: `/foodVenue/${id}/posts` },
         { name: 'photos', label: 'Photos', href: `/foodVenue/${id}/photos` },
         { name: 'menu', label: 'Menu', href: `/foodVenue/${id}/menu` },
-        { name: 'promotions', label: 'Promotions', href: `/foodVenue/${id}/promotions` },
         { name: 'events', label: 'Events', href: `/foodVenue/${id}/events` },
+        { name: 'promotions', label: 'Promotions', href: `/foodVenue/${id}/promotions` },
     ];
 
     // if (loading) {
@@ -81,10 +82,11 @@ export default function PlaceDetailsLayout({ user }) {
     // }
 
     return (
-        <div className="profile place_detail_information">
+        <div className="place_detail_information">
             <Header />
             <div className="place_details_wrapper">
                 <CustomBreadcrumbs breadcrumbs={breadcrumbs} />
+                <div className='profile'>
                 <div className="profile_top" style={{ marginTop: '0' }}>
                     <div className="profile_container" style={{ maxWidth: "none" }}>
                         <div className="profile_cover">
@@ -102,9 +104,10 @@ export default function PlaceDetailsLayout({ user }) {
                 <div className="profile_bottom">
                     <div className="profile_container" style={{ maxWidth: "none" }}>
                         <div className="bottom_container" style={{ padding: "10px 4rem" }}>
-                            <Outlet context={{ foodVenue }}/>
+                            <Outlet context={{ foodVenue, user }}/>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
         </div>

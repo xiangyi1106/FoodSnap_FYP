@@ -14,6 +14,7 @@ export default function ProfileSidebar({username}) {
         { name: 'followers', label: 'Followers', href: `/profile/${username}/followers` },
         { name: 'myfoodmap', label: 'My Food Map', href: `/profile/${username}/myFoodMap`},
         { name: 'myVoucher', label: 'My Voucher', href: `/profile/${username}/myVoucher`},
+        { name: 'savedPost', label: 'Saved Post', href: `/profile/${username}/savedPost`},
     ];
     return (
         <div className='profile_card'>

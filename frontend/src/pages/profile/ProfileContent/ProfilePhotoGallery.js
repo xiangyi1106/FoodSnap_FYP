@@ -42,7 +42,7 @@ const ProfilePhotoGallery = ({ photos }) => {
                 );
             }}
         >
-            {<ImageList variant="masonry" cols={3} gap={8} style={{ width: '500px' }}>
+            {<ImageList variant="masonry" cols={3} gap={8}>
                 {photos?.resources && photos?.resources.map((img) => (
                     <PhotoView src={img.secure_url}>
                         <ImageListItem key={img.public_id} style={{cursor: 'pointer', padding: '0px 8spx'}}>

@@ -1,6 +1,7 @@
 
 const MenuItem = require('../models/MenuItem');
 const FoodVenue = require('../models/FoodVenue');
+const User = require('../models/User');
 
 // Route to add new menu item to a food venue
 exports.addMenuItem = async (req, res) => {
@@ -118,47 +119,349 @@ exports.saveFoodVenues = async (req, res) => {
 
 exports.getFoodVenues = async (req, res) => {
   try {
-      // Get the address keyword from the request query
-      const { address } = req.query;
+    // Get the address keyword from the request query
+    const { address } = req.query;
 
-      // Check if address keyword is provided
-      if (!address) {
-          return res.status(400).json({ error: "Address keyword is required." });
-      }
+    // Check if address keyword is provided
+    if (!address) {
+      return res.status(400).json({ error: "Address keyword is required." });
+    }
 
-      // Use regex to perform a case-insensitive search on the address field
-      const foodVenues = await FoodVenue.find({
-          address: { $regex: address, $options: 'i' } // 'i' makes it case-insensitive
-      });
+    // Use regex to perform a case-insensitive search on the address field
+    const foodVenues = await FoodVenue.find({
+      address: { $regex: address, $options: 'i' } // 'i' makes it case-insensitive
+    });
 
-      // Check if any food venues were found
-      if (foodVenues.length === 0) {
-          return res.status(404).json({ message: "No food venues found." });
-      }
+    // Check if any food venues were found
+    if (foodVenues.length === 0) {
+      return res.status(404).json({ message: "No food venues found." });
+    }
 
-      // Return the found food venues
-      return res.status(200).json(foodVenues);
+    // Return the found food venues
+    return res.status(200).json(foodVenues);
 
   } catch (error) {
-      console.error(error);
-      res.status(500).send("Failed to retrieve food venues.");
+    console.error(error);
+    res.status(500).send("Failed to retrieve food venues.");
   }
 };
 
 exports.getFoodVenueDetails = async (req, res) => {
   try {
 
-      const id = req.params.id;
-      const foodVenue = await FoodVenue.findById(id);
-      if (!foodVenue) {
-          return res.status(404).json({ message: 'Event not found' });
-      }
+    const id = req.params.id;
+    const foodVenue = await FoodVenue.findById(id);
+    if (!foodVenue) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
 
-      res.json(foodVenue);
+    res.json(foodVenue);
 
   } catch (error) {
-      console.error('Error fetching food venue:', error);
-      res.status(500).json({ message: 'Server error:' + error });
+    console.error('Error fetching food venue:', error);
+    res.status(500).json({ message: 'Server error:' + error });
   }
 };
 
+exports.updateFoodVenueDetails = async (req, res) => {
+  const { id } = req.params;
+  const {
+    restaurantName,
+    address,
+    latitude,
+    longitude,
+    phone,
+    website,
+    description,
+    otherInfo,
+    serviceCharge,
+    sstCharge,
+    priceRange,
+    openingHours,
+    category,
+    profilePicture,
+    coverPicture,
+  } = req.body;
+
+  console.log(
+    restaurantName,
+    address,
+    latitude,
+    longitude,
+    phone,
+    website,
+    description,
+    otherInfo,
+    serviceCharge,
+    sstCharge,
+    priceRange,
+    openingHours,
+    category,
+    profilePicture,
+    coverPicture,
+  );
+
+  try {
+    // Find the existing food venue by its ID
+    const foodVenue = await FoodVenue.findById(id);
+    if (!foodVenue) {
+      return res.status(404).json({ success: false, message: 'Food venue not found' });
+    }
+
+    let categoryArray = [];
+
+    if (category) {
+      if (typeof category === 'string') {
+        categoryArray = category.includes(',')
+          ? category.split(',').map((item) => item.trim()).filter((item) => item.length > 0)
+          : [category.trim()];
+      }
+    } else {
+      categoryArray = foodVenue.category || [];
+    }
+
+    // Update the food venue with new data
+    foodVenue.name = restaurantName;
+    foodVenue.address = address;
+    foodVenue.latitude = latitude;
+    foodVenue.longitude = longitude;
+    foodVenue.phone = phone;
+    foodVenue.website = website;
+    foodVenue.description = description;
+    foodVenue.otherinfo = otherInfo;
+    foodVenue.serviceCharge = serviceCharge;
+    foodVenue.sstCharge = sstCharge;
+    foodVenue.priceRange = priceRange;
+    foodVenue.openingHours = openingHours;
+    foodVenue.category = categoryArray;
+
+    // Check for file uploads and update image URLs if new files were uploaded
+    if (req.body.profilePicture) {
+      foodVenue.picture = req.body.profilePicture; // Assume you're saving the file path
+    }
+    if (req.body.coverPicture) {
+      foodVenue.cover = req.body.coverPicture; // Same as above
+    }
+
+    // Save the updated food venue to the database
+    await foodVenue.save();
+    
+    // Return the updated food venue data
+    res.json({ success: true, message: 'Food venue updated successfully', data: foodVenue });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Server error' + error });
+  }
+};
+
+exports.updateMenu = async (req, res) => {
+  const { placeId } = req.params;
+  const { medias } = req.body; // Expecting an array of image URLs
+
+  // Check if the menu is an array
+  if (!Array.isArray(medias)) {
+    return res.status(400).json({ error: 'Menu must be an array of image URLs.' });
+  }
+
+  try {
+    // Find the food venue by ID
+    const foodVenue = await FoodVenue.findById(placeId);
+
+    if (!foodVenue) {
+      return res.status(404).json({ error: 'Food venue not found.' });
+    }
+
+    // If the food venue already has a menu, we append the new items
+    if (foodVenue.menu && foodVenue.menu.length > 0) {
+      // Append the new menu items to the existing menu array
+      foodVenue.menu = [...foodVenue.menu, ...medias];
+    } else {
+      // If the menu doesn't exist or is empty, create a new menu with the provided items
+      foodVenue.menu = medias;
+    }
+
+    // Save the updated food venue
+    await foodVenue.save();
+
+    // Return the updated food venue
+    res.status(200).json(foodVenue);
+  } catch (error) {
+    console.error("Error updating menu:", error);
+    res.status(500).json({ error: 'Failed to update menu.' + error.message });
+  }
+};
+
+exports.searchFoodVenue = async (req, res) => {
+  try {
+    const foodVenueName = decodeURIComponent(req.query.term);
+    const location = decodeURIComponent(req.query.location);
+    // const { location } = req.body;
+    // Validate that both 'term' and 'location' are provided
+    console.log(foodVenueName);
+    console.log(location);
+
+    var foodVenues = [];
+    if (foodVenueName !== "") {
+      foodVenues = await FoodVenue.find({
+        $and: [
+          { name: { $regex: `^${foodVenueName}`, $options: 'i' } }, // Match in text
+          { address: { $regex: location, $options: 'i' } }, // Match in text
+          // { location: { $elemMatch: { name: { $regex: location, $options: 'i' } } } } // Match in location array's name field
+        ],
+      })
+        .sort({ rating: -1 }); // Sort by newest to oldest
+    } else {
+      foodVenues = await FoodVenue.find({
+        address: { $regex: location, $options: 'i' } // 'i' makes it case-insensitive
+      })
+        .sort({ rating: -1 }); // Sort by newest to oldest
+    }
+    // const foodVenues = await FoodVenue.find({
+    //   $and: [
+    //     { name: { $regex: `^${foodVenueName}`, $options: 'i' } }, // Match in text
+    //     { address: { $regex: location, $options: 'i' } }, // Match in text
+    //     // { location: { $elemMatch: { name: { $regex: location, $options: 'i' } } } } // Match in location array's name field
+    //   ],
+    // })
+    //   .sort({ rating: -1 }); // Sort by newest to oldest
+    res.json(foodVenues);
+
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getAllFoodVenues = async (req, res) => {
+  try {
+
+    // Use regex to perform a case-insensitive search on the address field
+    const foodVenues = await FoodVenue.find();
+
+    // Check if any food venues were found
+    if (foodVenues.length === 0) {
+      return res.status(404).json([]);
+    }
+
+    // Return the found food venues
+    return res.status(200).json(foodVenues);
+
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Failed to retrieve food venues.");
+  }
+};
+
+
+exports.createFoodVenue = async (req, res) => {
+  const {
+    restaurantName,
+    address,
+    latitude,
+    longitude,
+    phone,
+    website,
+    description,
+    otherInfo,
+    serviceCharge,
+    sstCharge,
+    priceRange,
+    openingHours,
+    category,
+  } = req.body;
+
+  // Assuming you have the userId in req.user after authentication
+  const userId = req.user.id; // For example, from a JWT token
+
+  try {
+    // Step 1: Check for existing restaurant by name and address
+    const existingVenue = await FoodVenue.findOne({
+      name: { $regex: `^${restaurantName.trim()}$`, $options: 'i' }, // Case-insensitive name match
+      address: { $regex: `^${address.trim()}$`, $options: 'i' }, // Case-insensitive address match
+    });
+
+    if (existingVenue) {
+      return res.status(400).json({
+        message: 'A food venue with the same name and address already exists.',
+        foodVenue: existingVenue,
+      });
+    }
+
+    // Fetch the user from the database to check if they are a business owner
+    const user = await User.findById(userId);
+
+    // If user doesn't exist or their role isn't 'business_owner', reject the request
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found.',
+      });
+    }
+
+    // if (user.role !== 'business') {
+    //   return res.status(403).json({
+    //     message: 'You must be a business owner to create a food venue.',
+    //   });
+    // }
+
+    let categoryArray = [];
+
+    if (typeof category === 'string') {
+      // Check if the category string contains a comma
+      if (category.includes(',')) {
+        // Split by commas and trim whitespace
+        categoryArray = category.split(',').map((item) => item.trim());
+        // Filter out any empty strings in the array
+        categoryArray = categoryArray.filter((item) => item.length > 0);
+      } else {
+        // Save as a single-item array if there's no comma
+        categoryArray = [category.trim()];
+      }
+    } else {
+      // Default to an empty array if not a string
+      categoryArray = [];
+    }
+
+    // Create the food venue with the provided data
+    const foodVenue = new FoodVenue({
+      name: restaurantName,
+      address,
+      latitude,
+      longitude,
+      phone,
+      website,
+      description,
+      otherinfo: otherInfo,
+      serviceCharge,
+      sstCharge,
+      priceRange,
+      openingHours,
+      category: categoryArray,
+    });
+
+    // Save the food venue to the database
+    const savedFoodVenue = await foodVenue.save();
+
+    // Associate the food venue with the user
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        foodVenue: savedFoodVenue._id,  // Associate foodVenue ID with the user
+      },
+      { new: true } // Return the updated document
+    );
+
+    // Return a success response with the updated user and food venue
+    return res.status(201).json({
+      // message: 'Food venue created successfully and associated with the user.',
+      user: updatedUser,
+      foodVenue: savedFoodVenue,
+    });
+
+  } catch (error) {
+    console.error('Error creating food venue:', error);
+    return res.status(500).json({
+      message: 'Error creating food venue',
+      error: error.message,
+    });
+  }
+};

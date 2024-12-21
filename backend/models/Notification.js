@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const { ObjectId } = mongoose.Schema;
+const { Schema, model } = mongoose;
+
 // Notification Schema
 const notificationSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -8,7 +9,7 @@ const notificationSchema = new mongoose.Schema({
     postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: false },
     message: { type: String, required: true },
     isRead: { type: Boolean, default: false },
-    createdAt: { type: Date, default: Date.now }
+    // createdAt: { type: Date, default: Date.now }
   }, { 
     timestamps: true 
   });

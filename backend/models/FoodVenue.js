@@ -51,7 +51,7 @@ const foodVenueSchema = new Schema({
     rating: { type: Number, default: 0 }, // Rating of the venue
     priceRange: { type: String }, // Price level (e.g., "$", "$$", "$$$")
     category: [{ type: String }], //tags
-    dishesType: [{ type: String, default: [] }],
+    // dishesType: [{ type: String, default: [] }],
     otherinfo: [{
         halalOptions: { type: String, default: 'No' }, // Halal options (e.g., "Yes", "No")
         vegetarianOptions: { type: String, default: 'No' }, // Vegetarian options (e.g., "Yes", "No")
@@ -71,7 +71,11 @@ const foodVenueSchema = new Schema({
     serviceCharge: { type: Number, default: 0 },
     SSTCharge: { type: Number, default: 0 },
     // Reference to MenuItem
-    menuItems: [{ type: ObjectId, ref: 'MenuItem' }]
+    // menuItems: [{ type: ObjectId, ref: 'MenuItem' }]
+    menu: {
+        type: Array,
+        default: [],
+    },
 
 }, {
     timestamps: true // Automatically manage createdAt and updatedAt fields

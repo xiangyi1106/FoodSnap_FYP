@@ -17,11 +17,14 @@ exports.getFoodRecommendation = async (req, res) => {
     try {
         // Initialize the Google Generative AI client
         const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_AI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        // const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ 
+            model: "gemini-1.5-flash",
+            maxTokens: 100 // Restrict token output for faster response
+        });
 
         const prompt = `
-            You are an advanced AI food recommendation expert. Based on the following user preferences, provide an array of food recommendations based on Malaysian styles and its location:
-            
+            You are an advanced AI food recommendation expert. Based on the following user preferences, provide an array of maximum 6 and minimum 1 food recommendations based on Malaysian styles and its location, the food recommendation should able be found by the food venue on Google Maps:
             Meal Type: ${mealType}
             Mood: ${mood}
             Dietary Preference: ${dietaryPreference}
@@ -29,26 +32,36 @@ exports.getFoodRecommendation = async (req, res) => {
             Loved Ingredients: ${loveIngredients}
             Avoided Ingredients: ${avoidIngredients}
             Location: ${location}
-
-            Format the response as a array with max six items. Example format:
-            ["Laksa", "Sandwiches", "Roti Canai", 'Nasi Lemak', 
-            'Char Kway Teow' ]
-            Please give me only the array but not extra text.
+            Respond only with an array, e.g., ["Laksa", "Roti Canai", "Nasi Lemak"].
         `;
+
+        // Format the response as a array with max six items. Example format:
+            // ["Laksa", "Sandwiches", "Roti Canai", 'Nasi Lemak', 
+            // 'Char Kway Teow' ]
+            // Please give me only the array but not extra text.
 
         const result = await model.generateContent(prompt);
 
-        const suggestions = await result.response.text();
+        let suggestions = await result.response.text();
 
         console.log('API response:', suggestions);
 
         // res.json(suggestions);
         // Return the suggestions array as JSON
         // res.json({ suggestions: JSON.parse(suggestions) });
+        const jsonStart = suggestions.indexOf('[');
+        const jsonEnd = suggestions.lastIndexOf(']') + 1;
+
+        // Extract the JSON content
+        if (jsonStart !== -1 && jsonEnd !== -1) {
+            suggestions = suggestions.slice(jsonStart, jsonEnd);
+        } else {
+            // throw new Error('Invalid JSON format');
+            suggestions = [];
+        }
+
         food_suggestions = JSON.parse(suggestions);
         res.json({ food_suggestions });
-
-
 
     } catch (error) {
         console.error('Error fetching food suggestions:', error);

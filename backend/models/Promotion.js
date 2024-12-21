@@ -63,6 +63,11 @@ const promotionSchema = new Schema({
     type: String,
     enum: ['public', 'followers', 'private']
   },
+  foodVenue: {
+    type: Schema.Types.ObjectId,
+    ref: 'FoodVenue', // Reference to the FoodVenue collection
+    default: null // Set to null if no FoodVenue is provided
+  },
 }, { 
   timestamps: true 
 });

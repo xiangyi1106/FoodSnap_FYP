@@ -64,6 +64,11 @@ const eventSchema = new Schema({
   //   type: Schema.Types.ObjectId,
   //   ref: 'FoodVenue' // Reference to the food venue if applicable
   // }],
+  foodVenue: {
+    type: Schema.Types.ObjectId,
+    ref: 'FoodVenue', // Reference to the FoodVenue collection
+    default: null // Set to null if no FoodVenue is provided
+  },
   // tags: [{ type: String }],
   status: {
     type: String,

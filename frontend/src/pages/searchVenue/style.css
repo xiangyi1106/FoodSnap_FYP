@@ -221,9 +221,25 @@
 }
 
 .selected_active:hover {
-  background: var(--bg-third);
-  color: rgba(72, 71, 71, 0.801);
+  /* background: var(--bg-third); */
+  /* color: rgba(72, 71, 71, 0.801); */
+  background-color: #2cabab;
+}
 
+.select_category{
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10px 15px;
+}
+
+.clearAll_textButton{
+  font-size: 0.8rem;
+  color: #30BFBF;
+  cursor: pointer;
+}
+
+.clearAll_textButton:hover{
+  text-decoration: underline;
 }
 
 @media (max-width: 769px) {

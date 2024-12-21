@@ -1,40 +1,102 @@
 import React, { useCallback, useRef, useState } from 'react';
 import CIcon from '@coreui/icons-react';
-import { cilArrowLeft, cilCheckAlt, cilX } from '@coreui/icons';
+import { cilX } from '@coreui/icons';
 import './EditPlaceInfo.css';
-import TextField from '@mui/material/TextField';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
-import restaurantTypes from '../../data/restaurantType';
 import johorBahruAreas from '../../data/johorBahruAreas';
 import OpeningHours from './OpeningHours';
-import placeOtherInformation from '../../data/placeOtherInformation';
-import ColorToggleButton from './ToggleButton';
-import { foodVenueTypes } from '../../data/foodVenueTypes';
+import OtherInfoToggleButtons from './OtherInfoToggleButtons ';
+import { uploadMedias } from '../../functions/uploadMedia';
+import { toast } from 'react-toastify';
+import { createFoodVenue, updateFoodVenue } from '../../functions/foodVenue';
+import axios from 'axios';
+import MapPicker from '../MapPicker/MapPicker';
+import { validateFileType, validateImageType } from '../../functions/fileUtils';
 
-export default function AddPlaceInfo({ setVisible }) {
+export default function AddPlaceInfo({ setVisible, user }) {
     const [formData, setFormData] = useState({
         restaurantName: '',
-        category: {type: 'Restaurant'},
+        category: [],
         address: '',
-        postalCode: '',
-        city: '',
-        state: 'Johor',
-        latitude: '',
-        longitude: '',
+        // postalCode: '',
+        // city: '',
+        // state: 'Johor',
+        latitude: null,
+        longitude: null,
         phone: '',
-        openingHours: {},
+        // openingHours: {},
+        openingHours: {
+            "mon": [
+                {
+                    "open": "8:00am",
+                    "close": "5:00pm"
+                }
+            ],
+            "tue": [
+                {
+                    "open": "8:00am",
+                    "close": "5:00pm"
+                }
+            ],
+            "wed": [
+                {
+                    "open": "8:00am",
+                    "close": "5:00pm"
+                }
+            ],
+            "thu": [
+                {
+                    "open": "8:00am",
+                    "close": "5:00pm"
+                }
+            ],
+            "fri": [
+                {
+                    "open": "8:00am",
+                    "close": "5:00pm"
+                }
+            ],
+            "sat": [
+                {
+                    "open": "8:00am",
+                    "close": "5:00pm"
+                }
+            ],
+            "sun": [
+                {
+                    "open": "8:00am",
+                    "close": "5:00pm"
+                }
+            ],
+        },
         website: '',
         description: '',
-        otherInfo: placeOtherInformation.reduce((acc, info) => ({ ...acc, [info]: 'noInfo' }), {}),
+        // otherInfo: placeOtherInformation.reduce((acc, info) => ({ ...acc, [info]: 'noInfo' }), {}),
         serviceCharge: 0,
         sstCharge: 0,
         profilePicture: null,
         coverPicture: null,
-        type: [],
+        otherInfo: [{ // Initialize otherInfo as an array with an object
+            acceptsCreditCards: "No", // Default value
+            acceptsDebitCards: "No", // Default value
+            acceptsTNGBoostQRPayment: "No", // Default value
+            airConditioning: "No", // Default value
+            alcoholicDrinks: "No", // Default value
+            dogsAllowed: "No", // Default value
+            halalOptions: "No", // Default value
+            needsReservations: "No", // Default value
+            offersTakeout: "No", // Default value
+            vegetarianOptions: "No", // Default value
+            wheelchairAccessible: "No", // Default value
+            wifi: "No" // Default value
+        }],
+        // type: [],
     });
     const [errors, setErrors] = useState({});
     const pictureInput = useRef(null);
     const coverInput = useRef(null);
+    const [picture, setPicture] = useState('');
+    const [cover, setCover] = useState('');
 
     //Handle input change for formdata
     const handleChange = (e) => {
@@ -43,25 +105,17 @@ export default function AddPlaceInfo({ setVisible }) {
             ...prevData,
             [name]: value
         }));
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: value ? '' : prevErrors[name] // Clear error if input is filled
+        }));
     };
+
 
     const filterOptions = createFilterOptions({
         matchFrom: 'start',
         stringify: (option) => option,
     });
-
-    //Handle input change for otherInfo
-    const handleOtherInfoToggle = useCallback((info) => (event, newValue) => {
-        if (newValue !== null) {
-            setFormData(prevFormData => ({
-                ...prevFormData,
-                otherInfo: {
-                    ...prevFormData.otherInfo,
-                    [info]: newValue,
-                },
-            }));
-        }
-    }, [setFormData]);
 
     //Handle Input Change for serviceCharge and SST 
     const handleChargeChange = (event) => {
@@ -90,46 +144,48 @@ export default function AddPlaceInfo({ setVisible }) {
         }
     };
 
+    const updatePicture = async (img, fileLocation, venueId) => {
+        try {
+            let blob = await fetch(img).then((b) => b.blob());
+            const path = `foodVenue/${venueId}/${fileLocation}`;
+            let formData = new FormData();
+            formData.append("file", blob);
+            formData.append("path", path);
+
+            const res = await uploadMedias(formData, path, user.token);
+            console.log(res);
+            return res;
+
+        } catch (error) {
+            toast.error("Failed to uploads picture: " + error.message);
+        }
+    };
+
     const handlePictureChange = (event, type) => {
         const file = event.target.files[0];
         if (file) {
-            setFormData(prevState => ({
-                ...prevState,
-                [type]: URL.createObjectURL(file)
-            }));
+            // Use the validateFileType function to check if the file is valid
+            if (!validateImageType(file)) {
+                // Show error with toast
+                toast.error(`Unsupported file type. Only Jpeg, Png are allowed.`);
+                return; // Don't proceed further if the file type is invalid
+            }
+            // setFormData(prevState => ({
+            //     ...prevState,
+            //     [type]: URL.createObjectURL(file)
+            // }));
+            type === 'profilePicture' ? setPicture(URL.createObjectURL(file)) : setCover(URL.createObjectURL(file));
         }
     };
 
     const removePicture = (type) => {
-        setFormData(prevState => ({
-            ...prevState,
-            [type]: null
-        }));
+        // setFormData(prevState => ({
+        //     ...prevState,
+        //     [type]: null
+        // }));
+        type === 'profilePicture' ? setPicture(null) : setCover(null);
+
     };
-
-    // Update formData when selection changes
-    const handleDishTypeChange = (event, newValue) => {
-        setFormData((prevData) => ({
-            ...prevData,
-            type: newValue, // Update with selected values
-        }));
-    };
-
-    const handleCategoryChange = (event, newValue) => {
-        setFormData((prevData) => ({
-            ...prevData,
-            category: newValue, // Update with selected values
-        }));
-    };
-
-
-    const handleCityChange = (event, newValue) => {
-        setFormData((prevData) => ({
-          ...prevData,
-          city: newValue || "", // Update city value from Autocomplete
-        }));
-      };
-      
 
     const validatePhoneNumber = (phone) => {
         const cleanedPhone = phone.replace(/-/g, ''); // Remove hyphens for validation
@@ -155,31 +211,221 @@ export default function AddPlaceInfo({ setVisible }) {
         return !isNaN(lon) && lon >= -180 && lon <= 180;
     };
 
+    const validateWebsite = (url) => {
+        try {
+            // const parsedUrl = new URL(url);  // Try to parse the URL
+            // return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:";  // Ensure it's HTTP or HTTPS
+            const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(\/.*)?$/;
+            return urlPattern.test(url);
+        } catch (e) {
+            return false;  // If invalid URL, it'll throw an error
+        }
+    };
+
+    const validatePriceRange = (priceRange) => {
+        // Regex to match the pattern RM<number>-<number> and capture both the minimum and maximum prices
+        const priceRangeRegex = /^RM(\d+)-(\d+)$/;
+
+        const match = priceRange.match(priceRangeRegex);
+
+        if (match) {
+            // Extract the minimum and maximum prices
+            const minPrice = parseInt(match[1], 10); // First capture group (minimum price)
+            const maxPrice = parseInt(match[2], 10); // Second capture group (maximum price)
+
+            // Ensure the maximum price is greater than the minimum price
+            if (maxPrice > minPrice) {
+                return true;  // Valid price range
+            } else {
+                return false;  // Maximum price should be greater than minimum price
+            }
+        } else {
+            return false;  // Invalid format
+        }
+    };
 
     const validateForm = () => {
         const errors = {};
         if (!formData.restaurantName) errors.restaurantName = "Restaurant Name is required.";
+        if (!formData.category || formData.category === "" || formData.category === null) {
+            errors.category = 'Category is required.';
+        }
+
         if (!formData.address) errors.address = "Address is required.";
-        if (!formData.postalCode || !validatePostalCode(formData.postalCode)) errors.postalCode = "Invalid Postal Code. It should be exactly 5 digits.";
-        if (!formData.phone || !validatePhoneNumber(formData.phone)) errors.phone = "Invalid Phone Number. It should be 7 or 8 digits, or 011 followed by 8 digits.";
-        if (!formData.latitude || !validateLatitude(formData.latitude)) errors.latitude = "Invalid Latitude. It must be between -90 and 90.";
-        if (!formData.longitude || !validateLongitude(formData.longitude)) errors.longitude = "Invalid Longitude. It must be between -180 and 180.";
+        if (formData.priceRange && !validatePriceRange(formData.priceRange)) errors.priceRange = "Invalid Price Range. It should be in this format: RM10-20";
+        if (formData.phone && !validatePhoneNumber(formData.phone)) errors.phone = "Invalid Phone Number. It should be 7 or 8 digits, or 011 followed by 8 digits.";
+        if (isNaN(formData.latitude) || !formData.latitude || !validateLatitude(formData.latitude)) errors.latitude = "Invalid Latitude. It must be between -90 and 90.";
+        if (isNaN(formData.longitude) || !formData.longitude || !validateLongitude(formData.longitude)) errors.longitude = "Invalid Longitude. It must be between -180 and 180.";
+        if (formData.website && !validateWebsite(formData.website)) errors.website = "Invalid URL. Please try again."
         if (isNaN(formData.serviceCharge) || formData.serviceCharge < 0 || formData.serviceCharge > 100) errors.serviceCharge = "Service Charge must be between 0 and 100.";
         if (isNaN(formData.sstCharge) || formData.sstCharge < 0 || formData.sstCharge > 100) errors.sstCharge = "SST Charge must be between 0 and 100.";
 
+
+        // Focus on the first error input
+        if (Object.keys(errors).length > 0) {
+            const firstErrorKey = Object.keys(errors)[0];
+            const firstErrorElement = document.querySelector(`[name="${firstErrorKey}"]`);
+            if (firstErrorElement) {
+                firstErrorElement.focus();  // Set focus on the first error element
+            }
+        }
         return errors;
     };
 
-    const handleSave = () => {
+    const clearError = () => {
+        setErrors({
+            restaurantName: "",
+            address: "",
+            phone: "",
+            latitude: "",
+            longitude: "",
+            serviceCharge: "",
+            sstCharge: "",
+            category: "",
+            website: "",
+            priceRange: "",
+        });
+    };
+
+    const handleSave = async () => {
+
+        clearError();
+        formData.address = "";
+        formData.latitude = null;
+        formData.longitude = null;
+
+        // Handle specific fields for additional validation or default values
+        formData.address = address.trim() || "";
+        formData.latitude = latitude || null;
+        formData.longitude = longitude || null;
+
+        if (formData.serviceCharge === "") {
+            formData.serviceCharge = 0;
+        }
+
+        if (formData.sstCharge === "") {
+            formData.sstCharge = 0;
+        }
+
+        // Trim all string fields in formData
+        for (const key in formData) {
+            if (typeof formData[key] === 'string') {
+                formData[key] = formData[key].trim();
+            }
+        }
 
         const errors = validateForm();
         if (Object.keys(errors).length > 0) {
             setErrors(errors);
             return;
         }
+
+        // Send the updated form data to the backend (PUT or PATCH request)
+        try {
+            const createResponse = await createFoodVenue(formData, user);
+            console.log(createResponse);
+            if (!createResponse || !createResponse.foodVenue._id) {
+                if (createResponse) {
+                    toast.error(createResponse);  // Display the error message returned from backend
+                } else {
+                    toast.error("Failed to create food venue.");  // Fallback error message
+                }
+                return; // Exit if creation failed
+            }
+
+
+            const venueId = createResponse.foodVenue._id; // Get the newly created venue ID
+            console.log(venueId);
+
+            if (venueId) {
+                if (picture) {
+                    // Await the promise to resolve
+                    const pic = await updatePicture(picture, 'profilePicture', venueId);
+
+                    if (pic && pic.length > 0 && pic[0].url) {
+                        // Directly set the image URL in the values object
+                        formData.profilePicture = pic[0].url;
+                    }
+                    console.log(pic);
+                }
+
+                if (cover) {
+                    // Await the promise to resolve
+                    const pic = await updatePicture(cover, "coverPicture", venueId);
+
+                    if (pic && pic.length > 0 && pic[0].url) {
+                        // Directly set the image URL in the values object
+                        formData.coverPicture = pic[0].url;
+                    }
+                }
+
+                // Only proceed with updating the food venue if any of the pictures were uploaded or other formData is changed
+                if (picture || cover) {
+                    const updateResponse = await updateFoodVenue(venueId, formData, user);
+                    console.log(updateResponse);
+                    if (updateResponse && updateResponse.success) {
+                        toast.success("Food venue photo updated successfully!");
+                        // Optionally, redirect or update state here
+                    } else {
+                        toast.error("Error updating food venue's photo, please try again.");
+                    }
+                    return;
+                }
+
+            }
+
+            // Show a single success message after all operations are complete
+            toast.success("Food venue created successfully!");
+
+        } catch (error) {
+            toast.error("Error saving data: " + error);
+        }
+
         console.log(formData);
-        // setVisible(false);
+
+        setVisible(false);
     }
+
+    const [address, setAddress] = useState('');
+    const [latitude, setLatitude] = useState(); // Default Johor Bahru
+    const [longitude, setLongitude] = useState(); // Default Johor Bahru
+    const [error, setError] = useState('');
+    const [manualSelection, setManualSelection] = useState(false);
+
+    const handleGeocode = async () => {
+        try {
+            const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+                params: {
+                    q: address,
+                    format: 'json',
+                },
+                timeout: 5000, // Set timeout to 5 seconds
+            });
+
+            console.log(response.data);
+
+            if (response.data.length > 0) {
+                const result = response.data[0];
+                setLatitude(parseFloat(result.lat).toFixed(7));
+                setLongitude(parseFloat(result.lon).toFixed(7));
+                setError('');
+                setManualSelection(false); // Use geocoded result
+            } else {
+                setError('No results found. Please adjust the location manually on the map.');
+                setManualSelection(true); // Allow manual selection
+            }
+        } catch (err) {
+            setError('Error fetching location data. Try again later.');
+            setManualSelection(true);
+        }
+    };
+
+    const handleManualLocation = (latlng) => {
+        setLatitude(latlng.lat.toFixed(7));
+        setLongitude(latlng.lng.toFixed(7));
+        setManualSelection(false);
+        setError('');
+    };
 
     return (
         <div className="blur place_detail_information" style={{ backgroundColor: "gray" }}>
@@ -189,7 +435,7 @@ export default function AddPlaceInfo({ setVisible }) {
                         <CIcon icon={cilX} className="icon_size_22 close_button_icon" onClick={() => { setVisible(false); }} />
                     </div>
                     <div className="edit_place_info">
-                        <div className='edit_title'><span className='page_title logo_color_text'>Add Restaurant Information</span></div>
+                        <div className='edit_title'><span className='page_title logo_color_text'>Add Food Venue Information</span></div>
                         <div className="edit_place_info_basic">
                             <div className="edit_place_info_picture_row">
                                 <div className="image_upload_section">
@@ -203,8 +449,10 @@ export default function AddPlaceInfo({ setVisible }) {
                                         onChange={(e) => handlePictureChange(e, 'profilePicture')}
                                     />
                                     <div className="image_preview_container">
-                                        <img src={formData.profilePicture ? formData.profilePicture : `${process.env.PUBLIC_URL}/images/generative-image.png`} alt="Profile" className="profile_image" onClick={() => { pictureInput.current.click(); }} />
-                                        {formData.profilePicture && <button onClick={() => removePicture('profilePicture')} className="small_white_circle"><CIcon icon={cilX} className="icon_size_22" /></button>}
+                                        {/* <img src={formData.profilePicture ? formData.profilePicture : `${process.env.PUBLIC_URL}/images/generative-image.png`} alt="Profile" className="profile_image" onClick={() => { pictureInput.current.click(); }} /> */}
+                                        <img src={picture ? picture : `${process.env.PUBLIC_URL}/images/generative-image.png`} alt="Profile" className="profile_image" onClick={() => { pictureInput.current.click(); }} />
+                                        {picture && <button onClick={() => removePicture('profilePicture')} className="small_white_circle"><CIcon icon={cilX} className="icon_size_22" /></button>}
+                                        {/* {formData.profilePicture && <button onClick={() => removePicture('profilePicture')} className="small_white_circle"><CIcon icon={cilX} className="icon_size_22" /></button>} */}
                                     </div>
                                 </div>
 
@@ -219,8 +467,11 @@ export default function AddPlaceInfo({ setVisible }) {
                                         onChange={(e) => handlePictureChange(e, 'coverPicture')}
                                     />
                                     <div className="image_preview_container">
-                                        <img src={formData.coverPicture ? formData.coverPicture : `${process.env.PUBLIC_URL}/images/generative-image.png`} style={{ objectFit: formData.coverPicture ? 'cover' : 'contain' }} alt="Cover" className="cover_image" onClick={() => { coverInput.current.click(); }} />
+                                        {/* <img src={formData.coverPicture ? formData.coverPicture : `${process.env.PUBLIC_URL}/images/generative-image.png`} style={{ objectFit: formData.coverPicture ? 'cover' : 'contain' }} alt="Cover" className="cover_image" onClick={() => { coverInput.current.click(); }} />
                                         {formData.coverPicture && <button onClick={() => removePicture('coverPicture')} className="small_white_circle" style={{ zIndex: '99' }}><CIcon icon={cilX} className="icon_size_22" /></button>}
+                                         */}
+                                        <img src={cover ? cover : `${process.env.PUBLIC_URL}/images/generative-image.png`} alt="Cover" className="cover_image" onClick={() => { coverInput.current.click(); }} />
+                                        {cover && <button onClick={() => removePicture('coverPicture')} className="small_white_circle"><CIcon icon={cilX} className="icon_size_22" /></button>}
                                     </div>
                                 </div>
                             </div>
@@ -229,7 +480,7 @@ export default function AddPlaceInfo({ setVisible }) {
                         <div className="edit_place_info_basic">
                             <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">
-                                    Restaurant Name
+                                    Food Venue Name
                                 </div>
                                 <div className="edit_place_info_basic_col full_width">
                                     <input
@@ -237,7 +488,6 @@ export default function AddPlaceInfo({ setVisible }) {
                                         name="restaurantName"
                                         value={formData.restaurantName}
                                         onChange={handleChange}
-                                        // style={{width: '300px'}}
                                         required
                                     />
                                     {errors.restaurantName && <span className="error_message">{errors.restaurantName}</span>}
@@ -246,82 +496,72 @@ export default function AddPlaceInfo({ setVisible }) {
 
                             <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">
+                                    Price Range
+                                </div>
+                                <div className="edit_place_info_basic_col full_width">
+                                    <input
+                                        className="edit_place_info_basic_input"
+                                        name="priceRange"
+                                        value={formData.priceRange}
+                                        onChange={handleChange}
+                                        placeholder='RM20-40'
+                                    // style={{width: '300px'}}
+                                    />
+                                    {errors.priceRange && <span className="error_message">{errors.priceRange}</span>}
+                                </div>
+                            </div>
+
+                            <div className="edit_place_info_basic_row">
+                                <div className="edit_place_info_basic_label">
                                     Category
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'center' }} className='edit_city'>
-                                    <Autocomplete
-                                        id="filter-demo"
-                                        options={foodVenueTypes}
-                                        getOptionLabel={(option) => option.type}
-                                        filterOptions={filterOptions}
-                                        sx={{ width: 340 }}
-                                        // sx={{ width: '100%' }}
-                                        value={formData.category}
-                                        onChange={handleCategoryChange}
+                                <div className="edit_place_info_basic_col full_width">
+                                    <input
+                                        className="edit_place_info_basic_input"
                                         name="category"
-                                        className='full_width'
-                                        renderInput={(params) => <TextField {...params} />}
+                                        value={formData.category}
+                                        onChange={handleChange}
                                         required
                                     />
+                                    <p style={{ color: 'gray', fontSize: '0.85rem' }}>Seperate category with commas(,)</p>
+                                    {errors.category && <span className="error_message">{errors.category}</span>}
                                 </div>
                             </div>
                             <div className="edit_place_info_basic_row">
-                                <div className="edit_place_info_basic_label">
+                                <div className="edit_place_info_basic_label" style={{ alignSelf: 'flex-start' }}>
                                     Address
                                 </div>
                                 <div className="edit_place_info_basic_col full_width">
                                     <input
                                         className="edit_place_info_basic_input"
                                         name="address"
-                                        value={formData.address}
-                                        onChange={handleChange}
-                                        // style={{width: '600px'}}
+                                        value={address}
+                                        // onChange={(e) => setAddress(e.target.value)}
+                                        onChange={(e) => {
+                                            setAddress(e.target.value); setErrors((prevErrors) => ({
+                                                ...prevErrors,
+                                                address: ''
+                                            }))
+                                        }}
                                         required
                                     />
                                     {errors.address && <span className="error_message">{errors.address}</span>}
-
+                                    {error && <span className="error_message">{error}</span>}
+                                    <button onClick={handleGeocode} className='green_btn' style={{ margin: '10px 0', padding: '10px', cursor: 'pointer' }}>
+                                        Geocode Address
+                                    </button>
+                                    <p style={{ color: 'gray', fontSize: '0.85rem' }}>Geocode address to get the accurate latitude and longitude. If fail to get the latitude and longitude, please adjust the location manually on the map. </p>
+                                    {/* Map Picker */}
+                                    <div style={{ height: '300px', marginBottom: '10px' }}>
+                                        <MapPicker
+                                            center={[latitude || '1.4927', longitude || "103.7414"]}
+                                            zoom={13}
+                                            onLocationSelect={handleManualLocation}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                            <div className="edit_place_info_basic_row">
-                                <div className="edit_place_info_basic_label">
-                                    City
-                                </div>
-                                <div style={{ display: 'flex', justifyContent: 'center' }} className='edit_city'>
-                                    <Autocomplete
-                                        id="filter-demo"
-                                        options={johorBahruAreas}
-                                        getOptionLabel={(option) => option}
-                                        filterOptions={filterOptions}
-                                        sx={{ width: 340 }}
-                                        // sx={{ width: '100%' }}
-                                        value={formData.city}
-                                        onChange={handleCityChange}
-                                        name="city"
-                                        className='full_width'
-                                        renderInput={(params) => <TextField {...params} />}
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <div className="edit_place_info_basic_row" >
-                                <div className="edit_place_info_basic_label">
-                                    Postal Code
-                                </div>
-                                <div className="edit_place_info_basic_col full_width" style={{ width: '35%' }}>
 
-                                    <input
-                                        className="edit_place_info_basic_input"
-                                        name="postalCode"
-                                        value={formData.postalCode}
-                                        onChange={handleChange}
-                                        placeholder='Eg: 81300'
-                                        // style={{ width: '35%' }}
-                                        required
-                                    />
-                                    {errors.postalCode && <span className="error_message">{errors.postalCode}</span>}
-
-                                </div>
-                            </div>
                             <div className="edit_place_info_basic_row" >
                                 <div className="edit_place_info_basic_label">
                                     Latitude
@@ -330,8 +570,15 @@ export default function AddPlaceInfo({ setVisible }) {
                                     <input
                                         className="edit_place_info_basic_input "
                                         name="latitude"
-                                        value={formData.latitude}
-                                        onChange={handleChange}
+                                        // value={formData.latitude}
+                                        value={latitude || ''}
+                                        // onChange={handleChange}
+                                        onChange={(e) => {
+                                            setLatitude(e.target.value); setErrors((prevErrors) => ({
+                                                ...prevErrors,
+                                                latitude: ''
+                                            }))
+                                        }}
                                     // style={{ width: '35%' }}
                                     />
                                     {errors.latitude && <span className="error_message">{errors.latitude}</span>}
@@ -346,27 +593,22 @@ export default function AddPlaceInfo({ setVisible }) {
                                     <input
                                         className="edit_place_info_basic_input "
                                         name="longitude"
-                                        value={formData.longitude}
-                                        onChange={handleChange}
+                                        // value={formData.longitude}
+                                        value={longitude || ''}
+                                        // onChange={handleChange}
+                                        onChange={(e) => {
+                                            setLongitude(e.target.value); setErrors((prevErrors) => ({
+                                                ...prevErrors,
+                                                longitude: ''
+                                            }))
+                                        }}
                                     // style={{ width: '35%' }}
                                     />
                                     {errors.longitude && <span className="error_message">{errors.longitude}</span>}
                                     <p style={{ color: 'gray', fontSize: '0.85rem' }}>Provide latitude and longitude to perform a better accuracy on the map.</p>
                                 </div>
                             </div>
-                            <div className="edit_place_info_basic_row" >
-                                <div className="edit_place_info_basic_label">
-                                    State
-                                </div>
-                                <input
-                                    className="edit_place_info_basic_input "
-                                    name="state"
-                                    value="Johor"
-                                    readOnly
-                                    onChange={handleChange}
-                                    style={{ width: '35%' }}
-                                />
-                            </div>
+
                             <div className="edit_place_info_basic_row" >
                                 <div className="edit_place_info_basic_label" >
                                     Phone
@@ -394,14 +636,16 @@ export default function AddPlaceInfo({ setVisible }) {
                                         name="website"
                                         value={formData.website}
                                         onChange={handleChange}
+                                        placeholder='https://www.abc.com'
                                     />
+                                    {errors.website && <span className="error_message">{errors.website}</span>}
                                 </div>
                             </div>
                             <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">
                                     Opening Hours
                                 </div>
-                                <OpeningHours formData={formData} setFormData={setFormData} />
+                                <OpeningHours openingHours={formData.openingHours} setFormData={setFormData} />
                             </div>
                             <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">
@@ -415,43 +659,11 @@ export default function AddPlaceInfo({ setVisible }) {
                                     style={{ resize: 'none', height: '120px' }}
                                 />
                             </div>
-                            <div className="edit_place_info_basic_row">
-                                <div className="edit_place_info_basic_label">
-                                    Dish / Restaurant Type
-                                </div>
-                                <div style={{ width: '70%' }}>
-                                    {/* <div style={{ display: 'flex', justifyContent: 'center' }}> */}
-                                    <Autocomplete
-                                        multiple
-                                        id="tags-standard"
-                                        options={restaurantTypes}
-                                        getOptionLabel={(option) => option}
-                                        // filterOptions={filterOptions}
-                                        // value={formData.type || []} // Set the value from formData
-                                        onChange={handleDishTypeChange} // Handle change
-                                        renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                variant="standard"
-                                            />
-                                        )}
-                                    />
-                                    {/* </div> */}
-                                </div>
-                            </div>
+
                         </div>
                         <div className="edit_place_info_basic">
-                            {placeOtherInformation.map((info, index) => (
-                                <div className="edit_place_info_basic_row" key={index}>
-                                    <div className="edit_place_info_basic_label">
-                                        {info}
-                                    </div>
-                                    <div className='' style={{ width: '70%' }}>
-                                        <ColorToggleButton value={formData.otherInfo[info]}
-                                            onChange={handleOtherInfoToggle(info)} />
-                                    </div>
-                                </div>
-                            ))}
+                            <OtherInfoToggleButtons formData={formData} setFormData={setFormData} />
+
                             <div className="edit_place_info_basic_row" >
                                 <div className="edit_place_info_basic_label">
                                     Service Charge

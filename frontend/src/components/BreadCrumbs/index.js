@@ -4,9 +4,9 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import './style.css';
 
-const CustomBreadcrumbs = ({ breadcrumbs }) => {
+const CustomBreadcrumbs = ({ breadcrumbs, setting }) => {
     return (
-        <div className='breadcrumb_wrapper'>
+        <div className='breadcrumb_wrapper' style={{padding: setting ? '15px 0' : '15px 25px'}}>
             <Breadcrumbs aria-label="breadcrumb" sx={{fontSize: '0.85rem'}}>
                 {breadcrumbs.map((breadcrumb, index) => {
                     const isLast = index === breadcrumbs.length - 1;

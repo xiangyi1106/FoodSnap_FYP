@@ -45,6 +45,9 @@ import SearchResult from "./pages/searchResult/SearchResult";
 import PlaceProfileEvents from "./components/PlaceProfile/PlaceProfileEvents";
 import PlaceProfilePromotions from "./components/PlaceProfile/PlaceProfilePromotions";
 import WishlistPlaceDetailsLayout from "./pages/PlaceDetails/WishlistPlaceDetailsLayout";
+import FeedComment from "./components/post/FeedComment";
+import PostPopup from "./components/post/PostPopup";
+import ProfileSavedPost from "./pages/profile/ProfileContent/ProfileSavedPost";
 
 const useAxios = () => {
   const [isExpired, setIsExpired] = useState(false);
@@ -72,10 +75,10 @@ const useAxios = () => {
 function App() {
   const userSelector = (state) => state.user;
   const user = useSelector(userSelector);
-  
+
   const [page, setPage] = useState(1); // Track the current page
   const [hasMore, setHasMore] = useState(true);
-  
+
   const [{ loading, error, posts }, dispatch] = useReducer(postReducer, {
     loading: false,
     posts: [],
@@ -107,9 +110,9 @@ function App() {
         }
       );
       // Sort posts by createdAt after fetching
-      const sortedPosts = currentPage === 1 
-      ? data // if it's the first page, just take the posts as they are
-      : [...posts, ...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // sort on subsequent pages
+      const sortedPosts = currentPage === 1
+        ? data // if it's the first page, just take the posts as they are
+        : [...posts, ...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // sort on subsequent pages
 
       dispatch({
         type: "POSTS_SUCCESS",
@@ -120,7 +123,7 @@ function App() {
       //   setHasMore(false); // Stop fetching when there are no more posts
       // }
 
-      if(data.length === 0){
+      if (data.length === 0) {
         setHasMore(false);
       }
     } catch (error) {
@@ -177,25 +180,27 @@ function App() {
           <Route path="/resetpassword" element={<ResetPassword />} exact />
         </Route>
         <Route element={<LoginRoutes />}>
-          <Route path="/post/:id/:initialIndex" element={<PostDetailsPage user={user}/>} exact />
+          <Route path="/post/:id/:initialIndex" element={<PostDetailsPage user={user} />} exact />
+          <Route path="/post/:id" element={<PostPopup user={user} />} />
           <Route
             path="/profile/:username"
             element={<Profile />}
           >
-            <Route index element={<ProfilePost user={user}/>} />
+            <Route index element={<ProfilePost user={user} />} />
             <Route path="intro" element={<ProfileIntroCarousel />} />
             <Route path="photos" element={<ProfilePhoto />} />
             <Route path="following" element={<ProfileFollowing />} />
-            <Route path="followers" element={<ProfileFollower />} /> 
-            <Route path="myFoodMap" element={<ProfileFoodMap />} /> 
-            <Route path="myVoucher" element={<ProfileVoucher />} /> 
+            <Route path="followers" element={<ProfileFollower />} />
+            <Route path="myFoodMap" element={<ProfileFoodMap />} />
+            <Route path="myVoucher" element={<ProfileVoucher />} />
+            <Route path="savedPost" element={<ProfileSavedPost user={user}/>} />
           </Route>
 
           <Route path="/settings" element={<Settings />}>
             <Route index element={<SettingsPage />} />
             <Route path="password" element={<PasswordSettingsPage />} />
           </Route>
-          <Route path="/foodVenue/:id" element={<PlaceDetailsLayout user={user}/>}>
+          <Route path="/foodVenue/:id" element={<PlaceDetailsLayout user={user} />}>
             <Route index element={<PlaceProfileOverview />} />
             <Route path="reviews" element={<PlaceProfileReview user={user} />} />
             <Route path="photos" element={<PlaceProfilePhotos user={user} />} />
@@ -204,7 +209,7 @@ function App() {
             <Route path="events" element={<PlaceProfileEvents user={user} />} />
             <Route path="promotions" element={<PlaceProfilePromotions user={user} />} />
           </Route>
-          <Route path="/myWishlistVenue/:id" element={<WishlistPlaceDetailsLayout user={user}/>}>
+          <Route path="/foodVenueWishlist/:id" element={<WishlistPlaceDetailsLayout user={user} />}>
             <Route index element={<PlaceProfileOverview />} />
             <Route path="reviews" element={<PlaceProfileReview user={user} />} />
             <Route path="photos" element={<PlaceProfilePhotos user={user} />} />
@@ -215,13 +220,13 @@ function App() {
           </Route>
           <Route path="/" element={<Layout user={user} />}>
             {/* <Route index element={<Feed posts={posts} user={user} />} /> */}
-            <Route index element={<Feed posts={posts} user={user} fetchMorePosts={fetchMorePosts} hasMore={hasMore}/>} />
+            <Route index element={<Feed posts={posts} user={user} fetchMorePosts={fetchMorePosts} hasMore={hasMore} />} />
             <Route path="discover" element={<PublicFeed user={user} />} />
-            <Route path="searchVenue" element={<SearchVenue user={user}/>} />
+            <Route path="searchVenue" element={<SearchVenue user={user} />} />
             <Route path="myFoodJourney" element={<VisitedPlaceLayout user={user} />} />
-            <Route path="myWishlistVenue" element={<MyFoodMap user={user}/>} />
-            <Route path="foodEvent" element={<FoodEvent />} />
-            <Route path="foodPromotion" element={<FoodPromotion />} />
+            <Route path="foodVenueWishlist" element={<MyFoodMap user={user} />} />
+            <Route path="foodEvent" element={<FoodEvent user={user} />} />
+            <Route path="foodPromotion" element={<FoodPromotion user={user} />} />
             <Route path="searchResult/:term" element={<SearchResult user={user} />} />
           </Route>
           <Route path="/foodEvent/:id/" element={<EventDetails user={user} />} exact />

@@ -53,14 +53,16 @@ const PlaceCommentSection = ({ initialComments, comments, onAddComment, user, se
         return comments.map((comment) => (
             <div key={comment.id} style={{ paddingLeft: depth * 20 }}>
                 <PlaceComment
-                    author={comment.user.name}
-                    date={comment.createdAt}
-                    text={comment.text}
-                    avatarUrl={comment.user.picture}
-                    id={comment._id}
+                    author={comment?.user.name}
+                    date={comment?.createdAt}
+                    text={comment?.text}
+                    avatarUrl={comment?.user.picture}
+                    id={comment?._id}
                     user={user}
                     setComments={setComments}
                     depth={depth}
+                    rating={comment?.rating}
+                    media={comment?.media}
                 // onReply={(replyText) => handleReply(replyText, comment.author, comment.id, depth)}
                 >
                     {/* {comment.replies.length > 0 && (depth <= 2 ? renderComments(comment.replies, depth + 1) : renderComments(comment.replies, depth))} */}

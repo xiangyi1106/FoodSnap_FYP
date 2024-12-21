@@ -62,9 +62,9 @@ const SearchBar = ({ user }) => {
             navigate(`/searchResult/${searchTerm}`);
             setIsShowMenu(false);
         }
-        console.log("foodVenues", foodVenues);
-        const response = await saveRestaurantData(foodVenues, user.token);
-        console.log(response);
+        // console.log("foodVenues", foodVenues);
+        // const response = await saveRestaurantData(foodVenues, user.token);
+        // console.log(response);
     };
 
     const handleSearchButtonClick = () => {

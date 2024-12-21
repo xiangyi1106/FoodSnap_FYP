@@ -97,7 +97,9 @@
   }
   
   .restaurant_wishlist_item_img {
-    width: 65px;
+    /* width: 65px; */
+    width: 80px;
+    height: 80px;
     border-radius: 4px;
   }
   

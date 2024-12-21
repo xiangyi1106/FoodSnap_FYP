@@ -148,8 +148,13 @@ const userSchema = mongoose.Schema({
     foodVenueWishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'FoodVenue', default: [] }],
     role: {
         type: String,
-        enum: ['user', 'admin', 'businessOwner'],
+        enum: ['user', 'admin', 'business_account'],
         default: 'user'
+    },
+    foodVenueOwned: { type: mongoose.Schema.Types.ObjectId, ref: 'FoodVenue', default: null },
+    foodVenueMapList: {
+        type: Array,
+        default: [],
     },
 }, {
     timestamps: true,

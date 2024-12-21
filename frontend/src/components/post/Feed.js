@@ -14,7 +14,6 @@ export default function Feed({ posts, user, fetchMorePosts, hasMore }) {
         if (middle.current) {
             setHeight(middle.current.clientHeight);
         }
-        console.log(posts);
     }, [posts]);
 
     const [isFeedCommentVisible, setIsFeedCommentVisible] = useState(true);

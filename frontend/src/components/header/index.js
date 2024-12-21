@@ -1,12 +1,12 @@
 import "./style.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Notifications, Search } from "../../svg";
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import SearchMenu from "./SearchMenu";
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import UserMenu from "./UserMenu";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CIcon from '@coreui/icons-react';
 import { cilSearch, cilBell } from '@coreui/icons';
 import { MDBBtn, MDBIcon } from 'mdb-react-ui-kit';
@@ -14,17 +14,21 @@ import Tooltip from '@mui/material/Tooltip';
 import AddEvent from "../../pages/foodEvent/addEvent/addEvent";
 import AddPromotion from "../../pages/foodPromotion/AddPromotion/AddPromotion";
 import SearchBar from "./SearchBar";
+import Notification from "../Notification";
+import { getNotifications } from "../../functions/user";
 
 export default function Header({ setVisible, visible, page, currentPath }) {
     const userSelector = (state) => state.user;
     const user = useSelector(userSelector);
-  
+    const dispatch = useDispatch();
+
     // Memoize the selector function
     const memoizedUserSelector = useMemo(() => userSelector, []);
 
     // const [isShowMenu, setIsShowMenu] = useState(false);
     const [isShowUserMenu, setIsShowUserMenu] = useState(false);
-
+    const [isShowNotifications, setIsShowNotifications] = useState(false);
+    const searchIconRef = useRef(null);
     // const searchInput = useRef(null);
     // const searchRef = useRef(null);
 
@@ -36,8 +40,48 @@ export default function Header({ setVisible, visible, page, currentPath }) {
 
     const [isCreateFormVisible, setIsCreateFormVisible] = useState(false);
     const [isCreatePromotionVisible, setIsCreatePromotionVisible] = useState(false);
-
+    const [notificationNumber, setNotificationNumber] = useState(0);
     // const [searchTerm, setSearchTerm] = useState("");
+    const [notifications, setNotifications] = useState([]);
+    const navigate = useNavigate();
+    // Flag to track if the redirection is already done
+    const [hasRedirected, setHasRedirected] = useState(false);
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            if (hasRedirected) return;
+            try {
+                const response = await getNotifications(user?.id, user?.token);
+                // Make sure response is an array
+                if (Array.isArray(response)) {
+                    const filteredNotifications = response.filter(
+                        (n) => n.fromUserId._id !== user?.id
+                    );
+                    setNotifications(filteredNotifications);
+                    // Set the notification number to unread notifications count
+                    const unreadCount = filteredNotifications.filter(n => !n.isRead).length;
+                    setNotificationNumber(unreadCount);  // Set only unread notifications count
+                } else {
+                    console.warn('Unexpected response:', response);
+                    setNotifications([]); // Set an empty array if response is invalid
+                }
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+                if (error.response && error.response.status === 401 && !hasRedirected) {
+                    console.log("i am here");
+                    setHasRedirected(true);
+                    alert("Session timed out. Please log in again.");
+                    dispatch({
+                      type: "LOGOUT",
+                    });
+                    navigate("/login");
+                    return;
+                  }
+                setNotifications([]); // Set an empty array on error
+            }
+        };
+        fetchNotifications();
+    }, [user?.id, user?.token]);
 
     return (
         <header>
@@ -61,31 +105,32 @@ export default function Header({ setVisible, visible, page, currentPath }) {
                     <button type="submit" className="search_button"> <CIcon icon={cilSearch} className="icon_size_18" /></button>
                 </div>
                 {isShowMenu && <SearchMenu setIsShowMenu={setIsShowMenu} searchRef={searchRef} />} */}
-                <SearchBar user={user} />
+                {(currentPath === "/" || currentPath === "/discover") && <SearchBar user={user} />}
             </div>
             <div className="header_right">
                 {currentPath === "/" && <Tooltip title="Create Post"><MDBBtn outline href='#' className="btn_create_post" onClick={() => setVisible(true)}>
-                    <span>Create Post</span> <MDBIcon className="btn_create_post_icon ml-2" fas icon="plus-circle" /> 
+                    <span>Create Post</span> <MDBIcon className="btn_create_post_icon ml-2" fas icon="plus-circle" />
                 </MDBBtn></Tooltip>}
-                {currentPath === "/foodEvent" && <Tooltip title="Create Event"><MDBBtn outline href='#' className="btn_create_post" onClick={() => setIsCreateFormVisible(true)}>
+                {/* {currentPath === "/foodEvent" && <Tooltip title="Create Event"><MDBBtn outline href='#' className="btn_create_post" onClick={() => setIsCreateFormVisible(true)}>
                     <span>Create Event</span> <MDBIcon className="btn_create_post_icon ml-2" fas icon="plus-circle" /> 
                 </MDBBtn></Tooltip>}
                 {currentPath === "/foodPromotion" && user.role === 'user' && <Tooltip title="Create Promotion"><MDBBtn outline href='#' className="btn_create_post" onClick={() => setIsCreatePromotionVisible(true)}>
                     <span>Create Promotion</span> <MDBIcon className="btn_create_post_icon ml-2" fas icon="plus-circle" /> 
-                </MDBBtn></Tooltip>}
-                <div className="circle_icon hover_color">
-                    <CIcon icon={cilBell} className="icon_size_22" style={{ position: "relative" }} />
+                </MDBBtn></Tooltip>} */}
+                <div className="circle_icon" ref={searchIconRef}>
+                    <CIcon icon={cilBell} className="icon_size_22 hover_color" style={{ position: "relative" }} onClick={() => setIsShowNotifications(prev => !prev)} />
                     {/* <NotificationsIcon className="icon_size_20" style={{ position: "relative" }} /> */}
-                    <div className="notification_number">10</div>
+                    {notificationNumber > 0 && <div className="notification_number">{notificationNumber}</div>}
                     {/* <MDBBadge color='danger' notification pill>1</MDBBadge> */}
+                    {isShowNotifications && <Notification userId={user?.id} token={user?.token} setNotificationNumber={setNotificationNumber} setIsShowNotifications={setIsShowNotifications} searchIconRef={searchIconRef} notifications={notifications} setNotifications={setNotifications} />}
                 </div>
                 <Link className="profile_link hover1" onClick={handleProfileLinkClick} ref={profileLinkRef}>
                     <img src={user?.picture} alt="profile-picture"></img>
                     {/* <span>Username <ExpandMoreIcon style={{}} className="user_dropdown_icon icon_size_20"/></span> */}
                 </Link>
                 {isShowUserMenu && <UserMenu setIsShowUserMenu={setIsShowUserMenu} profileLinkRef={profileLinkRef} user={user} />}
-                {isCreateFormVisible && <AddEvent setIsCreateFormVisible={setIsCreateFormVisible} user={user}/>}
-                {isCreatePromotionVisible && <AddPromotion setIsCreatePromotionVisible={setIsCreatePromotionVisible} user={user}/>}
+                {/* {isCreateFormVisible && <AddEvent setIsCreateFormVisible={setIsCreateFormVisible} user={user} />} */}
+                {/* {isCreatePromotionVisible && <AddPromotion setIsCreatePromotionVisible={setIsCreatePromotionVisible} user={user}/>} */}
             </div>
         </header>
     )

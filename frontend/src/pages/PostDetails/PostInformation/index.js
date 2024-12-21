@@ -20,7 +20,8 @@ const PostDetailsInformation = ({ post, user, feedComment }) => {
     return (
         <>
             {/* Right part - Post Details and Comments */}
-            <Box sx={{ flex: 1, padding: '10px 0px',height: '100vh', overflowY: 'auto' }} ref={postRef}>
+            {/* <Box sx={{ flex: 1, padding: '10px 0px',height: '100vh', overflowY: 'auto' }} ref={postRef}> */}
+            <Box sx={{ flex: 1, padding: '10px 0px',height: '100vh'}} ref={postRef}>
                 <div className="post_header">
                     <Link
                         to={`/profile/${post?.user?.username}`}

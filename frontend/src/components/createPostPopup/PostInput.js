@@ -3,7 +3,7 @@ import { MentionsInput, Mention } from 'react-mentions';
 import axios from 'axios';
 import './style.css';  // Custom styling for the mentions input
 
-const PostInput = ({ isLoading, text, setText, user, textRef }) => {
+const PostInput = ({ isLoading, text, setText, user, textRef, isShowImage }) => {
     const [users, setUsers] = useState([]);
     const [hashtags, setHashtags] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -119,7 +119,8 @@ const PostInput = ({ isLoading, text, setText, user, textRef }) => {
         // },
         '&multiLine': {
             control: {
-                minHeight: '320px',
+                // minHeight: '320px',
+                minHeight: `${isShowImage ? "110px" : "320px"}`,
                 width: '350px',
                 outline: 'none',
                 border: 'none',
@@ -152,7 +153,7 @@ const PostInput = ({ isLoading, text, setText, user, textRef }) => {
 
 
     return (
-        <div className="post_content" style={{ minHeight: '320px' }}>
+        <div className="post_content" style={{ minHeight: `${isShowImage ? "110px" : "320px"}` }}>
             <MentionsInput
                 value={text}
                 onChange={handleChange} // Call handleChange on input change

@@ -11,16 +11,16 @@ import { uploadMedias } from "../../../functions/uploadMedia";
 import dataURItoBlob from "../../../helpers/dataURItoBlob";
 import { ToastContainer, toast } from 'react-toastify';
 import { handleImage } from "../../../functions/handleImage";
+import { getAllFoodVenues } from "../../../functions/foodVenue";
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
 
-export function AddPromotionForm({ user, setIsCreatePromotionVisible }) {
+export function AddPromotionForm({ setIsCreatePromotionVisible, user, setPromotions, setFilteredPromotions, foodVenue }) {
     const [showEndDate, setShowEndDate] = useState(false);
     const [locationText, setLocationText] = useState('');
     const [locationList, setLocationList] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [tags, setTags] = useState('');
-    const [foodVenue, setFoodVenue] = useState(''); // Optional food venue from DB
+    // const [tags, setTags] = useState('');
     const [address, setAddress] = useState([]);
     const today = new Date();
     const [image, setImage] = useState('');
@@ -63,7 +63,7 @@ export function AddPromotionForm({ user, setIsCreatePromotionVisible }) {
         termsAndConditions: Yup.string()
             // .min(10, "Description must be at least 10 characters.")
             .max(500, "Term And Condition must not exceed 500 characters."),
-        privacy: Yup.string().required("Privacy setting is required"),
+        // privacy: Yup.string().required("Privacy setting is required"),
     });
 
     const updatePicture = async (img) => {
@@ -82,6 +82,7 @@ export function AddPromotionForm({ user, setIsCreatePromotionVisible }) {
             toast.error("Failed to uploads picture: " + error.message);
         }
     };
+    const [locationError, setLocationError] = useState(false);
 
     const formik = useFormik({
         initialValues: {
@@ -97,6 +98,7 @@ export function AddPromotionForm({ user, setIsCreatePromotionVisible }) {
             promotionImage: null,
             // promotionType: "faceToFace",
             privacy: "public",
+            foodVenue: null,
             // tags: "",
             // foodVenue: "",
         },
@@ -116,25 +118,40 @@ export function AddPromotionForm({ user, setIsCreatePromotionVisible }) {
                     }
                 }
 
-                // Now process the location: check if address is selected from suggestions
-                if (!address || !address.latitude || !address.longitude) {
-                    const manualAddress = locationText;
-                    const addressText = {
-                        fullAddress: manualAddress,
-                    };
-
-                    // Set the manually entered location data
+                // if (locationText === "" || null) {
+                //     setLocationError(true);
+                //     return;
+                // }
+                if (foodVenue) {
                     const locationData = {
-                        name: manualAddress,
-                        address: addressText,
-                        latitude: null, // No latitude available
-                        longitude: null, // No longitude available
+                        name: foodVenue.name,
+                        address: foodVenue.location,
+                        latitude: foodVenue.latitude || null, // No latitude available
+                        longitude: foodVenue.longitude || null, // No longitude available
                     };
-
                     // formik.setFieldValue('location', locationData);
                     values.location = locationData;
-                }
+                    values.foodVenue = foodVenue._id;
+                } else {
+                    // Now process the location: check if address is selected from suggestions
+                    if (!address || !address.latitude || !address.longitude) {
+                        const manualAddress = locationText;
+                        const addressText = {
+                            fullAddress: manualAddress,
+                        };
 
+                        // Set the manually entered location data
+                        const locationData = {
+                            name: manualAddress,
+                            address: addressText,
+                            latitude: null, // No latitude available
+                            longitude: null, // No longitude available
+                        };
+
+                        // formik.setFieldValue('location', locationData);
+                        values.location = locationData;
+                    }
+                }
                 // Finally, post the promotion data to the backend
                 const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/addPromotion`, values, {
                     headers: {
@@ -144,6 +161,15 @@ export function AddPromotionForm({ user, setIsCreatePromotionVisible }) {
 
                 //   // Handle success response
                 console.log(response.data);
+                setPromotions((prevPromotions) => [
+                    response.data,         // Add the new data
+                    ...prevPromotions,  // Spread the previous promotions
+                ]);
+
+                setFilteredPromotions((prevPromotions) => [
+                    response.data,         // Add the new data
+                    ...prevPromotions,  // Spread the previous promotions
+                ]);
                 toast.success("Promotion created successfully!");
                 setIsCreatePromotionVisible(false);
 
@@ -160,11 +186,7 @@ export function AddPromotionForm({ user, setIsCreatePromotionVisible }) {
 
     const handlePictureChange = (promotion, setFieldValue, type) => {
         const file = promotion.target.files[0];
-        // if (file) {
-        //     setFieldValue(type, URL.createObjectURL(file));
-        // }
         if (file) {
-            // setFieldValue(type, file);
             handleImage(file, setError, setImage); // Use the imported handleImage function
         }
     };
@@ -200,6 +222,7 @@ export function AddPromotionForm({ user, setIsCreatePromotionVisible }) {
 
     const handleLocationSearch = (e) => {
         const query = e.target.value;
+        setLocationError(false);
         setLocationText(query);
         debouncedSearch(query); // Call the memoized debounced search function
         console.log('Location search input:', query);
@@ -226,6 +249,24 @@ export function AddPromotionForm({ user, setIsCreatePromotionVisible }) {
         setLocationText(selectedItem.display_name); // Update input state with selected location
         setLocationList([]); // Clear location list after selection
     };
+
+    // const [foodVenues, setFoodVenues] = useState([]); // State to store fetched food venues
+    // const [selectedVenues, setSelectedVenues] = useState(null); // State for selected venues
+    // const [searchTerm, setSearchTerm] = useState(""); // Input value for search term
+
+    // // Fetch food venues from the backend when the component mounts
+    // useEffect(() => {
+    //     const fetchFoodVenues = async () => {
+    //         try {
+    //             const response = await getAllFoodVenues(user.token); // Replace with your backend endpoint
+    //             setFoodVenues(response); // Assuming the response is an array of food venues
+    //         } catch (error) {
+    //             console.error("Error fetching food venues:", error);
+    //         }
+    //     };
+
+    //     fetchFoodVenues();
+    // }, []); // Empty dependency array ensures this runs once when the component mounts
 
     return (
         <FormikProvider value={formik}>
@@ -326,9 +367,9 @@ export function AddPromotionForm({ user, setIsCreatePromotionVisible }) {
                             />
                         </>
                     )}
-
                 </div>
-                <div className="profile_form_item">
+
+                {!foodVenue && <div className="profile_form_item">
                     <label className="profile_form_label">
                         Location
                     </label>
@@ -339,8 +380,10 @@ export function AddPromotionForm({ user, setIsCreatePromotionVisible }) {
                         value={locationText} // Use local state for the input value
                         onChange={handleLocationSearch} // Trigger location search
                     />
+                    {locationError && <div className="profile_form_message">Location is required.</div>}
                     <p className="profile_form_description">{"Provide the location where the promotion will take place."}</p>
                 </div>
+                }
 
                 {isLoading ? (
                     <CircularProgress />
@@ -385,7 +428,7 @@ export function AddPromotionForm({ user, setIsCreatePromotionVisible }) {
                     description="Provide terms and conditions about the promotion."
                 />
 
-                <div>
+                {/* <div>
                     <FormControl component="fieldset" style={{ marginTop: '20px' }}>
                         <FormLabel component="legend" style={{ color: 'black', fontSize: '0.9rem', marginBottom: '0.5rem', }}>Privacy</FormLabel>
                         <RadioGroup
@@ -428,43 +471,36 @@ export function AddPromotionForm({ user, setIsCreatePromotionVisible }) {
                         </RadioGroup>
                     </FormControl>
                     <p className="profile_form_description">Select the privacy of the promotion.</p>
-                </div>
-
-                {/* <TextInput
-                    label="Organizer"
-                    id="organizer"
-                    name="organizer"
-                    placeholder="Enter the organizer's name"
-                    formik={formik}
-                    description="Provide the name of the promotion organizer."
-                /> */}
-
-                {/* <TextInput
-                    label="Tags"
-                    id="tags"
-                    name="tags"
-                    placeholder="Enter promotion tags"
-                    formik={formik}
-                    description="Provide relevant tags for the promotion."
-                /> */}
-
-                {/* Food venue search and select dropdown */}
-                {/* <div className="profile_form_item">
+                </div> */}
+                {/* {!foodVenue && <div className="profile_form_item">
                     <label htmlFor="foodVenue" className="profile_form_label">Food Venue</label>
                     <Autocomplete
                         id="foodVenue"
-                        options={foodVenues}
-                        getOptionLabel={(option) => option.name} // Display venue name in the combobox
-                        value={selectedVenue} // Controlled value
-                        onChange={(promotion, newValue) => setSelectedVenue(newValue)} // Handle value change
+                        multiple={false} // Single selection
+                        options={foodVenues} // Array of available food venues
+                        getOptionLabel={(option) => option.name} // Display venue name
+                        value={selectedVenues} // Controlled value (single object or null)
+                        onChange={(event, newValue) => {
+                            console.log(newValue);
+                            setSelectedVenues(newValue); // Update the selected venue
+                            formik.setFieldValue("foodVenue", newValue ? newValue._id : null); // Update Formik's state with selected venue ID
+                        }}
                         inputValue={searchTerm} // Controlled input value (typed by user)
-                        onInputChange={(promotion, newInputValue) => setSearchTerm(newInputValue)} // Handle input change for filtering
+                        onInputChange={(event, newInputValue) => setSearchTerm(newInputValue)} // Handle input change for filtering
+                        filterOptions={(options, state) =>
+                            options.filter((option) =>
+                                option.name.toLowerCase().startsWith(state.inputValue.toLowerCase()) // Filter options based on input
+                            )
+                        }
                         renderInput={(params) => (
                             <TextField {...params} placeholder="Type to search for a venue" />
                         )}
+                        isOptionEqualToValue={(option, value) => option.id === value?.id} // Compare by 'id'
                     />
-                    <p className="profile_form_description">Select the food venue of the promotion if available.</p>
-                </div> */}
+
+
+                    <p className="profile_form_description">Select the food venue of the promotion to show it on food venue's promotion page.</p>
+                </div>} */}
 
                 <button
                     type="submit"

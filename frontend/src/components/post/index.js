@@ -114,7 +114,7 @@ export default function Post({ post, user, profile, skip, onShowFeedComment, dep
                 {/* Render shared post if it exists and is available */}
                 {post.sharedPost && isOriginalPostAvailable && depth < 2 && (
                     <div className="shared_post">
-                        <Post post={post.sharedPost} user={post.sharedPost.user} skip={true} depth={depth + 1}/>
+                        <Post post={post.sharedPost} user={post.sharedPost.user} skip={true} depth={depth + 1} profile/>
                     </div>
                     
                 )}

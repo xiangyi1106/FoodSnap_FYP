@@ -17,15 +17,18 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import ChangeLocationModal from './ChangeLocationModal';
 import SearchFoodCategoryModal from './SearchFoodCategoryModal';
+import { searchFoodVenue } from '../../functions/foodVenue';
 
-export default function SearchBox({setVisible, user, foodVenues, error}) {
+export default function SearchBox({ setVisible, user, foodVenues, error, setFoodVenues, isAISearchVisible, setIsAISearchVisible }) {
 
     const [isPlaceDetailsVisible, setPlaceDetailsVisible] = useState(false);
     const [isFoodVenueFinderVisible, setFoodVenueFinderVisible] = useState(false);
-    const [isAISearchVisible, setIsAISearchVisible] = useState(false);
+    // const [isAISearchVisible, setIsAISearchVisible] = useState(false);
     const [isFilterVisible, setIsFiterVisible] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState([]);
     const [isEditPlaceVisible, setIsEditPlaceVisible] = useState(false);
+    const location = localStorage.getItem('currentLocation') || 'Johor Bahru';
+    const [searchTerm, setSearchTerm] = useState("");
 
     //Hide the outer scrollbar
     useEffect(() => {
@@ -43,11 +46,41 @@ export default function SearchBox({setVisible, user, foodVenues, error}) {
         };
     }, [isPlaceDetailsVisible]);
 
-    console.log("foodve", foodVenues)
+    // Function to handle search submission
+    const handleSearchSubmit = async (event) => {
+        event.preventDefault(); // Prevent form submission from reloading the page
+        performSearch();
+    };
+
+    const performSearch = async () => {
+        try {
+            // Make an API call to the backend with the search term and location
+            const response = await searchFoodVenue(searchTerm, location, user.token);
+            setFoodVenues(response);
+        } catch (error) {
+            console.error("Error:", error);
+            setFoodVenues([]);
+        }
+    }
+
+    const handleClearSearch = async () => {
+        setSearchTerm('');  // Clear the input field
+        // Make an API call to the backend with the search term and location
+        const response = await searchFoodVenue("", location, user.token);
+        // Store the search results in state
+        setFoodVenues(Array.isArray(response) ? response : []);
+    };
+
+    const searchHandler = async (e) => {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    };
+
     return (
         <Card sx={{ width: '100%', marginLeft: "auto", marginRight: "auto" }}>
             {isPlaceDetailsVisible && <PlaceDetails setVisible={setPlaceDetailsVisible} />}
-            {isAISearchVisible && <FoodSuggestion setVisible={setIsAISearchVisible} user={user}/>}
+            {isAISearchVisible && <FoodSuggestion setVisible={setIsAISearchVisible} user={user} />}
             <CardContent>
                 <div className='searchbox_wrapper'>
                     <Tooltip title="Change Location">
@@ -57,18 +90,32 @@ export default function SearchBox({setVisible, user, foodVenues, error}) {
                     </Tooltip>
 
                     <div className="search search1">
-                        <input type="text" placeholder="What would you like to eat today?" className="hide_input"></input>
-                        <button type="submit" className="search_button"> <CIcon icon={cilSearch} className="icon_size_18" /></button>
+                        <input type="text"
+                            placeholder="Search Food Venue..."
+                            className="hide_input"
+                            value={searchTerm} // Controlled input value
+                            onChange={(e) => setSearchTerm(e.target.value)} // Update search term on input change
+                            onKeyUp={searchHandler}
+                        >
+                        </input>
+                        <div>
+                            <button type="submit" className="search_button" onClick={handleSearchSubmit}> <CIcon icon={cilSearch} className="icon_size_18" /></button>
+                        </div>
                     </div>
-                    <IconButton aria-label="filter" onClick={() => setIsFiterVisible(true)}>
-                        <FilterAltIcon style={{ color: '#6C83B5' }} />
-                    </IconButton>
+                    <Tooltip title="Filter by Category">
+                        <IconButton aria-label="filter" onClick={() => setIsFiterVisible(true)}>
+                            <FilterAltIcon style={{ color: '#6C83B5' }} />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="AI Food Suggestion by Google Gemini">
                     <IconButton aria-label="AISearch" onClick={() => setIsAISearchVisible(true)}>
                         <TipsAndUpdatesIcon style={{ color: '#F5A762' }} />
                     </IconButton>
+                    </Tooltip>
                 </div>
                 {(foodVenues || foodVenues.length > 0) && <FoodVenueList setVisible={setPlaceDetailsVisible} foodVenues={foodVenues} />}
                 {(!foodVenues || foodVenues.length === 0) && error && <p style={{ textAlign: 'center', color: 'gray', marginTop: '20px' }}>Sorry, there is no food venue found. Please change to another location to find another food venue.</p>}
+                {(!foodVenues || foodVenues.length === 0 || !Array.isArray(foodVenues)) && <p style={{ textAlign: 'center', color: 'gray', marginTop: '20px' }}>Sorry, there is no food venue found.</p>}
             </CardContent>
             <SearchFoodCategoryModal setVisible={setIsFiterVisible} visible={isFilterVisible} setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory} />
         </Card>

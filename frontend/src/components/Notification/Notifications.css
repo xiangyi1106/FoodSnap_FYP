@@ -1,0 +1,125 @@
+/* Notifications.css */
+.notifications {
+    /* padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+
+    position: absolute;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--bg-primary);
+    box-shadow: 0 12px 12px var(--shadow-1);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    transition: all 0.2s;
+    -webkit-font-smoothing: antialiased;
+    z-index: 1;
+    /* min-height: 400px; */
+    max-height: 70vh;
+    padding: 8px 16px 10px 6px;
+    width: 340px;
+    top: 60px;
+    right: 60px;
+  }
+  
+  .notifications-title {
+    font-size: 1.05rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    /* text-align: center; */
+    padding: 10px;
+  }
+
+  .notification-section{
+    display: flex;
+    gap: 10px;
+  }
+  
+  .notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: scroll;
+  }
+  
+  .notification-card {
+    padding: 10px 15px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: all 0.3s ease;
+  }
+  
+  .notification-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: black;
+  }
+  
+  .notification-card.read {
+    background-color: #f0f0f0;
+  }
+  
+  .notification-card.unread {
+    background-color: #e8f8e8;
+    border-left: 5px solid #33cc33;
+  }
+  
+  .notification-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .notification-icon {
+    font-size: 20px;
+    color: #888;
+  }
+  
+  .notification-status {
+    font-size: 12px;
+    font-weight: bold;
+    color: #888;
+  }
+  
+  .status-read {
+    color: #888;
+  }
+  
+  .status-unread {
+    color: #33cc33;
+  }
+  
+  .notification-message p {
+    /* font-size: 16px; */
+    margin: 0;
+    color: #333;
+  }
+  
+  .notification-footer {
+    font-size: 12px;
+    text-align: right;
+    color: #aaa;
+  }
+  
+  .icon {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+  }
+  
+  .icon-read {
+    content: "\f00c"; /* Checkmark */
+  }
+  
+  .icon-unread {
+    content: "\f0f3"; /* Bell Icon */
+  }
+  

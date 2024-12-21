@@ -37,7 +37,9 @@ export default function Settings() {
             <div className="profile">
                 <Header />
                 <div className="settings_layout hidden">
-                    <CustomBreadcrumbs breadcrumbs={breadcrumbs} />
+                    <div style={{padding: 0}}>
+                    <CustomBreadcrumbs breadcrumbs={breadcrumbs} setting />
+                    </div>
                     <div className="settings_header">
                         <h2 className="settings_title">Settings</h2>
                         <p className="settings_description">

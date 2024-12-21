@@ -72,7 +72,7 @@ export default function PlaceProfilePictureInfo({ foodVenue, user }) {
               </div>
             </span>
             <div className='badge_category_container source-sans-3-bold'>
-              {foodVenue && foodVenue.dishesType.length > 0 && foodVenue.dishesType.map((c) => (
+              {foodVenue && foodVenue.category.length > 0 && foodVenue.category.map((c) => (
                 <span className='badge_category' key={c}>
                   {c}
                 </span>

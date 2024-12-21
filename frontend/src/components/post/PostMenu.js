@@ -62,8 +62,8 @@ export default function PostMenu({
           />
         )}
       </div>
-      <div className="line"></div>
-      {test && <MenuItem icon="edit_icon" title="Edit Post" />}
+      {/* <div className="line"></div> */}
+      {/* {test && <MenuItem icon="edit_icon" title="Edit Post" />} */}
       {/* {!test && (
         <MenuItem
           icon="turnOnNotification_icon"
@@ -91,7 +91,7 @@ export default function PostMenu({
         <MenuItem icon="refresh_icon" title="Refresh share attachment" />
       )}
       {test && <MenuItem icon="archive_icon" title="Move to archive" />} */}
-      {test && (
+      {/* {test && (
         <div onClick={() => deleteHandler()}>
           <MenuItem
             icon="trash_icon"
@@ -99,15 +99,15 @@ export default function PostMenu({
             subtitle="items in your trash are deleted after 30 days"
           />
         </div>
-      )}
+      )} */}
       {/* {!test && <div className="line"></div>} */}
-      {!test && (
+      {/* {!test && (
         <MenuItem
           img="../../../icons/report.png"
           title="Report post"
           subtitle="i'm concerned about this post"
         />
-      )}
+      )} */}
     </ul>
   );
 }

@@ -3,8 +3,10 @@ import './PlaceComment.css';
 import { Button, TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import PlaceCommentReply from './PlaceCommentReply';
+import StarRating from '../searchVenue/StarRating';
+import MediaCarousel from './MediaCarousel';
 
-const PlaceComment = ({ author, date, text, avatarUrl, children, id, user, setComments, depth }) => {
+const PlaceComment = ({ author, date, text, avatarUrl, children, id, user, setComments, depth, rating, media }) => {
     const [isReplying, setIsReplying] = useState(false);
     // Format the date to a more readable format
     //  const formattedDate = format(new Date(date), 'MMMM d, yyyy h:mm a');
@@ -29,7 +31,42 @@ const PlaceComment = ({ author, date, text, avatarUrl, children, id, user, setCo
                     </p>
                 </div>
             </div>
+            {/* <p className="comment_text">{rating}</p> */}
+            {rating && <div className='place-ratings'>
+                <StarRating rating={rating} />
+                <span className='rating-text' style={{ marginRight: '10px' }}>
+                    {rating}
+                </span>
+            </div>}
             <p className="comment_text">{text}</p>
+            {/* <MediaCarousel media={media} /> */}
+            {media && media.length > 0 && (
+                <div>
+                    {media.map((item, index) => {
+                        // Check the media type (you can extend this with more checks for different media types)
+                        if (item.type === "image") {
+                            return (
+                                <div key={index}>
+                                    <img src={item.url} alt={`Media ${index}`} style={{ width: '100%', marginBottom: '10px' }} className='comment_image'/>
+                                </div>
+                            );
+                        }
+                        if (item.type === "video") {
+                            return (
+                                <div key={index}>
+                                    <video controls style={{ width: '100%', marginBottom: '10px' }}>
+                                        <source src={item.url} type="video/mp4" />
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            );
+                        }
+                        // You can add other types (like audio, pdf, etc.) as needed
+                        return null;  // If the media type is unsupported, return nothing
+                    })}
+                </div>
+            )}
+
             {depth === 0 &&
                 <div className="comment_actions">
                     <button type="button" className="comment_reply_button" onClick={() => setIsReplying(!isReplying)}>

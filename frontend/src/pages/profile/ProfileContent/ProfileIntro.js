@@ -9,10 +9,10 @@ const emojis = [
     ["🚻", "Gender", "gender"],            // Gender
     ["🌍", "Current City", "currentCity"],  // Current City
     ["🍕", "Favorite Food", "favouriteFood"], // Favorite Food
-    ["🥦", "Dietary Preferences", "dietaryPreferences"], // Dietary Preferences or Restrictions
-    ["🚫", "Allergic", "allergies"],       // Allergies
-    ["🍭", "Taste Preference", "tastePreferences"], // Taste Preference
-    ["🌶️", "Spicy Level", "spicyLevel"],   // Spicy Level
+    // ["🥦", "Dietary Preferences", "dietaryPreferences"], // Dietary Preferences or Restrictions
+    // ["🚫", "Allergic", "allergies"],       // Allergies
+    // ["🍭", "Taste Preference", "tastePreferences"], // Taste Preference
+    // ["🌶️", "Spicy Level", "spicyLevel"],   // Spicy Level
     ["ⓕ", "Facebook", "facebook"],         // Facebook
     ["📸", "Instagram", "instagram"],       // Instagram
     ["▶️", "YouTube", "youtube"]            // YouTube

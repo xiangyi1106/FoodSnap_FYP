@@ -2,7 +2,7 @@ import CIcon from '@coreui/icons-react';
 import { cilX } from '@coreui/icons';
 import { AddPromotionForm } from './AddPromotionForm';
 
-export default function AddPromotion({ setIsCreatePromotionVisible, user }) {
+export default function AddPromotion({ setIsCreatePromotionVisible, user, setPromotions, setFilteredPromotions, foodVenue }) {
     return (
         <>
             <div className='blur place_detail_information'>
@@ -19,7 +19,7 @@ export default function AddPromotion({ setIsCreatePromotionVisible, user }) {
                         </div>
                         <div className="settings_separator"></div>
                         <div className="settings_container">
-                            <AddPromotionForm user={user} setIsCreatePromotionVisible={setIsCreatePromotionVisible}/>
+                            <AddPromotionForm setIsCreatePromotionVisible={setIsCreatePromotionVisible} user={user}  setPromotions={setPromotions} setFilteredPromotions={setFilteredPromotions} foodVenue={foodVenue}/>
                         </div>
                     </div>
                 </div>

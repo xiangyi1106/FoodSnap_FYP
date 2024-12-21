@@ -110,18 +110,9 @@ export default function Profile() {
       <div className="profile_bottom">
         <div className="profile_container" style={{ maxWidth: '850px', margin: '0 auto' }}>
           <div className="bottom_container">
-            <div className="profile_grid" style={{ gridTemplateColumns: '0.8fr 1fr' }}>
+          <div className="profile_grid">
+          {/* <div className="profile_grid" style={{ gridTemplateColumns: '0.8fr 1fr' }}> */}
               <div className="profile_left">
-                {/* <Intro
-                  detailss={profile.details}
-                  visitor={visitor}
-                  setOthername={setOthername}
-                />
-                <Photos
-                  username={userName}
-                  token={user.token}
-                  photos={photos}
-                /> */}
                 {!isMyFoodMap ?
                   <div>
                     {!isMobile && <ProfileSidebar username={username} />}
@@ -145,15 +136,6 @@ export default function Profile() {
               </div>
               <div className="profile_right">
                 <Outlet context={{ profile, photos }} />
-                {/* <div className="posts">
-                  {profile.posts && profile.posts.length ? (
-                    profile.posts.map((post) => (
-                      <Post post={post} user={user} key={post._id} profile />
-                    ))
-                  ) : (
-                    <div className="no_posts">No posts available</div>
-                  )}
-                </div> */}
               </div>
             </div>
           </div>

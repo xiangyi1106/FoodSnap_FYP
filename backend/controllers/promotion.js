@@ -13,6 +13,7 @@ exports.addPromotion = async (req, res) => {
         description,
         termsAndConditions,
         privacy,
+        foodVenue,
     } = req.body;
 
     try {
@@ -48,6 +49,7 @@ exports.addPromotion = async (req, res) => {
             termsAndConditions,
             organizer, // Save current user as the organizer
             privacy,
+            foodVenue,
         });
 
         await newPromotion.save();
@@ -65,6 +67,33 @@ exports.getPublicPromotions = async (req, res) => {
         res.json(promotions);
     } catch (error) {
         return res.status(500).json({ message: error.message });
+    }
+};
+
+exports.getPromotionsByID = async (req, res) => {
+    try {
+        console.log("Request Params:", req.params); // Debugging
+        const id = req.params.id;
+        console.log(id);
+        let promotions;
+
+        if (id) {
+            promotions = await Promotion.find({ foodVenue: id }) // Fetch promotions matching the given foodVenue ID
+                .sort({ createdAt: -1 });
+
+        }
+
+        if (promotions.length === 0) {
+            return res.status(404).json({ message: "No public promotions found." }); // Handle empty result
+        }
+        console.log(promotions);
+
+        return res.json(promotions); // Return the promotions
+
+
+    } catch (error) {
+        console.error("Error fetching promotions:", error);
+        return res.status(500).json({ message: error.message }); // Handle server error
     }
 };
 

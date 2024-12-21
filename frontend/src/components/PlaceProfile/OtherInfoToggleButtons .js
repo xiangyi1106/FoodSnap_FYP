@@ -33,7 +33,7 @@ const OtherInfoToggleButtons = ({ formData, setFormData }) => {
     <div>
       {Object.keys(labelMap).map((label) => {
         const dbKey = labelMap[label];
-        const currentValue = formData.otherInfo?.[dbKey] || 'No Info';
+        const currentValue = formData.otherInfo?.[dbKey] || 'No';
 
         return (
           <div key={dbKey} style={{ marginBottom: '8px', display: 'flex'}}>

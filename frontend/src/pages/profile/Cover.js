@@ -223,13 +223,13 @@ export default function Cover({ visitor, cover }) {
                                 <i className="upload_icon"></i>
                                 Upload Photo
                             </div>
-                            <div
+                            {/* <div
                                 className="open_cover_menu_item hover_style_1"
                                 onClick={() => setShow(true)}
                             >
                                 <i className="photo_icon"></i>
                                 Remove Cover
-                            </div>
+                            </div> */}
                         </div>
                     )}
                 </div>

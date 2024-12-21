@@ -1,5 +1,6 @@
 const FoodVenueComment = require('../models/FoodVenueComment');
 const User = require("../models/User");
+const FoodVenue = require("../models/FoodVenue");
 
 // Get all comments for a place
 exports.getFoodVenueComments = async (req, res) => {
@@ -71,6 +72,12 @@ exports.addFoodVenueComment = async (req, res) => {
 // Add a new comment or reply
 exports.addFoodVenueReview = async (req, res) => {
     try {
+         // Validate the rating
+         const rating = req.body.rating;
+         if (rating < 1 || rating > 5) {
+             return res.status(400).json({ message: 'Rating must be between 1 and 5' });
+         }
+
         const newComment = new FoodVenueComment({
             placeId: req.params.placeId,
             user: req.body.userID, // ensure user._id is passed in the body
@@ -80,7 +87,23 @@ exports.addFoodVenueReview = async (req, res) => {
             replies: [],
         });
         await newComment.save();
-        res.json("Add review successfully");
+
+         // Update the venue's average rating
+         const placeId = req.params.placeId;
+         const reviews = await FoodVenueComment.find({ placeId });
+ 
+         // Calculate the new average rating
+         const totalRatings = reviews.reduce((sum, review) => sum + review.rating, 0);
+         const averageRating = totalRatings / reviews.length;
+ 
+         // Update the venue's average rating in the FoodVenue model
+         await FoodVenue.findByIdAndUpdate(placeId, { rating: averageRating.toFixed(2) });
+
+        // Populate the user data before sending the response
+        const populatedComment = await FoodVenueComment.findById(newComment._id).populate('user', 'username name picture'); // Adjust the fields you want to populate
+
+        // Send response with populated user data
+        res.json(populatedComment);
 
     } catch (error) {
         res.status(500).json({ message: error.message });

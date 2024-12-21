@@ -65,6 +65,30 @@ exports.getPublicEvents = async (req, res) => {
     }
 };
 
+exports.getEventsByID = async (req, res) => {
+    try {
+        const id = req.params.id;
+        let events;
+
+        if (id) {
+            events = await Event.find({ foodVenue: id }) // Fetch promotions matching the given foodVenue ID
+                .sort({ createdAt: -1 });
+
+        }
+
+        if (events.length === 0) {
+            return res.status(404).json({ message: "No events found." }); // Handle empty result
+        }
+        console.log(events);
+
+        return res.json(events); // Return the promotions
+
+
+    } catch (error) {
+        console.error("Error fetching events:", error);
+        return res.status(500).json({ message: error.message }); // Handle server error
+    }
+};
 
 exports.getEventDetails = async (req, res) => {
     try {

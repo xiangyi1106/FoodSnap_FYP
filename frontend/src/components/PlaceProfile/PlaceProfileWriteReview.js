@@ -12,7 +12,7 @@ import { addFoodVenueReview } from '../../functions/foodVenue';
 import '../Loader/loader.css';
 import { toast } from 'react-toastify';
 
-export default function PlaceProfileWriteReview({ user, foodVenue }) {
+export default function PlaceProfileWriteReview({ user, foodVenue, setComments }) {
     const [text, setText] = useState("");
     const [error, setError] = useState("");
     const [commentImage, setCommentImage] = useState([]);
@@ -62,8 +62,8 @@ export default function PlaceProfileWriteReview({ user, foodVenue }) {
 
     const commentSubmit = async () => {
         // Validate input for rating and text
-        if (!rating) {
-            toast.error("Please provide a rating before submitting your review.");
+        if (!rating && (rating < 1 || rating > 5)) {
+            toast.error("Please provide a valid rating before submitting your review.");
             return;
         }
         if (!text.trim()) {
@@ -101,8 +101,9 @@ export default function PlaceProfileWriteReview({ user, foodVenue }) {
             }
 
             setLoading(false);
-            console.log("Review Response:", res);
-            toast.success(res);
+            // console.log("Review Response:", res);
+            toast.success("Review added successfully! Thank you for your response!");
+            setComments((prevComments) => [res, ...prevComments]);
             setCommentImage([]);
             setText("");
             setRating(0);

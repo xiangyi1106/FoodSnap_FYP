@@ -104,18 +104,11 @@ export default function VisitedPlaceLayout({ user }) {
         }
     }, [selectedDay, posts]); // Recalculate filteredPosts whenever selectedDay or posts change
 
-    // const filteredPosts = useMemo(() => {
-    //     if (selectedDay) {
-    //         return posts.filter(post => new Date(post.createdAt).getDate() === selectedDay);
-    //     }
-    //     return [];
-    // }, [selectedDay, posts]);
     const navigate = useNavigate();
 
     const handleClick = (postId) => {
         navigate(`/post/${postId}/${0}`);
     };
-
     return (
         <div className='search_venue'>
             <div className='map' style={{ height: '100vh' }}>
@@ -127,7 +120,7 @@ export default function VisitedPlaceLayout({ user }) {
             <div className='search_box' style={{ overflowY: 'scroll' }}>
                 <div className='food_journey_info'>
                     <div className="page__content">
-                        <h1 className="page__content-book-title">{user.name}'s Food Journey</h1>
+                        <h1 className="page__content-book-title">{user?.name}'s Food Journey</h1>
                         <p className="page__content-author">{formattedSelectedDate ? formattedSelectedDate : ''}</p>
                         {/* <p className="page__content-author">Click on the date to see the details</p> */}
                         <p className="page__content-credits">Add a new food journey by creating a post with location tag!</p>
@@ -135,11 +128,12 @@ export default function VisitedPlaceLayout({ user }) {
                     {filteredPosts && filteredPosts.length > 0 ? (
                         filteredPosts.map((post, index) => (
                             <VisitedPlaceCard
-                                key={post._id} // Ensure a unique key is used for each item
+                                key={post?._id} // Ensure a unique key is used for each item
                                 imageUrl={post.media && post.media.length > 0 ? post.media[0].url : ''} // Check if media exists and get the first image URL
-                                date={new Date(post.createdAt).toLocaleDateString()} // Convert the date to a readable format
-                                title={post.text ? post.text : ''} // Check if post content exists, otherwise provide a fallback title
+                                date={new Date(post?.createdAt).toLocaleDateString()} // Convert the date to a readable format
+                                title={post?.text ? post.text : ''} // Check if post content exists, otherwise provide a fallback title
                                 onClick={post.media && post.media.length > 0 ? () => handleClick(post._id) : null} // Only allow click if media exists
+                                location={post.location[0]?.name}
                             />
                         ))
                     ) : (

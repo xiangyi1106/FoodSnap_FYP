@@ -4,6 +4,10 @@ import Map from '../../components/searchVenue/Map';
 import SearchBox from '../../components/searchVenue/SearchBox';
 import ChangeLocationModal from '../../components/searchVenue/ChangeLocationModal';
 import { getFoodVenueData } from '../../functions/foodVenue';
+import { Fab } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import AddPlaceInfo from '../../components/PlaceProfile/AddPlaceInfo';
+
 export default function SearchVenue({user}) {
     // Usage example
     const addresses = [
@@ -17,6 +21,8 @@ export default function SearchVenue({user}) {
     const [selected, setSelected] = useState(localStorage.getItem('currentLocation') || '');
     const [foodVenues, setFoodVenues] = useState([]);
     const [error, setError] = useState("");
+    const [isAddFoodVenueOpen, setIsAddFoodVenueOpen] = useState(false);
+    const [isAISearchVisible, setIsAISearchVisible] = useState(false);
 
     const getFoodVenuesList = async () => {
         const response = await getFoodVenueData(selected, user.token);
@@ -26,7 +32,8 @@ export default function SearchVenue({user}) {
             setError(response.message); // Example: set it in a state variable called `error`
             setFoodVenues([]); // Clear any previous food venues if desired
         } else {
-            setFoodVenues(response);
+            // setFoodVenues(response);
+            setFoodVenues(Array.isArray(response) ? response : []);
             setError(null); // Clear any previous error message
         }
     };
@@ -41,13 +48,28 @@ export default function SearchVenue({user}) {
 
     return (
         <div className='search_venue'>
+            {isAddFoodVenueOpen && <AddPlaceInfo setVisible={setIsAddFoodVenueOpen} user={user}/>}
             <div className='map'>
-                <Map addresses={addresses} selected={selected}/>
+                <Map addresses={addresses} selected={selected} foodVenues={foodVenues}/>
             </div>
             <div className='search_box'>
-                <SearchBox setVisible={setVisible} user={user} foodVenues={foodVenues} error={error} />
+                <SearchBox setVisible={setVisible} user={user} foodVenues={foodVenues} error={error} setFoodVenues={setFoodVenues} isAISearchVisible={isAISearchVisible} setIsAISearchVisible={setIsAISearchVisible}/>
             </div>
             {visible && <ChangeLocationModal setVisible={setVisible} visible={visible} setSelected={setSelected} selected={selected} />}
+            {!isAddFoodVenueOpen && !isAISearchVisible && 
+            <Fab
+                color="#30BFBF"
+                aria-label="add"
+                variant="extended"
+                style={{
+                    position: 'fixed',
+                    bottom: 20,
+                    right: 20,
+                }}
+                onClick={() => setIsAddFoodVenueOpen(true)}
+            >
+                Create Food Venue <AddIcon />
+            </Fab>}
         </div>
     );
 }

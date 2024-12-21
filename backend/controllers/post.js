@@ -1,6 +1,7 @@
 const Post = require("../models/Post");
 const Hashtag = require("../models/Hashtag");
 const User = require("../models/User");
+const Notification = require("../models/Notification");
 
 // const { User, Post, Hashtag } = require("../models/models");
 
@@ -55,32 +56,24 @@ const cleanMentions = (text) => {
 
 exports.createPost = async (req, res) => {
   try {
-    // const { text, user } = req.body;
-
-    // const mentions = extractMentions(text);
-    // // Clean mentions before saving
-    // text = cleanMentions(text);
-
-    // // Extract hashtags from text
-    // const hashtags = extractHashtags(text);
-
-
-    // // Save or update hashtags in the database
-    // await saveHashtags(hashtags);
-
-    // // Convert hashtags to their respective IDs
-    // const hashtagDocs = await Hashtag.find({ name: { $in: hashtags } }).select('_id');
-    // const hashtagIds = hashtagDocs.map(doc => doc._id);
 
     let { text, user } = req.body;
+
+    // Remove text from req.body before proceeding further
+    delete req.body.text;
 
     // Initialize an empty array for mentions
     let mentions = [];
 
     // Check if mentions exist in the text
     if (text.includes('@')) {
-      mentions = extractMentions(text);  // Extract mentions only if present
-      text = cleanMentions(text);        // Clean mentions from the text
+      // mentions = extractMentions(text);  // Extract mentions only if present
+      // text = cleanMentions(text);        // Clean mentions from the text
+      // Extract and add usernames to mentions
+      const rawMentions = extractMentions(text); // Extract mentions without usernames
+      mentions = await addUsernamesToMentions(rawMentions); // Add usernames
+      // Clean mentions before saving
+      text = cleanMentions(text);
     }
 
     // Extract hashtags from text, if any
@@ -99,13 +92,42 @@ exports.createPost = async (req, res) => {
       hashtagIds = hashtagDocs.map(doc => doc._id);
     }
 
-
     // Create a new post with hashtags
     const post = await new Post({
       ...req.body,
+      text: text,
       hashtag: hashtagIds,
       mentions: mentions,
     }).save();
+
+    const postOwner = await User.findById(user).populate("followers", "name picture username");
+
+    if (mentions && mentions.length > 0) {
+      const mentionNotifications = mentions.map((mention) => ({
+        userId: mention.userId, // User mentioned
+        type: 'mention',
+        fromUserId: req.user.id,
+        postId: post._id,
+        message: `${postOwner.name} mentioned you in a post`,
+      }));
+
+      await Notification.insertMany(mentionNotifications);
+    }
+
+    // Check if the user has followers
+    if (postOwner.followers && postOwner.followers.length > 0) {
+      // Notify followers about the new post
+      const notifications = postOwner.followers.map((followerId) => ({
+        userId: followerId, // Follower's ID
+        type: 'new_post', // Notification type
+        fromUserId: user, // ID of the user who created the post
+        postId: post._id, // ID of the new post
+        message: `${postOwner.name} added a new post`, // Custom message
+      }));
+
+      // Save notifications to the database
+      await Notification.insertMany(notifications);
+    }
 
     res.json(post);
 
@@ -236,7 +258,8 @@ exports.toggleLike = async (req, res) => {
     const { postId } = req.params;
     const userId = req.user.id;
 
-    const post = await Post.findById(postId);
+    const post = await Post.findById(postId).populate("user", "name picture username gender");
+    const likeUser = await User.findById(userId);
 
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
@@ -251,6 +274,14 @@ exports.toggleLike = async (req, res) => {
     } else {
       // Like the post
       post.likes.push({ _id: userId, likeAt: new Date() }); // Add a new like object
+      // Create a notification
+      await Notification.create({
+        userId: post.user._id, // post owner's user ID
+        type: 'like',
+        fromUserId: userId,
+        postId: postId,
+        message: `${likeUser.name} liked your post`
+      });
     }
 
 
@@ -321,12 +352,9 @@ exports.sharePost = async (req, res) => {
     // Extract hashtags from text
     const hashtags = extractHashtags(text);
 
-    // const mentions = extractMentions(text);
-
     // Extract and add usernames to mentions
     const rawMentions = extractMentions(text); // Extract mentions without usernames
     const mentions = await addUsernamesToMentions(rawMentions); // Add usernames
-    console.log(mentions);
     // Clean mentions before saving
     text = cleanMentions(text);
 
@@ -354,14 +382,23 @@ exports.sharePost = async (req, res) => {
       mentions: mentions,
     });
 
-    // Log the new post object for debugging
-    console.log("New Post Object:", newPost);
-
     await newPost.save();
 
     // Optionally, update the original post's share count
     originalPost.shares.push(userId);
     await originalPost.save();
+
+    const sharedPeople = await User.findById(userId);
+
+    const shareNotification = {
+      userId: originalPost.user, // Original post owner
+      type: 'shared',
+      fromUserId: userId, // User who shared the post
+      postId: newPost._id, // Shared post ID
+      message: `${sharedPeople.name} shared your post.`,
+    };
+    
+    await Notification.create(shareNotification);
 
     // Re-fetch the post with the required populations
     const populatedPost = await Post.findById(originalPost._id)
@@ -374,7 +411,7 @@ exports.sharePost = async (req, res) => {
         }
       });
 
-    res.status(201).json({ message: 'Post shared successfully', post: populatedPost });
+    res.status(201).json({ message: 'Post shared successfully to your profile page.', post: populatedPost });
   } catch (error) {
     // Log error details for debugging
     console.error("Error sharing post:", error.message);

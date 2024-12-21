@@ -90,6 +90,8 @@
 .opening_hour_row{
   display: flex;
   gap: 30px;
+  /* justify-content: space-between; Makes sure the day and time are on separate ends */
+  /* margin-bottom: 10px; Adds space between rows */
 }
 .other_info_text_wrapper,
 .opening_hour_day,
@@ -296,6 +298,14 @@
   }
   .badge_category_container{
     justify-content: center;
+  }
+
+  .place-ratings{
+    justify-content: center;
+  }
+
+  .profile_picture_right{
+    top: 0px!important;
   }
 
   .place_detail_information .bottom_container{
