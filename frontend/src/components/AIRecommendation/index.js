@@ -5,6 +5,7 @@ import './style.css';
 import Slider from '@mui/material/Slider';
 import FoodResult from './foodResult';
 import { getFoodRecommendations } from '../../functions/AIRecommendation';
+import { toast } from 'react-toastify';
 
 export default function FoodSuggestion({ setVisible, user }) {
     // const [weather, setWeather] = useState('');
@@ -16,12 +17,12 @@ export default function FoodSuggestion({ setVisible, user }) {
     const [avoidIngredients, setAvoidIngredients] = useState(localStorage.getItem('AIavoidIngredients') || ''); // State for ingredients they want to avoid
 
     // const handleWeatherChange = (selectedWeather) => setWeather(selectedWeather);
-    const handleMealTypeChange = (selectedMealType) => {setMealType(selectedMealType);};
-    const handleMoodChange = (selectedMood) => {setMood(selectedMood); };
-    const handleDietaryPreferenceChange = (selectedDietaryPreference) => {setDietaryPreference(selectedDietaryPreference);};
+    const handleMealTypeChange = (selectedMealType) => { setMealType(selectedMealType); };
+    const handleMoodChange = (selectedMood) => { setMood(selectedMood); };
+    const handleDietaryPreferenceChange = (selectedDietaryPreference) => { setDietaryPreference(selectedDietaryPreference); };
     const handleSpicyLevelChange = (event, value) => setSpicyLevelValue(value); // Handle spicy level change
-    const handleLoveIngredientsChange = (event) => setLoveIngredients(event.target.value); // Handle love ingredients
-    const handleAvoidIngredientsChange = (event) => setAvoidIngredients(event.target.value); // Handle avoid ingredients
+    // const handleLoveIngredientsChange = (event) => setLoveIngredients(event.target.value); // Handle love ingredients
+    // const handleAvoidIngredientsChange = (event) => setAvoidIngredients(event.target.value); // Handle avoid ingredients
 
     const spicyLevel = [
         {
@@ -50,48 +51,57 @@ export default function FoodSuggestion({ setVisible, user }) {
         return `${value}%`;
     }
 
-    const [isLoading, setIsLoading] = useState(false);
+    const [isFoodLoading, setIsFoodLoading] = useState(false);
     const [isResultShown, setIsResultShown] = useState(false);
-    const [foodSuggestion, setFoodSuggestion] = useState(null);
+    const [foodSuggestion, setFoodSuggestion] = useState([]);
     const location = localStorage.getItem('currentLocation') || 'Johor Bahru';
+    const [restaurantSuggestion, setRestaurantSuggestion] = useState([]);
 
     const handleClickFood = async () => {
-        setIsLoading(true);
+        setIsFoodLoading(true);
+        setRestaurantSuggestion([]);
         localStorage.setItem("AImealType", mealType);
         localStorage.setItem("AImood", mood);
         localStorage.setItem("AIdietaryPreference", dietaryPreference);
         localStorage.setItem("AIspicyLevelValue", spicyLevelValue.toString()); // Save as a string
         localStorage.setItem("AIloveIngredients", loveIngredients);
         localStorage.setItem("AIavoidIngredients", avoidIngredients);
+        try {
+            const response = await getFoodRecommendations(
+                mealType,
+                mood,
+                dietaryPreference,
+                spicyLevelValue,
+                loveIngredients,
+                avoidIngredients,
+                location,
+                user.token,
+            );
+            // Check if media upload was successful
+            const suggestions = response.food_suggestions;
+            setFoodSuggestion(suggestions);
+            setIsResultShown(true);
+            setIsFoodLoading(false);
+            console.log('Suggestions:', suggestions);
+            console.log('Food Suggestions:', foodSuggestion);
 
+            console.log(localStorage.getItem('AImealType'));
+            console.log(localStorage.getItem('AImood'));
+            console.log(localStorage.getItem('AIdietaryPreference'));
+            console.log(localStorage.getItem('AIspicyLevelValue'));
+            console.log(localStorage.getItem('AIloveIngredients'));
+            console.log(localStorage.getItem('AIavoidIngredients'));
+            console.log(location);
+            console.log(user.token);
 
-        const response = await getFoodRecommendations(
-            mealType,
-            mood,
-            dietaryPreference,
-            spicyLevelValue,
-            loveIngredients,
-            avoidIngredients,
-            location,
-            user.token,
-        );
-        // Check if media upload was successful
-        const suggestions = response.food_suggestions;
-        setFoodSuggestion(suggestions);
-        setIsResultShown(true);
-        setIsLoading(false);
-        console.log('Suggestions:', suggestions);
-        console.log('Food Suggestions:', foodSuggestion);
-        
-        // console.log(mealType);
-        // console.log(mood);
-        // console.log(dietaryPreference);
-        // console.log(spicyLevelValue);
-        // console.log(loveIngredients);
-        // console.log(avoidIngredients);
-        // console.log(location);
-        // console.log(user.token);
-
+        } catch (error) {
+            // Handle the error gracefully
+            console.error("Error fetching food recommendations:", error);
+            setIsFoodLoading(false); // Stop loading
+            setFoodSuggestion([]);
+            // Optionally show a toast, modal, or alert to inform the user
+            toast.error("Failed to fetch food recommendations, please try again.");
+        }
     };
     return (
         <div className="blur place_detail_information" style={{ backgroundColor: "gray" }}>
@@ -106,45 +116,6 @@ export default function FoodSuggestion({ setVisible, user }) {
                             <div className="preference_group">
                                 <p>What is your mood now?</p>
                                 <div className="button_group" style={{ gap: '40px' }}>
-                                    {/* <div className='emoji_group'>
-                                        <img
-                                            src={mood === "sad" ? "/emoji_icons/sad.png" : "/emoji_icons/sad_o.png"}
-                                            className='emoji_button'
-                                            alt="Sad"
-                                            onClick={() => handleMoodChange('sad')}
-                                        />
-                                        <div className='emoji_group_text'>Sad</div>
-                                    </div>
-
-                                    <div className='emoji_group'>
-                                        <img
-                                            src={mood === "angry" ? "/emoji_icons/angry.png" : "/emoji_icons/angry_o.png"}
-                                            className='emoji_button'
-                                            alt="Angry"
-                                            onClick={() => handleMoodChange('angry')}
-                                        />
-                                        <div className='emoji_group_text'>Angry</div>
-                                    </div>
-
-                                    <div className='emoji_group'>
-                                        <img
-                                            src={mood === "normal" ? "/emoji_icons/happy.png" : "/emoji_icons/happy_o.png"}
-                                            className='emoji_button'
-                                            alt="Normal"
-                                            onClick={() => handleMoodChange('normal')}
-                                        />
-                                        <div className='emoji_group_text'>Normal</div>
-                                    </div>
-
-                                    <div className='emoji_group'>
-                                        <img
-                                            src={mood === "happy" ? "/emoji_icons/smile.png" : "/emoji_icons/smile_o.png"}
-                                            className='emoji_button'
-                                            alt="Happy"
-                                            onClick={() => handleMoodChange('happy')}
-                                        />
-                                        <div className='emoji_group_text'>Happy</div>
-                                    </div> */}
                                     <MoodButtonGroup mood={mood} handleMoodChange={handleMoodChange} />
                                 </div>
                             </div>
@@ -172,7 +143,6 @@ export default function FoodSuggestion({ setVisible, user }) {
                                 <div className="button_group" style={{ width: '300px', color: '#30bfbfc0' }}>
                                     <Slider
                                         aria-label="Custom marks"
-                                        // defaultValue={0}
                                         getAriaValueText={valuetext}
                                         step={25}
                                         valueLabelDisplay="auto"
@@ -184,26 +154,26 @@ export default function FoodSuggestion({ setVisible, user }) {
                                 </div>
                             </div>
                             <div className="preference_group">
-                                <p>Are there any specific food you love?</p>
+                                <p>Are there any specific food/ingredient you love?</p>
                                 <div className="button_group" >
-                                    <input type='text' name='' className='' placeholder='e.g., cheese, chocolate, seafood' onChange={handleLoveIngredientsChange} ></input>
+                                    <input type='text' name='' value={loveIngredients} className='' placeholder='e.g., cheese, chocolate, seafood' onChange={(e) => { setLoveIngredients(e.target.value) }} ></input>
                                 </div>
                             </div>
                             <div className="preference_group">
-                                <p>Are there any specific food you want to avoid?</p>
+                                <p>Are there any specific food/ingredient you want to avoid?</p>
                                 <div className="button_group" >
-                                    <input type='text' name='' className='' placeholder='e.g., nuts, dairy, soy' onChange={handleAvoidIngredientsChange} ></input>
+                                    <input type='text' value={avoidIngredients} name='' className='' placeholder='e.g., nuts, dairy, soy' onChange={(e) => { setAvoidIngredients(e.target.value) }} ></input>
                                 </div>
                             </div>
                             <div className='preference_group'>
                                 <button className="glow-on-hover" type="button" onClick={handleClickFood}>Suggest</button>
                             </div>
-                            {isLoading && <div className='preference_group'>
+                            {isFoodLoading && <div className='preference_group'>
                                 <div className='loader'></div>
                                 <p>Loading ...</p>
                             </div>}
                         </div>
-                        {isResultShown && foodSuggestion && <FoodResult foodSuggestion={foodSuggestion} user={user}/>}
+                        {isResultShown && foodSuggestion && <FoodResult foodSuggestion={foodSuggestion} user={user} isFoodLoading={isFoodLoading} restaurantSuggestion={restaurantSuggestion} setRestaurantSuggestion={setRestaurantSuggestion}/>}
                     </div>
                 </div>
             </div>

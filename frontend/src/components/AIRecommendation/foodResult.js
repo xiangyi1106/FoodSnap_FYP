@@ -2,10 +2,9 @@ import React, { useState } from 'react'
 import FoodResultCard from './foodResultCard'
 import { getRestaurantRecommendations } from '../../functions/AIRecommendation';
 
-export default function FoodResult({ foodSuggestion, user }) {
+export default function FoodResult({ foodSuggestion, user, isFoodLoading, restaurantSuggestion, setRestaurantSuggestion }) {
  
     const [visible, setVisible] = useState(false);
-    const [restaurantSuggestion, setRestaurantSuggestion] = useState(null);
     const location = localStorage.getItem('currentLocation') || 'Johor Bahru';
     const [isLoading, setIsLoading] = useState(false);
 
@@ -42,7 +41,7 @@ export default function FoodResult({ foodSuggestion, user }) {
                     </button>
                 ))}
             </div>
-            {visible && restaurantSuggestion.length > 0 && (
+            {visible && restaurantSuggestion.length > 0 && !isLoading && !isFoodLoading && (
                 <div>
                     <div className='' style={{display: 'flex', justifyContent: 'center'}}>
                         Best restaurants serving <span className='' style={{fontWeight: 'bold', margin: '0 4px'}}>{foodChoice}</span> in <span style={{fontWeight: 'bold',  margin: '0 4px'}}>{location}</span>:

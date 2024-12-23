@@ -288,29 +288,6 @@ const changePassword = async (req, res) => {
     return res.status(200).json({ message: "ok" });
 };
 
-
-// const getProfile = async (req, res) => {
-//     try {
-//       const { username } = req.params;
-//     //   console.log(`Fetching profile for username: ${username}`);
-
-//       const profile = await User.findOne({ username }).select("-password");
-//       if (!profile) {
-//         // console.log(`Profile not found for username: ${username}`);
-//         return res.status(404).json({ ok: false, message: "Profile not found" });
-//       }
-
-//       const posts = await Post.find({ user: profile._id })
-//         .populate("user")
-//         .sort({ createdAt: -1 });
-//     //   console.log(`Found posts for user: ${profile._id}`);
-
-//       res.json({ ...profile.toObject(), posts });
-//     } catch (error) {
-//     //   console.error(`Error fetching profile: ${error.message}`);
-//       res.status(500).json({ message: error.message });
-//     }
-//   };
 const DEFAULT_PROFILE_IMAGE_URL = "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg";
 const DEFAULT_COVER_IMAGE_URL = "https://mewitti.com/wp-content/themes/miyazaki/assets/images/default-fallback-image.png";
 
@@ -342,22 +319,6 @@ const getProfile = async (req, res) => {
                     ],
                 },
             });
-            // .populate({
-            //     path: 'savedPosts', // Populate savedPosts
-            //     populate: [
-            //         { 
-            //             path: 'post', // Populate user inside savedPosts
-            //             // select: 'name picture username _id' 
-            //         },
-            //         // { 
-            //         //     path: 'sharedPost', // Populate sharedPost inside savedPosts
-            //         //     populate: {
-            //         //         path: 'user', // Populate user inside sharedPost
-            //         //         select: 'name picture username _id'
-            //         //     }
-            //         // }
-            //     ]
-            // });
 
         if (!profile) {
             return res.status(404).json({ ok: false, message: "Profile not found" });

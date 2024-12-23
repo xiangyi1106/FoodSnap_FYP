@@ -15,6 +15,10 @@ import Intro from "../../components/intro";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import ProfileSidebar from "./ProfileSidebar";
 import ProfileFoodMapList from "./ProfileContent/ProfileFoodMapList";
+import { Fab } from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
+import ProfileFoodMapAddVenue from "./ProfileContent/ProfileFoodMap/ProfileFoodMapAddVenue";
+import { getFoodVenuesMap } from "../../functions/foodVenueMap";
 
 export default function Profile() {
   const { username } = useParams();
@@ -85,33 +89,83 @@ export default function Profile() {
   const isMobile = useMediaQuery('(max-width:768px)');
   const location = useLocation();
   const isMyFoodMap = location.pathname === `/profile/${username}/myFoodMap`; // Check if the route is '/myfoodmap'
+  const [visible, setVisible] = useState(false);
+  //   const [foodVenuesMap, setFoodVenuesMap] = useState([]);
+  //   useEffect(() => {
+  //     const fetchFoodVenues = async () => {
+  //       try {
+  //         const response = await getFoodVenuesMap(user);
+  //         // Check if the response is not empty
+  //         if (response && response.length > 0 && response.success) {
+  //           setFoodVenuesMap(response.foodVenues); // Set all promotions
+  //         }
+  //         console.log(response.foodVenues);
+  //       } catch (error) {
+  //         // setError(error.message); // Capture error message
+  //         console.log("Error fetching food venues for my food map: " + error.message);
+  //         setFoodVenuesMap([]);
+  //       }
 
+  //     };
 
-  // Sample usage of the ProfileMapList component:
-  const steps = [
-    { title: 'Discovery and assessment', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
-    { title: 'Information gathering and analysis', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
-    { title: 'Creating your claim', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
-    { title: 'Approvals and submission', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
-    { title: 'Receiving your benefit', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
-    // Add more steps as needed...
-  ];
+  //     fetchFoodVenues();
+  //   }, [user]); 
+
+  //   useEffect(() => {
+  //     console.log("Updated foodVenues state:", foodVenuesMap);
+  // }, [foodVenuesMap]);
+  const [foodVenuesMap, setFoodVenuesMap] = useState([]);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const fetchFoodVenues = async () => {
+      try {
+        const response = await getFoodVenuesMap(user);
+        // Check if the response is not empty
+        if (response.success) {
+          setFoodVenuesMap(response.foodVenues); // Set all promotions
+        }
+        console.log(response.foodVenues);
+      } catch (error) {
+        // setError(error.message); // Capture error message
+        console.log("Error fetching food venues for my food map: " + error.message);
+        setFoodVenuesMap([]);
+      }
+
+    };
+
+    fetchFoodVenues();
+  }, [user]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
+
+  const handlePageChange = (event, newPage) => {
+    setCurrentPage(newPage); // Update the current page
+  };
+
+  const paginatedFoodVenues = foodVenuesMap.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
 
   return (
     <div className="profile">
       <Header />
       <div className="profile_top">
         <div className="profile_container">
+          {visible && <ProfileFoodMapAddVenue setVisible={setVisible} user={user} setFoodVenuesMap={setFoodVenuesMap} />}
           <Cover visitor={visitor} cover={profile.cover} />
           <ProfilePictureInfo profile={profile} visitor={visitor} user={user} />
-          {(isMyFoodMap || isMobile) && <ProfileMenu username={username}/>}
+          {(isMyFoodMap || isMobile) && <ProfileMenu username={username} />}
         </div>
       </div>
       <div className="profile_bottom">
         <div className="profile_container" style={{ maxWidth: '850px', margin: '0 auto' }}>
           <div className="bottom_container">
-          <div className="profile_grid">
-          {/* <div className="profile_grid" style={{ gridTemplateColumns: '0.8fr 1fr' }}> */}
+            <div className="profile_grid">
+              {/* <div className="profile_grid" style={{ gridTemplateColumns: '0.8fr 1fr' }}> */}
               <div className="profile_left">
                 {!isMyFoodMap ?
                   <div>
@@ -130,13 +184,41 @@ export default function Profile() {
                     <div className='profile_card_header'>
                       My Favorite Food Venue List
                     </div>
-                    <ProfileFoodMapList items={steps} />
+                    <ProfileFoodMapList
+                      foodVenuesMap={foodVenuesMap}
+                      currentPage={currentPage}
+                      itemsPerPage={itemsPerPage}
+                      onPageChange={handlePageChange}
+                      isVisible={isVisible}
+                      setIsVisible={setIsVisible}
+                    />
                   </div>
                 }
               </div>
               <div className="profile_right">
-                <Outlet context={{ profile, photos }} />
+                <Outlet
+                  context={{
+                    profile,
+                    photos,
+                    foodVenuesMap: paginatedFoodVenues,
+                  }}
+                />
               </div>
+              {isMyFoodMap && !isVisible &&
+                <Fab
+                  color="#30BFBF"
+                  aria-label="add"
+                  variant="extended"
+                  style={{
+                    position: 'fixed',
+                    bottom: 20,
+                    right: 20,
+                  }}
+                  onClick={() => setVisible(true)}
+                >
+                  Add Food Venue <AddIcon />
+                </Fab>
+              }
             </div>
           </div>
         </div>

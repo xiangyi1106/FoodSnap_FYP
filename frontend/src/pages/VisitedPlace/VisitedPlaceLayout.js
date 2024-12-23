@@ -8,6 +8,7 @@ import CustomCalendarHeader from './CustomCalendarHeader';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import FeedComment from '../../components/post/FeedComment';
 
 export default function VisitedPlaceLayout({ user }) {
 
@@ -106,11 +107,16 @@ export default function VisitedPlaceLayout({ user }) {
 
     const navigate = useNavigate();
 
-    const handleClick = (postId) => {
-        navigate(`/post/${postId}/${0}`);
+    const [selectedPost, setSelectedPost] = useState("");
+    const [isFeedCommentVisible, setIsFeedCommentVisible] = useState(true);
+
+    const handleClick = (post) => {
+        // navigate(`/post/${postId}/${0}`);
+        setSelectedPost(post);
     };
     return (
         <div className='search_venue'>
+            {isFeedCommentVisible && selectedPost && <FeedComment post={selectedPost} user={user} setIsFeedCommentVisible={setIsFeedCommentVisible} />}
             <div className='map' style={{ height: '100vh' }}>
                 <div className='month_selector source-sans-3-bold'>
                     <CustomCalendarHeader setSelectedMonth={setSelectedMonth} setSelectedYear={setSelectedYear} />
@@ -132,7 +138,7 @@ export default function VisitedPlaceLayout({ user }) {
                                 imageUrl={post.media && post.media.length > 0 ? post.media[0].url : ''} // Check if media exists and get the first image URL
                                 date={new Date(post?.createdAt).toLocaleDateString()} // Convert the date to a readable format
                                 title={post?.text ? post.text : ''} // Check if post content exists, otherwise provide a fallback title
-                                onClick={post.media && post.media.length > 0 ? () => handleClick(post._id) : null} // Only allow click if media exists
+                                onClick={() => handleClick(post)} // Only allow click if media exists
                                 location={post.location[0]?.name}
                             />
                         ))

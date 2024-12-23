@@ -48,6 +48,7 @@
   .profile_form_item {
     display: flex;
     flex-direction: column;
+    margin-bottom: 15px;
   }
   
   .profile_form_label {

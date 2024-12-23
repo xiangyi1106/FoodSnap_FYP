@@ -1,51 +1,86 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './ProfileFoodMapList.css';
+import { Pagination } from '@mui/material';
+import ProfileFoodMapVenueDetails from './ProfileFoodMap/ProfileFoodMapVenueDetails';
 
-const ProfileFoodMapList = ({ items }) => {
-  // State to manage which description is expanded
-  const [expandedIndex, setExpandedIndex] = useState(null);
+const ProfileFoodMapList = ({ foodVenuesMap, currentPage, itemsPerPage, onPageChange, setIsVisible, isVisible }) => {
+  // const [currentPage, setCurrentPage] = useState(1);
+  const [selectedVenue, setSelectedVenue] = useState(null);
+  // const venuesPerPage = 5;
 
-  const handleToggle = (index) => {
-    // Toggle visibility for the clicked item
-    setExpandedIndex(expandedIndex === index ? null : index);
+  // // Handle pagination
+  // const indexOfLastVenue = currentPage * venuesPerPage;
+  // const indexOfFirstVenue = indexOfLastVenue - venuesPerPage;
+  // const currentVenues = foodVenuesMap.slice(indexOfFirstVenue, indexOfLastVenue);
+
+  // const handleChangePage = (_, value) => {
+  //   setCurrentPage(value);
+  // };
+
+   // Calculate paginated venues
+   const indexOfLastVenue = currentPage * itemsPerPage;
+   const indexOfFirstVenue = indexOfLastVenue - itemsPerPage;
+   const currentVenues = foodVenuesMap.slice(indexOfFirstVenue, indexOfLastVenue);
+
+  const openVenueDetails = (venue) => {
+    setSelectedVenue(venue);
+    setIsVisible(true);
+  };
+
+  const closeVenueDetails = () => {
+    setSelectedVenue(null);
+    setIsVisible(false);
   };
 
   return (
-    <div className="my_foodmap_list">
-      <ul>
-        {items.map((item, index) => (
-          <li key={index} onClick={() => handleToggle(index)} className={`listItem ${expandedIndex === index ? 'expanded' : ''}`}>
-            {expandedIndex === index ? <div className='expanded_title'>{item.title}</div>:
-            <span>{item.title}</span>}
-            {/* Conditionally render the description and toggle button */}
-            {expandedIndex === index && (
-              <div className="my_foodmap_list_description">
-                <p>{item.description}</p>
-                <button 
-                  onClick={(e) => { 
-                    e.stopPropagation();
-                    handleToggle(index); 
-                  }}
-                  className="toggleButton"
-                >
-                  See less
-                </button>
+    <div className={"foodMapListContainer"}>
+      {selectedVenue && isVisible && (
+        <ProfileFoodMapVenueDetails
+          selectedVenue={selectedVenue}
+          setIsVisible={setIsVisible}
+          setSelectedVenue={setSelectedVenue}
+        />
+      )}
+      {currentVenues && currentVenues.length > 0 ? (
+        currentVenues.map((venue, index) => (
+          <div
+            key={index}
+            className={"foodMapCard"}
+            onClick={() => openVenueDetails(venue)}
+          >
+            {venue.venueImage && (
+              <div className={"foodMapImageWrapper"}>
+                <img src={venue.venueImage} alt={venue.name} className={"foodMapImage"} />
               </div>
             )}
-            {/* {expandedIndex !== index && (
-              <button 
-                onClick={(e) => { 
-                  e.stopPropagation();
-                  handleToggle(index); 
-                }}
-                className="toggleButton"
-              >
-                See more
-              </button>
-            )} */}
-          </li>
-        ))}
-      </ul>
+            <div className={"foodMapContent"}>
+              <h5 className={"foodMapTitle"}>{venue.name}</h5>
+              <p className={"foodMapAddress"}>{venue.address}</p>
+            </div>
+          </div>
+        ))
+      ) : (
+        <p className={"foodMapNoVenuesMessage"}>No food venues available.</p>
+      )}
+      {/* Pagination */}
+      {/* <Pagination
+        // count={Math.ceil(foodVenuesMap.length / venuesPerPage)}
+        // page={currentPage}
+        // onChange={handleChangePage}
+        count={Math.ceil(foodVenuesMap.length / itemsPerPage)} // Total pages
+        page={currentPage} // Current page
+        onChange={onPageChange}
+        className={"foodMapPagination"}
+        color="primary"
+      /> */}
+      <Pagination
+        count={Math.ceil(foodVenuesMap.length / itemsPerPage)} // Total pages
+        page={currentPage} // Current page
+        // onChange={onPageChange} // Correct handler
+        onChange={(event, newPage) => onPageChange(event, newPage)}
+        className="foodMapPagination"
+        color="primary"
+      />
     </div>
   );
 };

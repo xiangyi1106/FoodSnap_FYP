@@ -152,10 +152,10 @@ const userSchema = mongoose.Schema({
         default: 'user'
     },
     foodVenueOwned: { type: mongoose.Schema.Types.ObjectId, ref: 'FoodVenue', default: null },
-    foodVenueMapList: {
-        type: Array,
-        default: [],
-    },
+    // foodVenueMapList: {
+    //     type: Array,
+    //     default: [],
+    // },
 }, {
     timestamps: true,
 });

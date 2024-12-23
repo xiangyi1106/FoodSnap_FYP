@@ -387,8 +387,8 @@ export default function AddPlaceInfo({ setVisible, user }) {
     }
 
     const [address, setAddress] = useState('');
-    const [latitude, setLatitude] = useState(); // Default Johor Bahru
-    const [longitude, setLongitude] = useState(); // Default Johor Bahru
+    const [latitude, setLatitude] = useState(null); // Default Johor Bahru
+    const [longitude, setLongitude] = useState(null); // Default Johor Bahru
     const [error, setError] = useState('');
     const [manualSelection, setManualSelection] = useState(false);
 

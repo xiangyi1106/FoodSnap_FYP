@@ -191,6 +191,8 @@
   justify-content: space-between;
   padding: 0;
   white-space: nowrap;
+  flex-wrap: wrap; /* Allow wrapping of items on smaller screens */
+  gap: 3px; /* Adds space between items */
 }
 
 .profile_menu a {
@@ -205,6 +207,19 @@
   border-radius: 10px;
   margin: 3px 0;
   color: var(--color-secondary);
+}
+
+@media (max-width: 768px) {
+  .profile_menu {
+    justify-content: center; /* Center items when wrapping */
+    padding: 0 1rem; /* Reduce padding on smaller screens */
+  }
+
+  .profile_menu a {
+    /* width: 45%; Makes each link take up 45% of the container width (2 items per row) */
+    text-align: center; /* Centers text within each link */
+    /* margin-bottom: 10px; Adds spacing between rows */
+  }
 }
 
 .profile_menu_active {

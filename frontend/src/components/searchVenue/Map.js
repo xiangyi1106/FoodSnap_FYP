@@ -188,7 +188,7 @@ export default function Map({ addresses, selected, foodVenues }) {
                     <Popup>{location.name}</Popup>
                 </Marker>
             ))} */}
-            {foodVenues.map((location, index) => (
+            {foodVenues.length > 0 && foodVenues.map((location, index) => (
                 location.latitude && location.longitude ? (
                     <Marker key={index} position={[location.latitude, location.longitude]} icon={customMarkerIcon}>
                         <Popup className="">

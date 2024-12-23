@@ -18,27 +18,35 @@ exports.getFoodRecommendation = async (req, res) => {
         // Initialize the Google Generative AI client
         const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_AI_API_KEY);
         // const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        const model = genAI.getGenerativeModel({ 
+        const model = genAI.getGenerativeModel({
             model: "gemini-1.5-flash",
-            maxTokens: 100 // Restrict token output for faster response
+            maxTokens: 200 // Restrict token output for faster response
         });
 
         const prompt = `
-            You are an advanced AI food recommendation expert. Based on the following user preferences, provide an array of maximum 6 and minimum 1 food recommendations based on Malaysian styles and its location, the food recommendation should able be found by the food venue on Google Maps:
+            You are an advanced AI food recommendation expert with extensive knowledge of Malaysian cuisine. Based on the user's preferences below, provide an array of 1-6 highly relevant food recommendations. These recommendations should:
+- Be realistic and region-specific.
+- Include dishes commonly available in ${location}.
+- Avoid items that may not be locally found or have speculative variants.
+- Can search the food that match the food venue name too, for example if loveIngredient is seafood, can also search the food venue with the name seafood.
+
             Meal Type: ${mealType}
             Mood: ${mood}
             Dietary Preference: ${dietaryPreference}
             Spicy Level: ${spicyLevelValue}%
             Loved Ingredients: ${loveIngredients}
             Avoided Ingredients: ${avoidIngredients}
-            Location: ${location}
+            Location: ${location}, Johor
+            If there’s a conflict:
+1. Suggest another food for alternative meal types for the loved ingredient.
+2. If no match is found, return an empty array []
             Respond only with an array, e.g., ["Laksa", "Roti Canai", "Nasi Lemak"].
         `;
 
         // Format the response as a array with max six items. Example format:
-            // ["Laksa", "Sandwiches", "Roti Canai", 'Nasi Lemak', 
-            // 'Char Kway Teow' ]
-            // Please give me only the array but not extra text.
+        // ["Laksa", "Sandwiches", "Roti Canai", 'Nasi Lemak', 
+        // 'Char Kway Teow' ]
+        // Please give me only the array but not extra text.
 
         const result = await model.generateContent(prompt);
 
@@ -82,18 +90,17 @@ exports.getRestaurantsRecommendation = async (req, res) => {
 
         // Create the prompt to request exactly two restaurant suggestions
         const prompt = `
-            You are an advanced AI food recommendation expert. Based on the following selected food, provide max three restaurant recommendations:
-            
+You are an advanced AI food recommendation expert. Based on the following selected food, provide max three food venues/restaurants recommendations that can find that selected food at that location at Johor, Malaysia:
             Food: ${food}
-            Location: ${location}
+            Location: ${location}, Johor
 
-            For each restaurant, include the following details:
+            For each food venue/restaurant, include the following details:
             - Name
             - Rating
             - Opening Hours
             - Address
             - Description
-            - Reason why this restaurant is suggested
+            - Reason why this food venue/restaurant is suggested
 
             Format the response as a JSON array with max two objects. Each object should have the fields: name, rating, openHour, address, description, and reason. Example format:
             [
