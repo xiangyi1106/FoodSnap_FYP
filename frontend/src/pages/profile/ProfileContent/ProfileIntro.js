@@ -1,6 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./ProfileIntroCarousel.css"; // Updated CSS file
 import { useOutletContext } from "react-router-dom";
+import EditProfile from "../EditProfile/EditProfileLayout";
+import { toast } from "react-toastify";
 
 // Updated emojis array with keys matching the user data
 const emojis = [
@@ -19,7 +21,21 @@ const emojis = [
 ];
 
 const ProfileIntroCarousel = () => {
-    const { profile } = useOutletContext(); // Fetch the user profile data from context
+    const { profile, user, dispatch } = useOutletContext(); // Fetch the user profile data from context
+    
+    const [currentProfile, setCurrentProfile] = useState({});
+    useEffect(() => {
+        if (profile && Object.keys(profile).length > 0) {
+            setCurrentProfile(profile); // Set the profile once it's available
+
+        }
+    }, [profile]);
+
+    const handleProfileUpdate = (updatedProfile) => {
+        setCurrentProfile(updatedProfile); // Update profile state
+        // toast.success("Profile updated successfully");
+    };
+
     // Format the birthday (assuming profile.bDay, profile.bMonth, profile.bYear exist)
     const formatBirthday = () => {
         if (profile?.bDay && profile?.bMonth && profile?.bYear) {
@@ -37,9 +53,13 @@ const ProfileIntroCarousel = () => {
         return profile?.[key] || profile?.details?.[key] || "Not provided";
     };
 
+    const [isVisible, setVisible] = useState(false);
+
     // Mapping the data from the user profile to the carousel items
     return (
         <div className="profile_intro">
+            {isVisible && <EditProfile setVisible={setVisible} user={user} profile={currentProfile} dispatch={dispatch} /> }
+            <button className="green_btn" onClick={()=> setVisible(true)} style={{marginTop: '15px'}}>Edit Profile</button>
             <div className="profile_intro_carousel">
                 <div className={`profile_intro_carousel__container`}>
                     {emojis.map((emoji, index) => (

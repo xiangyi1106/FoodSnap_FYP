@@ -4,14 +4,14 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Dots, Public } from "../../svg";
 import Moment from "react-moment";
 import CIcon from '@coreui/icons-react';
-import { cilShare, cilThumbUp, cilCommentBubble, cilBookmark, cilPeople, cilLockLocked } from '@coreui/icons';
+import { cilShare, cilThumbUp, cilCommentBubble, cilBookmark, cilPeople, cilLockLocked, cilLocationPin } from '@coreui/icons';
 import CreateComment from "./CreateComment";
 import { linkifyMentionsAndHashtags } from "../../functions/linkify";
 import PostMenu from "./PostMenu";
 import PostInteraction from "../PostInteraction/PostInteraction";
 import FeedComment from "./FeedComment";
 
-export default function Post({ post, user, profile, skip, onShowFeedComment, depth = 1 }) {
+export default function Post({ post, user, profile, skip, onShowFeedComment, depth = 1, dispatch }) {
     const [visible, setVisible] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const [checkSaved, setCheckSaved] = useState();
@@ -22,14 +22,6 @@ export default function Post({ post, user, profile, skip, onShowFeedComment, dep
         navigate(`/post/${postId}/${i}`);
     };
 
-    // Create a map of names to user IDs
-    // const mentionMap = (post.mentions || []).reduce((acc, mention) => {
-    //     if (!acc[mention.name]) {
-    //         acc[mention.name] = [];
-    //     }
-    //     acc[mention.name].push(mention.userId);
-    //     return acc;
-    // }, {});
     const mentionMap = (post.mentions || []).reduce((acc, mention) => {
         const { name, userId, username } = mention;
         if (!acc[name]) {
@@ -44,21 +36,8 @@ export default function Post({ post, user, profile, skip, onShowFeedComment, dep
     const postRef = useRef(null);
     const dotRef = useRef(null);
 
-    const [showDot, setShowDot] = useState(true);
     const [isOriginalPostAvailable, setIsOriginalPostAvailable] = useState(true);
     const [isPost, setIsPost] = useState(true);
-
-    // useEffect(() => {
-    //     // If post is a shared post, hide the Dots button for the original post
-    //     if (post.sharedPost) {
-    //         setShowDot(true);
-    //         // setNotShow(false);
-    //     } else {
-    //         setShowDot(false);
-    //         // setNotShow(true);
-    //     }
-    // }, [post.sharedPost]);
-    const [notShow, setNotShow] = useState(true);
 
     return (
         <div className={`post`} style={{ width: `${profile && "100%"}`, }} ref={postRef} >
@@ -98,6 +77,12 @@ export default function Post({ post, user, profile, skip, onShowFeedComment, dep
                             . {post.privacy === 'public' ? <Public color="#828387" /> : post.privacy === 'followers' ? <CIcon icon={cilPeople} className="icon_size_12" style={{ marginLeft: '2px' }} /> : <CIcon icon={cilLockLocked} className="icon_size_12" style={{ marginLeft: '2px' }} />}
                         </div>
                     </div>
+                    {post?.location && post.location[0]?.name &&
+                        <span className='post_location'>
+                            <CIcon icon={cilLocationPin} style={{ color: 'red', position: 'relative', bottom: '1px', marginRight: '2px' }} className="icon_size_16" />
+                            {post.location[0].name}
+                        </span>
+                    }
                 </Link>
                 {!skip && <div
                     className="post_header_right hover_style_1"
@@ -108,18 +93,15 @@ export default function Post({ post, user, profile, skip, onShowFeedComment, dep
                 </div>}
             </div>
             <>
-                {/* <div className="post_text"><p>{post.text}</p></div> */}
                 <div className="post_text"><p>{formattedText}</p></div>
 
                 {/* Render shared post if it exists and is available */}
                 {post.sharedPost && isOriginalPostAvailable && depth < 2 && (
                     <div className="shared_post">
-                        <Post post={post.sharedPost} user={post.sharedPost.user} skip={true} depth={depth + 1} profile/>
+                        <Post post={post.sharedPost} user={post.sharedPost.user} skip={true} depth={depth + 1} profile />
                     </div>
-                    
-                )}
-                
 
+                )}
 
                 {/* Handle case where original post is not available */}
                 {post.sharedPost && !isOriginalPostAvailable && (
@@ -164,7 +146,7 @@ export default function Post({ post, user, profile, skip, onShowFeedComment, dep
                 )}
             </>
 
-            {!skip && <PostInteraction post={post} user={user} isPost={isPost} onShowFeedComment={onShowFeedComment} />}
+            {!skip && <PostInteraction post={post} user={user} isPost={isPost} onShowFeedComment={onShowFeedComment} dispatch={dispatch} />}
 
             {showMenu && (
                 <PostMenu
@@ -177,7 +159,6 @@ export default function Post({ post, user, profile, skip, onShowFeedComment, dep
                     setCheckSaved={setCheckSaved}
                     postRef={postRef}
                     dotRef={dotRef}
-                // sharedPost={post.sharedPost}
                 />
             )}
         </div>

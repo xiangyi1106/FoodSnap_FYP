@@ -8,7 +8,7 @@ import { cilColorBorder, cilBookmark } from '@coreui/icons';
 import EditPlaceInfo from './EditPlaceInfo';
 import { addToFoodVenueWishlist, checkFoodVenueInWishlist, getFoodVenueWishlist, removeFromFoodVenueWishlist } from '../../functions/user';
 
-export default function PlaceProfilePictureInfo({ foodVenue, user }) {
+export default function PlaceProfilePictureInfo({ foodVenue, user, setFoodVenue }) {
   const [visible, setVisible] = useState(false);
 
   const [wishlist, setWishlist] = useState([]);
@@ -47,7 +47,7 @@ export default function PlaceProfilePictureInfo({ foodVenue, user }) {
 
   return (
     <div className='profile_picture_wrapper' style={{ padding: '0 4rem' }}>
-      {visible && <EditPlaceInfo setVisible={setVisible} id={foodVenue._id} user={user} />}
+      {visible && <EditPlaceInfo setVisible={setVisible} id={foodVenue._id} user={user} setFoodVenue={setFoodVenue}/>}
       <div className='profile_picture_left'>
         <div className='profile_picture'>
           <div

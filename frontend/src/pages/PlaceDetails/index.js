@@ -97,7 +97,7 @@ export default function PlaceDetailsLayout({ user }) {
                                 alt="profile_cover"
                             />
                         </div>
-                        {foodVenue && <PlaceProfilePictureInfo foodVenue={foodVenue} user={user} />}
+                        {foodVenue && <PlaceProfilePictureInfo foodVenue={foodVenue} user={user} setFoodVenue={setFoodVenue} />}
                         <PlaceDetailsNav items={menuItems} />
                     </div>
                 </div>

@@ -11,7 +11,17 @@ export default function PublicFeed({ user }) {
         const fetchPosts = async () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/getPublicPosts`);
-                setPosts(response.data);
+                // setPosts(response.data);
+                const rawPosts = response.data;
+
+                // Process posts to add `hasLiked` property
+                const processedPosts = rawPosts.map((post) => ({
+                    ...post,
+                    hasLiked: post.likes.some((like) => like._id === user.id), // Assuming `user._id` is available
+                }));
+
+                setPosts(processedPosts);
+                console.log(processedPosts);
             } catch (error) {
                 toast.error("Error fetching posts: " + error.message);
             }
@@ -51,8 +61,8 @@ export default function PublicFeed({ user }) {
 
     return (
         <div className='feed_middle' style={{ height: `${height + 80}px` }}>
-            <div className="public_feed_middle" ref={middle} style={{overflowY: 'auto'}}>
-                <DiscoverPostList posts={posts}/>
+            <div className="public_feed_middle" ref={middle} style={{ overflowY: 'auto' }}>
+                <DiscoverPostList posts={posts} user={user} setPosts={setPosts}/>
             </div>
         </div>
     )

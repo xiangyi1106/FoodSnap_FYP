@@ -28,7 +28,6 @@ exports.getFoodRecommendation = async (req, res) => {
 - Be realistic and region-specific.
 - Include dishes commonly available in ${location}.
 - Avoid items that may not be locally found or have speculative variants.
-- Can search the food that match the food venue name too, for example if loveIngredient is seafood, can also search the food venue with the name seafood.
 
             Meal Type: ${mealType}
             Mood: ${mood}
@@ -43,20 +42,12 @@ exports.getFoodRecommendation = async (req, res) => {
             Respond only with an array, e.g., ["Laksa", "Roti Canai", "Nasi Lemak"].
         `;
 
-        // Format the response as a array with max six items. Example format:
-        // ["Laksa", "Sandwiches", "Roti Canai", 'Nasi Lemak', 
-        // 'Char Kway Teow' ]
-        // Please give me only the array but not extra text.
-
         const result = await model.generateContent(prompt);
 
         let suggestions = await result.response.text();
 
         console.log('API response:', suggestions);
 
-        // res.json(suggestions);
-        // Return the suggestions array as JSON
-        // res.json({ suggestions: JSON.parse(suggestions) });
         const jsonStart = suggestions.indexOf('[');
         const jsonEnd = suggestions.lastIndexOf(']') + 1;
 

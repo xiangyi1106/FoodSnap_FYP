@@ -12,7 +12,14 @@ export function postReducer(state, action) {
       };
     case "POSTS_ERROR":
       return { ...state, loading: false, error: action.payload };
-
+    case "UPDATE_POST": {
+      const updatedPosts = state.posts.map((post) =>
+        post._id === action.payload._id ? { ...post, ...action.payload } : post
+      );
+      return { ...state, posts: updatedPosts };
+    }
+    case "SET_POSTS":
+      return { ...state, posts: action.payload };
     case "ADD_POST":
       const updatedPosts = [action.payload, ...state];
       console.log("Updated posts in reducer:", updatedPosts); // Check if the new post is added
@@ -40,6 +47,9 @@ export function profileReducer(state, action) {
       };
     case "PROFILE_ERROR":
       return { ...state, loading: false, error: action.payload };
+    case "PROFILE_UPDATE_SUCCESS":
+      console.log("Updating profile state with:", action.payload);
+      return { ...state, profile: { ...state.profile, ...action.payload } }; // Merge updated fields
 
     default:
       return state;

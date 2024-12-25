@@ -473,6 +473,76 @@ const updateDetails = async (req, res) => {
     }
 };
 
+const updateProfile = async (req, res) => {
+    try {
+   
+        const { about, birthday, currentCity, favouriteFood, facebook, instagram, youtube, gender } = req.body;
+
+        // Find the user by ID
+        const user = await User.findById(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // // Update profile information
+        // user.details.about = about || user.details.about;
+        // user.birthday = birthday ? new Date(birthday) : user.birthday;
+        // user.details.currentCity = currentCity || user.details.currentCity;
+        // user.details.favouriteFood = favouriteFood || user.details.favouriteFood;
+        // user.details.facebook = facebook || user.details.facebook;
+        // user.details.instagram = instagram || user.details.instagram;
+        // user.details.youtube = youtube || user.details.youtube;
+        // user.gender = gender || user.gender;
+
+        // Track the updated fields
+        const updatedFields = {};
+
+        // Update profile information only if the field is provided
+        if (about !== undefined) {
+            user.details.about = about;
+            updatedFields.about = about;
+        }
+        if (birthday !== undefined) {
+            user.birthday = new Date(birthday);
+            updatedFields.birthday = user.birthday;
+        }
+        if (currentCity !== undefined) {
+            user.details.currentCity = currentCity;
+            updatedFields.currentCity = currentCity;
+        }
+        if (favouriteFood !== undefined) {
+            user.details.favouriteFood = favouriteFood;
+            updatedFields.favouriteFood = favouriteFood;
+        }
+        if (facebook !== undefined) {
+            user.details.facebook = facebook;
+            updatedFields.facebook = facebook;
+        }
+        if (instagram !== undefined) {
+            user.details.instagram = instagram;
+            updatedFields.instagram = instagram;
+        }
+        if (youtube !== undefined) {
+            user.details.youtube = youtube;
+            updatedFields.youtube = youtube;
+        }
+        if (gender !== undefined) {
+            user.gender = gender;
+            updatedFields.gender = gender;
+        }
+
+        // Save the updated user profile
+        await user.save();
+
+        // Respond with updated user profile
+        res.status(200).json({ success: true, message: "Profile updated successfully", updatedFields: updatedFields, });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server error");
+    }
+};
+
 const follow = async (req, res) => {
     try {
         if (req.user.id !== req.params.id) {
@@ -931,5 +1001,6 @@ module.exports = {
     checkFoodVenueInWishlist,
     getFoodVenueMapList,
     getSavedPost,
+    updateProfile,
     // auth,
 };

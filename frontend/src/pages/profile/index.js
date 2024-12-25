@@ -54,8 +54,8 @@ export default function Profile() {
           },
         }
       );
+      console.log(data);
       if (data.ok === false) {
-        // navigate("/profile");
         navigate(`/profile/${userName}`);
       } else {
         try {
@@ -68,7 +68,6 @@ export default function Profile() {
               },
             }
           );
-
           setPhotos(images.data);
         } catch (error) {
           console.log(error);
@@ -90,30 +89,6 @@ export default function Profile() {
   const location = useLocation();
   const isMyFoodMap = location.pathname === `/profile/${username}/myFoodMap`; // Check if the route is '/myfoodmap'
   const [visible, setVisible] = useState(false);
-  //   const [foodVenuesMap, setFoodVenuesMap] = useState([]);
-  //   useEffect(() => {
-  //     const fetchFoodVenues = async () => {
-  //       try {
-  //         const response = await getFoodVenuesMap(user);
-  //         // Check if the response is not empty
-  //         if (response && response.length > 0 && response.success) {
-  //           setFoodVenuesMap(response.foodVenues); // Set all promotions
-  //         }
-  //         console.log(response.foodVenues);
-  //       } catch (error) {
-  //         // setError(error.message); // Capture error message
-  //         console.log("Error fetching food venues for my food map: " + error.message);
-  //         setFoodVenuesMap([]);
-  //       }
-
-  //     };
-
-  //     fetchFoodVenues();
-  //   }, [user]); 
-
-  //   useEffect(() => {
-  //     console.log("Updated foodVenues state:", foodVenuesMap);
-  // }, [foodVenuesMap]);
   const [foodVenuesMap, setFoodVenuesMap] = useState([]);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -201,6 +176,8 @@ export default function Profile() {
                     profile,
                     photos,
                     foodVenuesMap: paginatedFoodVenues,
+                    user,
+                    dispatch,
                   }}
                 />
               </div>

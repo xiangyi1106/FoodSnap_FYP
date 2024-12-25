@@ -4,12 +4,12 @@ import CIcon from '@coreui/icons-react';
 import { cilThumbUp } from '@coreui/icons';
 import { toast } from 'react-toastify';
 import './interactionButton.css'
-const LikeButton = ({ postId, user, setLikesCount, isLiked, setIsLiked}) => {
+const LikeButton = ({ post, user, setLikesCount, isLiked, setIsLiked, dispatch }) => {
 
     const handleLike = async () => {
         try {
             const response = await axios.put(
-                `${process.env.REACT_APP_BACKEND_URL}/likePost/${postId}`,
+                `${process.env.REACT_APP_BACKEND_URL}/likePost/${post._id}`,
                 {},
                 {
                     headers: {
@@ -18,9 +18,24 @@ const LikeButton = ({ postId, user, setLikesCount, isLiked, setIsLiked}) => {
                 }
             );
 
-            // Update the state based on the response from the server
-            setIsLiked(!isLiked);
-            setLikesCount(response.data.likes); // Update the likes count from the server response
+            if (response.data) {
+                // Toggle the like status
+                setIsLiked(!isLiked);
+                // Update likes count with server response
+                setLikesCount(response.data.likes.length);
+                // setLikesCount(response.data.likes);
+
+                // Update global state via dispatch
+                dispatch({
+                    type: "UPDATE_POST",
+                    payload: {
+                        _id: post._id, // Ensure post ID is sent
+                        likes: response.data.likes, // The updated likes array
+                    },
+                });
+
+                console.log(response.data);
+            }
 
         } catch (error) {
             toast.error('Error liking post: ' + error.message);

@@ -30,39 +30,7 @@ export default function RegisterForm({ setVisible }) {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  // const userInfos = {
-  //   username: "",
-  //   name: "",
-  //   email: "",
-  //   password: "",
-  //   bYear: new Date().getFullYear(),
-  //   bMonth: new Date().getMonth() + 1,
-  //   bDay: new Date().getDate(),
-  //   gender: "",
-  // };
-
-  // const [user, setUser] = useState(userInfos);
-
-  // //Extract elements from user
-  // const {
-  //   username,
-  //   name,
-  //   email,
-  //   password,
-  //   bYear,
-  //   bMonth,
-  //   bDay,
-  //   gender
-  // } = user;
-
-  // const handleRegisterChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setUser({ ...user, [name]: value });
-  //   // console.log(user);
-  // };
-  // // console.log(user);
-
+ 
   //Prepare the birthday day,month,year options for the select
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
@@ -85,7 +53,6 @@ export default function RegisterForm({ setVisible }) {
   const days = Array.from(new Array(getDays()), (val, index) => index + 1);
 
   const [selectGender, setSelectGender] = useState("");
-
 
   const registerValidation = Yup.object({
     username: Yup.string()
@@ -119,16 +86,6 @@ export default function RegisterForm({ setVisible }) {
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,30}$/,
         "Password must contain at least one uppercase letter, one lowercase letter, one number, one special character and at least 8 characters and at most 30 characters."
       ),
-    // password: Yup.string().when("$passwordInput", {
-    //   is: (passwordInput) => passwordInput && passwordInput.length > 0,
-    //   then: Yup.string()
-    //     .min(8, "Password must be at least 8 characters.")
-    //     .max(30, "Password must be at most 30 characters.")
-    //     .matches(
-    //       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,30}$/,
-    //       "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."
-    //     )
-    // })
   });
 
   const [dateError, setDateError] = useState("");
@@ -141,42 +98,6 @@ export default function RegisterForm({ setVisible }) {
   // const [submitSuccess, setSubmitSuccess] = useState("");
   const [submitLoading, setSubmitLoading] = useState(false);
 
-  // const registerSubmit = async () => {
-  //   try {
-  //     const { data } = await axios.post(
-  //       `${process.env.REACT_APP_BACKEND_URL}/register`,
-  //       {
-  //         username,
-  //         name,
-  //         email,
-  //         password,
-  //         bYear,
-  //         bMonth,
-  //         bDay,
-  //         gender
-  //       }
-  //     );
-  //     setSubmitError("");
-  //     setSubmitSuccess(data.message);
-
-  //     //remove message from send data
-  //     const [message, ...rest] = data;
-
-  //     setTimeout(() => {
-  //       dispatch({ type: "LOGIN", payload: rest });
-  //       Cookie.set("user", JSON.stringify(rest));
-  //       navigate("/");//navigate to home page
-  //     }, 2000);
-
-  //   } catch (error) {
-  //     setSubmitLoading(false);
-  //     setSubmitSuccess("");
-  //     setSubmitError(error.response.data.message);
-  //   }
-  // }
-
-  // Define state variables for password input and validation
-  // const [passwordInput, setPasswordInput] = useState("");
   const [passwordValidated, setPasswordValidated] = useState({
     lower: false,
     upper: false,
@@ -217,7 +138,6 @@ export default function RegisterForm({ setVisible }) {
       length: isLengthValidated
     });
   };
-
 
   return (
     <MDBContainer className="register_page">
@@ -336,8 +256,6 @@ export default function RegisterForm({ setVisible }) {
                         label="Username"
                         name="username"
                         id="usernameInput"
-
-                      // onChange={handleRegisterChange}
                       />
                       {/* Error message when username exist */}
                       {usernameError !== "" && <div className="input_error">{usernameError}</div>}
@@ -345,7 +263,6 @@ export default function RegisterForm({ setVisible }) {
                         type="text"
                         label="Name"
                         name="name"
-                      // onChange={handleRegisterChange}
                       />
                     </div>
                     <div className="reg_line">
@@ -428,14 +345,8 @@ export default function RegisterForm({ setVisible }) {
                       <div className="reg_line_header">
                         Date of birth
                         <CakeIcon style={{ fontSize: "medium", position: "relative", bottom: "2px" }} />
-                        {/* <CIcon icon={cilBirthdayCake} className="" style={{width: '15px', height: '15px',}}/> */}
-
                       </div>
-
                       <DateOfBirthSelect
-                        // bDay={bDay}
-                        // bMonth={bMonth}
-                        // bYear={bYear}
                         selectDay={selectDay}
                         setSelectDay={setSelectDay}
                         selectYear={selectYear}
@@ -445,22 +356,17 @@ export default function RegisterForm({ setVisible }) {
                         days={days}
                         months={months}
                         years={years}
-                        // handleRegisterChange={handleRegisterChange}
                         dateError={dateError}
                       />
                     </div>
-                    {console.log(selectGender)}
                     <div className="reg_col">
                       <div className="reg_line_header">
                         Gender <WcIcon style={{ fontSize: "medium" }} />
                       </div>
                       <GenderRadioButton
                         setSelectGender={setSelectGender}
-                      // handleRegisterChange={handleRegisterChange}
                       />
-                      {/* Error message when radio button is unselected */}
                       {genderError !== "" && <div className="input_error">{genderError}</div>}
-
                     </div>
                     <div className="reg_infos mb-4">
                       By clicking Sign Up, you agree to our{" "}
@@ -469,10 +375,6 @@ export default function RegisterForm({ setVisible }) {
                     </div>
 
                     <MDBBtn className="px-5 w-100" color='info' size='lg' type="submit">Sign Up</MDBBtn>
-
-
-
-                    {/*Loading spinner  */}
                     <BeatLoader
                       color="#87e4d1"
                       loading={submitLoading}
@@ -480,7 +382,6 @@ export default function RegisterForm({ setVisible }) {
                       aria-label="Loading Spinner"
                       data-testid="loader"
                     />
-
                     {/* Register status - Error / Success */}
                     {submitError && <div className="error_text mt-3 input_error">{submitError}</div>}
                     {submitSuccessed && <div className="mt-3 success_text">{submitSuccessed}</div>}
@@ -491,7 +392,6 @@ export default function RegisterForm({ setVisible }) {
               <div>
                 <p className="mb-0 mt-4">Already have an account? <Link className=" fw-bold link-info text_up_effect" to={"/login"}>Sign In</Link></p>
               </div>
-
             </MDBCardBody>
           </MDBCard>
         </MDBCol>

@@ -230,7 +230,7 @@ export const getNotifications = async (userId, token) => {
     );
     return data;
   } catch (error) {
-    
+
     if (error.response && error.response.status === 401) {
       console.log("401 error: Session timed out.");
       throw error; // Throw the error so it can be caught in useEffect
@@ -269,6 +269,29 @@ export const getSavedPost = async (token) => {
     );
     return data;
   } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+export const updateProfile = async (
+  values,
+  user
+) => {
+
+  try {
+    const { data } = await axios.put(
+      `${process.env.REACT_APP_BACKEND_URL}/updateProfile`,
+      values,
+      {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
+    return data;
+
+  } catch (error) {
+    console.log(error.response.data.message);
     return error.response.data.message;
   }
 };

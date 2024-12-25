@@ -42,9 +42,9 @@ const ProfilePhotoGallery = ({ photos }) => {
                 );
             }}
         >
-            {<ImageList variant="masonry" cols={3} gap={8}>
-                {photos?.resources && photos?.resources.map((img) => (
-                    <PhotoView src={img.secure_url}>
+            {/* {<ImageList variant="masonry" cols={3} gap={8}>
+                {photos?.resources && photos.resources.length > 0 && photos.resources.map((img) => (
+                    <PhotoView src={img.secure_url} key={img.public_id}>
                         <ImageListItem key={img.public_id} style={{cursor: 'pointer', padding: '0px 8spx'}}>
                             <img
                                 srcSet={`${img.secure_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
@@ -54,19 +54,28 @@ const ProfilePhotoGallery = ({ photos }) => {
                         </ImageListItem>
                     </PhotoView>
                 ))}
-                {/* {photos?.resources && photos.resources.map((img) => (
-                    <div className="profile_photo_card" key={img.public_id}>
-                        <PhotoView src={img.secure_url}>
-                            <img
-                                src={img.secure_url}
-                                alt=""
-                                className="photo-thumbnail"
-                                style={{ cursor: 'pointer', width: '100%', height: 'auto' }}
-                            />
+            </ImageList>} */}
+            {photos?.resources && photos.resources.length > 0 ? (
+                <ImageList variant="masonry" cols={3} gap={8}>
+                    {photos.resources.map((img) => (
+                        <PhotoView src={img.secure_url} key={img.public_id}>
+                            <ImageListItem key={img.public_id} style={{ cursor: 'pointer' }}>
+                                <img
+                                    srcSet={`${img.secure_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                                    src={`${img.secure_url}?w=248&fit=crop&auto=format`}
+                                    loading="lazy"
+                                    alt=""
+                                />
+                            </ImageListItem>
                         </PhotoView>
-                    </div>
-                ))} */}
-            </ImageList>}
+                    ))}
+                </ImageList>
+            ) : (
+                <div style={{ textAlign: 'center' }}>
+                    <img src={`${process.env.PUBLIC_URL}/images/no-image.png`} className="" alt="profile_cover"></img>
+                    <div style={{ color: 'gray', fontSize: '0.9rem', marginTop: '3px' }}>Sorry, there are currently no photos available.</div>
+                </div>
+            )}
         </PhotoProvider>
 
     </div>

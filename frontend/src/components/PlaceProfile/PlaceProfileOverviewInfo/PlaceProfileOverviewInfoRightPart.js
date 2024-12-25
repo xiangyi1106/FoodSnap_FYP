@@ -15,6 +15,27 @@ export default function PlaceProfileOverviewInfoRight({
             alert('Coordinates not available for this location.');
         }
     };
+
+    const convertTo12HourFormat = (time) => {
+        if (!time) return ''; // Return empty string if the time is not provided
+
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours, 10);
+        const minute = minutes || '00';
+
+        const period = hour >= 12 ? 'PM' : 'AM';
+        const formattedHour = hour % 12 || 12;  // Convert 0 to 12 (12AM or 12PM)
+        return `${formattedHour}:${minute} ${period}`;
+    };
+
+    const getCurrentDayAbbreviation = () => {
+        const daysOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+        const today = new Date();
+        return daysOfWeek[today.getDay()]; // Returns the current abbreviated day (e.g., "Mon")
+    };
+
+    const currentDayAbbreviation = getCurrentDayAbbreviation();
+
     return (
         <div className="profile_card">
             {/* Telephone */}
@@ -50,13 +71,15 @@ export default function PlaceProfileOverviewInfoRight({
             </div>
             <div className="opening_hour">
                 {Object.entries(foodVenue?.openingHours || {}).map(([day, times], index) => (
-                    <div key={index} className="opening_hour_row">
-                        <div className="opening_hour_day" style={{ minWidth: '50px', textAlign: 'left', paddingRight: '16px' }}>{day.charAt(0).toUpperCase() + day.slice(1)}</div>
+                    <div key={index} className="opening_hour_row" style={{color: day === currentDayAbbreviation ? '#30BFBF' : 'black'}}>
+                        <div className="opening_hour_day" style={{ minWidth: '50px', textAlign: 'left', paddingRight: '16px'}}>{day.charAt(0).toUpperCase() + day.slice(1)}</div>
                         <div className="opening_hour_time">
                             {times.length > 0 ? (
                                 times.map((time, idx) => (
                                     <div key={idx}>
-                                        {time.open} - {time.close}
+                                        {time.open && time.close
+                                            ? `${convertTo12HourFormat(time.open)} - ${convertTo12HourFormat(time.close)}`
+                                            : <span>Closed</span>}
                                     </div>
                                 ))
                             ) : (

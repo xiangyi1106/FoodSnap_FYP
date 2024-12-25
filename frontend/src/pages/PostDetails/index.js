@@ -8,10 +8,11 @@ import { Box } from '@mui/material';
 import CIcon from '@coreui/icons-react';
 import { cilX } from '@coreui/icons';
 
-const PostDetailsPage = ({ user }) => {
+const PostDetailsPage = ({ user, dispatch }) => {
     const { id, mediaIndex } = useParams();
     const [post, setPost] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(parseInt(mediaIndex, 10) || 0);
+    const [visible, setVisible] = useState(false);
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -41,10 +42,10 @@ const PostDetailsPage = ({ user }) => {
         <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh', overflow: 'hidden'}}>
             {/* Left part - Media */}
             <Box sx={{ flex: 2, marginRight: 2}} >
-                <div className='close_button hover_style_2' style={{ left: '12px', right: '0' }}><CIcon icon={cilX} className="icon_size_22 close_button_icon" onClick={() => navigate(-1)} /></div>
-                <PostDetailsCarousel media={post.media} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
+                {!visible && <div className='close_button hover_style_2' style={{ left: '12px', right: '0' }}><CIcon icon={cilX} className="icon_size_22 close_button_icon" onClick={() => navigate(-1)} /></div>}
+                <PostDetailsCarousel media={post.media} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex}  setVisible={setVisible} />
             </Box>
-            <PostDetailsInformation post={post} user={user} />
+            <PostDetailsInformation post={post} user={user} dispatch={dispatch} />
         </Box>
     );
 };

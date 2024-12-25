@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import Slider from 'react-slick';
@@ -9,7 +9,7 @@ import {
   cilZoomIn, cilZoomOut
 } from '@coreui/icons';
 
-const PostDetailsCarousel = ({ media, currentIndex, setCurrentIndex }) => {
+const PostDetailsCarousel = ({ media, currentIndex, setCurrentIndex, setVisible }) => {
 
 
   const settings = {
@@ -25,9 +25,9 @@ const PostDetailsCarousel = ({ media, currentIndex, setCurrentIndex }) => {
 
   return (
     <PhotoProvider
-      toolbarRender={({ onScale, scale }) => {
+      toolbarRender={({ onScale, scale, onClose }) => {
         return (
-          <div style={{ display: 'flex', gap: '10px', color: '#fff' }}>
+          <div style={{ display: 'flex', gap: '10px', color: '#fff' }} onClose={() => {setVisible(false);}}>
             {/* Zoom In Button */}
             <button
               style={{
@@ -57,14 +57,16 @@ const PostDetailsCarousel = ({ media, currentIndex, setCurrentIndex }) => {
             >
               <CIcon icon={cilZoomOut} className="icon_size_20" />
             </button>
+            
           </div>
         );
       }}
+      onVisibleChange={(isVisible) => setVisible(isVisible)}
     >
       <Slider {...settings}>
         {media.map((item, index) => (
-          <div key={index} onClick={() => setCurrentIndex(index)}>
-            <PhotoView src={item.url}>
+          <div key={index} >
+            <PhotoView src={item.url} >
               {item.type === 'image' ? (
                 <img
                   src={item.url}

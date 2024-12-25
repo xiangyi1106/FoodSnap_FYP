@@ -1,6 +1,6 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CIcon from '@coreui/icons-react';
-import { cilX } from '@coreui/icons';
+import { cilLocationPin, cilX } from '@coreui/icons';
 import './EditPlaceInfo.css';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import johorBahruAreas from '../../data/johorBahruAreas';
@@ -11,9 +11,17 @@ import { toast } from 'react-toastify';
 import { createFoodVenue, updateFoodVenue } from '../../functions/foodVenue';
 import axios from 'axios';
 import MapPicker from '../MapPicker/MapPicker';
-import { validateFileType, validateImageType } from '../../functions/fileUtils';
+import { toggleScroll, validateFileType, validateImageType } from '../../functions/fileUtils';
+import { debounce } from 'lodash';
+import { CircularProgress, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import FoodVenueOpeningHours from './FoodVenueOpeningHours';
 
 export default function AddPlaceInfo({ setVisible, user }) {
+    useEffect(() => {
+        toggleScroll(true);
+        return () => toggleScroll(false); // Re-enable scrolling on cleanup
+    }, []);
+
     const [formData, setFormData] = useState({
         restaurantName: '',
         category: [],
@@ -25,53 +33,96 @@ export default function AddPlaceInfo({ setVisible, user }) {
         longitude: null,
         phone: '',
         // openingHours: {},
+        // openingHours: {
+        //     "mon": [
+        //         {
+        //             "open": "8:00am",
+        //             "close": "5:00pm"
+        //         }
+        //     ],
+        //     "tue": [
+        //         {
+        //             "open": "8:00am",
+        //             "close": "5:00pm"
+        //         }
+        //     ],
+        //     "wed": [
+        //         {
+        //             "open": "8:00am",
+        //             "close": "5:00pm"
+        //         }
+        //     ],
+        //     "thu": [
+        //         {
+        //             "open": "8:00am",
+        //             "close": "5:00pm"
+        //         }
+        //     ],
+        //     "fri": [
+        //         {
+        //             "open": "8:00am",
+        //             "close": "5:00pm"
+        //         }
+        //     ],
+        //     "sat": [
+        //         {
+        //             "open": "8:00am",
+        //             "close": "5:00pm"
+        //         }
+        //     ],
+        //     "sun": [
+        //         {
+        //             "open": "8:00am",
+        //             "close": "5:00pm"
+        //         }
+        //     ],
+        // },
         openingHours: {
             "mon": [
                 {
-                    "open": "8:00am",
-                    "close": "5:00pm"
+                    "open": "08:00",
+                    "close": "17:00"
                 }
             ],
             "tue": [
                 {
-                    "open": "8:00am",
-                    "close": "5:00pm"
+                    "open": "08:00",
+                    "close": "17:00"
                 }
             ],
             "wed": [
                 {
-                    "open": "8:00am",
-                    "close": "5:00pm"
+                    "open": "08:00",
+                    "close": "17:00"
                 }
             ],
             "thu": [
                 {
-                    "open": "8:00am",
-                    "close": "5:00pm"
+                    "open": "08:00",
+                    "close": "17:00"
                 }
             ],
             "fri": [
                 {
-                    "open": "8:00am",
-                    "close": "5:00pm"
+                    "open": "08:00",
+                    "close": "17:00"
                 }
             ],
             "sat": [
                 {
-                    "open": "8:00am",
-                    "close": "5:00pm"
+                    "open": "08:00",
+                    "close": "17:00"
                 }
             ],
             "sun": [
                 {
-                    "open": "8:00am",
-                    "close": "5:00pm"
+                    "open": "08:00",
+                    "close": "17:00"
                 }
             ],
         },
         website: '',
         description: '',
-        // otherInfo: placeOtherInformation.reduce((acc, info) => ({ ...acc, [info]: 'noInfo' }), {}),
         serviceCharge: 0,
         sstCharge: 0,
         profilePicture: null,
@@ -170,21 +221,12 @@ export default function AddPlaceInfo({ setVisible, user }) {
                 toast.error(`Unsupported file type. Only Jpeg, Png are allowed.`);
                 return; // Don't proceed further if the file type is invalid
             }
-            // setFormData(prevState => ({
-            //     ...prevState,
-            //     [type]: URL.createObjectURL(file)
-            // }));
             type === 'profilePicture' ? setPicture(URL.createObjectURL(file)) : setCover(URL.createObjectURL(file));
         }
     };
 
     const removePicture = (type) => {
-        // setFormData(prevState => ({
-        //     ...prevState,
-        //     [type]: null
-        // }));
         type === 'profilePicture' ? setPicture(null) : setCover(null);
-
     };
 
     const validatePhoneNumber = (phone) => {
@@ -391,6 +433,63 @@ export default function AddPlaceInfo({ setVisible, user }) {
     const [longitude, setLongitude] = useState(null); // Default Johor Bahru
     const [error, setError] = useState('');
     const [manualSelection, setManualSelection] = useState(false);
+    const [locationList, setLocationList] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleItemClick = (index) => {
+        const selectedItem = locationList[index]; // Access the selected item directly from the list
+        // Parse lat and lon to floats before applying .toFixed
+        const latitude = parseFloat(selectedItem.lat);
+        const longitude = parseFloat(selectedItem.lon);
+
+        // Check if latitude and longitude are valid numbers
+        if (!isNaN(latitude) && !isNaN(longitude)) {
+            setLatitude(latitude.toFixed(7));  // Fix to 7 decimal places
+            setLongitude(longitude.toFixed(7));  // Fix to 7 decimal places
+            setAddress(selectedItem.display_name);
+        } else {
+            console.error("Invalid latitude or longitude");
+        }
+        setLocationList([]);
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            latitude: '',  // Set error for latitude if invalid
+            longitude: '', // Set error for longitude if invalid
+        }));
+    };
+    const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
+
+    const debouncedSearch = useCallback(
+        debounce((query) => {
+            setIsLoading(true);
+            const params = { q: query, format: "json", addressdetails: 1 };
+            const queryString = new URLSearchParams(params).toString();
+            const requestOptions = {
+                method: "GET",
+                redirect: "follow",
+            };
+            fetch(`${NOMINATIM_BASE_URL}${queryString}`, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    setLocationList(result);
+                    setIsLoading(false);
+                })
+                .catch((err) => {
+                    console.error("Error fetching data: ", err);
+                    setIsLoading(false);
+                });
+        }, 500),
+        [] // Empty dependency array ensures debounce is created only once
+    );
+    const handleLocationSearch = (e) => {
+        errors.address && setErrors((prevErrors) => ({
+            ...prevErrors,
+            address: ''
+        }))
+        const query = e.target.value;
+        setAddress(query);
+        debouncedSearch(query); // Call the memoized debounced search function
+    };
 
     const handleGeocode = async () => {
         try {
@@ -424,7 +523,11 @@ export default function AddPlaceInfo({ setVisible, user }) {
         setLatitude(latlng.lat.toFixed(7));
         setLongitude(latlng.lng.toFixed(7));
         setManualSelection(false);
-        setError('');
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            latitude: '',  // Set error for latitude if invalid
+            longitude: '', // Set error for longitude if invalid
+        }));
     };
 
     return (
@@ -449,10 +552,8 @@ export default function AddPlaceInfo({ setVisible, user }) {
                                         onChange={(e) => handlePictureChange(e, 'profilePicture')}
                                     />
                                     <div className="image_preview_container">
-                                        {/* <img src={formData.profilePicture ? formData.profilePicture : `${process.env.PUBLIC_URL}/images/generative-image.png`} alt="Profile" className="profile_image" onClick={() => { pictureInput.current.click(); }} /> */}
                                         <img src={picture ? picture : `${process.env.PUBLIC_URL}/images/generative-image.png`} alt="Profile" className="profile_image" onClick={() => { pictureInput.current.click(); }} />
                                         {picture && <button onClick={() => removePicture('profilePicture')} className="small_white_circle"><CIcon icon={cilX} className="icon_size_22" /></button>}
-                                        {/* {formData.profilePicture && <button onClick={() => removePicture('profilePicture')} className="small_white_circle"><CIcon icon={cilX} className="icon_size_22" /></button>} */}
                                     </div>
                                 </div>
 
@@ -467,9 +568,6 @@ export default function AddPlaceInfo({ setVisible, user }) {
                                         onChange={(e) => handlePictureChange(e, 'coverPicture')}
                                     />
                                     <div className="image_preview_container">
-                                        {/* <img src={formData.coverPicture ? formData.coverPicture : `${process.env.PUBLIC_URL}/images/generative-image.png`} style={{ objectFit: formData.coverPicture ? 'cover' : 'contain' }} alt="Cover" className="cover_image" onClick={() => { coverInput.current.click(); }} />
-                                        {formData.coverPicture && <button onClick={() => removePicture('coverPicture')} className="small_white_circle" style={{ zIndex: '99' }}><CIcon icon={cilX} className="icon_size_22" /></button>}
-                                         */}
                                         <img src={cover ? cover : `${process.env.PUBLIC_URL}/images/generative-image.png`} alt="Cover" className="cover_image" onClick={() => { coverInput.current.click(); }} />
                                         {cover && <button onClick={() => removePicture('coverPicture')} className="small_white_circle"><CIcon icon={cilX} className="icon_size_22" /></button>}
                                     </div>
@@ -523,7 +621,7 @@ export default function AddPlaceInfo({ setVisible, user }) {
                                         onChange={handleChange}
                                         required
                                     />
-                                    <p style={{ color: 'gray', fontSize: '0.85rem' }}>Seperate category with commas(,)</p>
+                                    <p style={{ color: 'gray', fontSize: '0.85rem' }}>Seperate category with commas(,) E.g.: western, chicken chop</p>
                                     {errors.category && <span className="error_message">{errors.category}</span>}
                                 </div>
                             </div>
@@ -537,20 +635,37 @@ export default function AddPlaceInfo({ setVisible, user }) {
                                         name="address"
                                         value={address}
                                         // onChange={(e) => setAddress(e.target.value)}
-                                        onChange={(e) => {
-                                            setAddress(e.target.value); setErrors((prevErrors) => ({
-                                                ...prevErrors,
-                                                address: ''
-                                            }))
-                                        }}
-                                        required
+                                        // onChange={(e) => {
+                                        //     setAddress(e.target.value); setErrors((prevErrors) => ({
+                                        //         ...prevErrors,
+                                        //         address: ''
+                                        //     }))
+                                        // }}
+                                        // required
+                                        onChange={handleLocationSearch}
                                     />
+                                    {isLoading ? (
+                                        <CircularProgress />
+                                    ) : (
+                                        <List>
+                                            {locationList.length > 0 && locationList.map((loc, index) => (
+                                                <ListItem key={index} button onClick={() => handleItemClick(index)}>
+                                                    <ListItemIcon>
+                                                        <CIcon icon={cilLocationPin} className="icon_size_22" />
+                                                    </ListItemIcon>
+                                                    <ListItemText primary={loc.display_name} />
+                                                </ListItem>
+                                            ))}
+                                        </List>
+                                    )}
                                     {errors.address && <span className="error_message">{errors.address}</span>}
                                     {error && <span className="error_message">{error}</span>}
-                                    <button onClick={handleGeocode} className='green_btn' style={{ margin: '10px 0', padding: '10px', cursor: 'pointer' }}>
+
+                                    {/* <button onClick={handleGeocode} className='green_btn' style={{ margin: '10px 0', padding: '10px', cursor: 'pointer' }}>
                                         Geocode Address
                                     </button>
-                                    <p style={{ color: 'gray', fontSize: '0.85rem' }}>Geocode address to get the accurate latitude and longitude. If fail to get the latitude and longitude, please adjust the location manually on the map. </p>
+                                    <p style={{ color: 'gray', fontSize: '0.85rem' }}>Geocode address to get the accurate latitude and longitude. If fail to get the latitude and longitude, please adjust the location manually on the map. </p> */}
+
                                     {/* Map Picker */}
                                     <div style={{ height: '300px', marginBottom: '10px' }}>
                                         <MapPicker
@@ -559,6 +674,8 @@ export default function AddPlaceInfo({ setVisible, user }) {
                                             onLocationSelect={handleManualLocation}
                                         />
                                     </div>
+                                    <p style={{ color: 'gray', fontSize: '0.85rem' }}>If the address is not accurate, drag the pin on the map to the correct location. The latitude and longitude will update automatically.</p>
+
                                 </div>
                             </div>
 
@@ -645,7 +762,8 @@ export default function AddPlaceInfo({ setVisible, user }) {
                                 <div className="edit_place_info_basic_label">
                                     Opening Hours
                                 </div>
-                                <OpeningHours openingHours={formData.openingHours} setFormData={setFormData} />
+                                {/* <OpeningHours openingHours={formData.openingHours} setFormData={setFormData} /> */}
+                                <FoodVenueOpeningHours openingHours={formData.openingHours} setFormData={setFormData} />
                             </div>
                             <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">

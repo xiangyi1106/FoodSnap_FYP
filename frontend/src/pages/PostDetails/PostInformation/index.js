@@ -5,12 +5,13 @@ import Moment from 'react-moment';
 import { Dots, Public } from '../../../svg';
 import CIcon from '@coreui/icons-react';
 import {
-    cilLockLocked, cilPeople, cilThumbUp, cilCommentBubble, cilShare
+    cilLockLocked, cilPeople, cilThumbUp, cilCommentBubble, cilShare,
+    cilLocationPin
 } from '@coreui/icons';
 import PostMenu from '../../../components/post/PostMenu';
 import PostInteraction from '../../../components/PostInteraction/PostInteraction';
 
-const PostDetailsInformation = ({ post, user, feedComment }) => {
+const PostDetailsInformation = ({ post, user, feedComment, dispatch }) => {
     const [checkSaved, setCheckSaved] = useState();
     const [showMenu, setShowMenu] = useState();
 
@@ -19,9 +20,7 @@ const PostDetailsInformation = ({ post, user, feedComment }) => {
 
     return (
         <>
-            {/* Right part - Post Details and Comments */}
-            {/* <Box sx={{ flex: 1, padding: '10px 0px',height: '100vh', overflowY: 'auto' }} ref={postRef}> */}
-            <Box sx={{ flex: 1, padding: '10px 0px',height: '100vh'}} ref={postRef}>
+            <Box sx={{ flex: 1, padding: '10px 0px', height: '100vh' }} ref={postRef}>
                 <div className="post_header">
                     <Link
                         to={`/profile/${post?.user?.username}`}
@@ -39,6 +38,12 @@ const PostDetailsInformation = ({ post, user, feedComment }) => {
                                 . {post?.privacy === 'public' ? <Public color="#828387" /> : post?.privacy === 'followers' ? <CIcon icon={cilPeople} className="icon_size_12" style={{ marginLeft: '2px' }} /> : <CIcon icon={cilLockLocked} className="icon_size_12" style={{ marginLeft: '2px' }} />}
                             </div>
                         </div>
+                        {post?.location && post.location[0]?.name &&
+                            <span className='post_location'>
+                                <CIcon icon={cilLocationPin} style={{ color: 'red', position: 'relative', bottom: '1px', marginRight: '2px' }} className="icon_size_16" />
+                                {post.location[0].name}
+                            </span>
+                        }
                     </Link>
                     <div
                         className="post_header_right hover_style_1"
@@ -51,8 +56,8 @@ const PostDetailsInformation = ({ post, user, feedComment }) => {
                 <Typography variant="body1" sx={{ marginTop: 1, padding: '10px 15px' }}>
                     {post?.text}
                 </Typography>
-                <PostInteraction post={post} user={user} feedComment={feedComment} />
-                
+                <PostInteraction post={post} user={user} feedComment={feedComment} dispatch={dispatch} />
+
                 {showMenu && (
                     <PostMenu
                         userId={user.id}

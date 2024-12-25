@@ -26,6 +26,7 @@ const {
     checkFoodVenueInWishlist,
     getFoodVenueMapList,
     getSavedPost,
+    updateProfile,
 } = require("../controllers/user");
 
 const { authUser } = require("../middleware/auth");
@@ -55,6 +56,8 @@ router.put("/updateProfilePicture", authUser, updateProfilePicture);
 router.put("/updateCover", authUser, updateCover);
 
 router.put("/updateDetails", authUser, updateDetails);
+
+router.put("/updateProfile", authUser, updateProfile);
 
 router.put("/follow/:id", authUser, follow);
 

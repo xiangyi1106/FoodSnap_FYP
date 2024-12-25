@@ -48,10 +48,15 @@ const userSchema = mongoose.Schema({
         type: String,
         trim: true,
     },
+    // gender: {
+    //     type: String,
+    //     required: [true, "Gender is required"],
+    //     trim: true,
+    // },
     gender: {
         type: String,
-        required: [true, "Gender is required"],
-        trim: true,
+        enum: ['male', 'female', 'secret'],
+        default: null,
     },
     bYear: {
         type: Number,
@@ -67,6 +72,10 @@ const userSchema = mongoose.Schema({
         type: Number,
         required: true,
         trim: true,
+    },
+    birthday:{
+        type: Date,
+        default: null,
     },
     verified: {
         type: Boolean,
@@ -84,15 +93,6 @@ const userSchema = mongoose.Schema({
     }],
     search: [
         {
-            // termType: {
-            //     type: String,
-            //     required: true,
-            //     enum: ['user', 'term'], // Restrict to specific categories
-            // },
-            // termValue: {
-            //     type: String,
-            //     required: true,
-            // },
             searchTerm: {
                 type: String,
                 required: true,
@@ -106,21 +106,27 @@ const userSchema = mongoose.Schema({
     details: {
         about: {
             type: String,
+            default: '',
         },
         currentCity: {
             type: String,
+            default: '',
         },
         favouriteFood: {
             type: String,
+            default: '',
         },
         facebook: {
             type: String,
+            default: '',
         },
         instagram: {
             type: String,
+            default: '',
         },
         youtube: {
             type: String,
+            default: '',
         },
     },
     savedPosts: [{
@@ -148,14 +154,10 @@ const userSchema = mongoose.Schema({
     foodVenueWishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'FoodVenue', default: [] }],
     role: {
         type: String,
-        enum: ['user', 'admin', 'business_account'],
+        enum: ['user', 'admin', 'business'],
         default: 'user'
     },
     foodVenueOwned: { type: mongoose.Schema.Types.ObjectId, ref: 'FoodVenue', default: null },
-    // foodVenueMapList: {
-    //     type: Array,
-    //     default: [],
-    // },
 }, {
     timestamps: true,
 });

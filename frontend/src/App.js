@@ -84,10 +84,6 @@ function App() {
     posts: [],
     error: "",
   });
-  // useEffect(() => {
-  //   user && getAllPosts(page);
-  // }, [user]);
-  // Fetch posts when the component mounts or page changes
   useEffect(() => {
     if (user) {
       getAllPosts(page); // Fetch posts for the current page
@@ -109,6 +105,7 @@ function App() {
           },
         }
       );
+
       // Sort posts by createdAt after fetching
       const sortedPosts = currentPage === 1
         ? data // if it's the first page, just take the posts as they are
@@ -133,31 +130,7 @@ function App() {
       });
     }
   };
-  // const getAllPosts = async () => {
-  //   try {
-  //     dispatch({
-  //       type: "POSTS_REQUEST",
-  //     });
-  //     const { data } = await axios.get(
-  //       // `${process.env.REACT_APP_BACKEND_URL}/getAllPosts`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${user.token}`,
-  //         },
-  //       }
-  //     );
-  //     dispatch({
-  //       type: "POSTS_SUCCESS",
-  //       // payload: data,
-  //     });
-  //   } catch (error) {
-  //     dispatch({
-  //       type: "POSTS_ERROR",
-  //       payload: error.response.data.message,
-  //     });
-  //   }
-  // };
-
+  
   const fetchMorePosts = () => {
     setPage((prevPage) => prevPage + 1); // Fetch next page when user scrolls down
     console.log('Page', page)
@@ -180,7 +153,7 @@ function App() {
           <Route path="/resetpassword" element={<ResetPassword />} exact />
         </Route>
         <Route element={<LoginRoutes />}>
-          <Route path="/post/:id/:initialIndex" element={<PostDetailsPage user={user} />} exact />
+          <Route path="/post/:id/:initialIndex" element={<PostDetailsPage user={user} dispatch={dispatch} />} exact />
           <Route path="/post/:id" element={<PostPopup user={user} />} />
           <Route
             path="/profile/:username"
@@ -220,7 +193,7 @@ function App() {
           </Route>
           <Route path="/" element={<Layout user={user} />}>
             {/* <Route index element={<Feed posts={posts} user={user} />} /> */}
-            <Route index element={<Feed posts={posts} user={user} fetchMorePosts={fetchMorePosts} hasMore={hasMore} />} />
+            <Route index element={<Feed posts={posts} user={user} fetchMorePosts={fetchMorePosts} hasMore={hasMore} dispatch={dispatch} />} />
             <Route path="discover" element={<PublicFeed user={user} />} />
             <Route path="searchVenue" element={<SearchVenue user={user} />} />
             <Route path="myFoodJourney" element={<VisitedPlaceLayout user={user} />} />

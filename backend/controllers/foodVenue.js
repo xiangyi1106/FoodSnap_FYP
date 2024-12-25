@@ -247,7 +247,7 @@ exports.updateFoodVenueDetails = async (req, res) => {
     await foodVenue.save();
     
     // Return the updated food venue data
-    res.json({ success: true, message: 'Food venue updated successfully', data: foodVenue });
+    res.json({ success: true, message: 'Food venue updated successfully', updatedFoodVenue: foodVenue });
 
   } catch (error) {
     console.error(error);

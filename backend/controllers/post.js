@@ -200,22 +200,6 @@ exports.getAllPosts = async (req, res) => {
     // Sort the combined posts by createdAt
     allPosts.sort((a, b) => b.createdAt - a.createdAt);
 
-    // // Count total posts to check if there are more
-    // const totalPosts = await Post.countDocuments({
-    //   user: { $in: [req.user.id, ...following] },
-    // });
-
-    // // Calculate if more posts are available
-    // const hasMore = skip + limit < totalPosts;
-
-    // // Send back paginated posts and pagination info
-    // res.json({
-    //   posts: allPosts,
-    //   currentPage: page,
-    //   totalPosts: allPosts.length,
-    //   hasMore, // Indicates if there are more posts to load
-    // });
-
     res.json(allPosts);
 
   } catch (error) {
@@ -265,7 +249,6 @@ exports.toggleLike = async (req, res) => {
       return res.status(404).json({ message: 'Post not found' });
     }
 
-
     const likeIndex = post.likes.findIndex(like => like._id.toString() === userId);
 
     if (likeIndex !== -1) {
@@ -286,7 +269,7 @@ exports.toggleLike = async (req, res) => {
 
 
     await post.save();
-    res.json({ message: likeIndex !== -1 ? 'Post unliked' : 'Post liked', likes: post.likes.length });
+    res.json({ success: true, message: likeIndex !== -1 ? 'Post unliked' : 'Post liked', likes: post.likes });
 
   } catch (error) {
     console.error('Error liking post:', error);

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CIcon from '@coreui/icons-react';
-import { cilArrowLeft, cilCheckAlt, cilX } from '@coreui/icons';
+import { cilArrowLeft, cilCheckAlt, cilLocationPin, cilX } from '@coreui/icons';
 import './EditPlaceInfo.css';
 import TextField from '@mui/material/TextField';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
@@ -14,11 +14,20 @@ import { getFoodVenueDetails, updateFoodVenue } from '../../functions/foodVenue'
 import { toast } from 'react-toastify';
 import OtherInfoToggleButtons from './OtherInfoToggleButtons ';
 import { uploadMedias } from '../../functions/uploadMedia';
-import { validateImageType, validateLatitude, validateLongitude, validatePhoneNumber, validatePriceRange, validateWebsite } from '../../functions/fileUtils';
+import { toggleScroll, validateImageType, validateLatitude, validateLongitude, validatePhoneNumber, validatePriceRange, validateWebsite } from '../../functions/fileUtils';
 import axios from 'axios';
 import MapPicker from '../MapPicker/MapPicker';
+import { debounce } from 'lodash';
+import { CircularProgress, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import FoodVenueOpeningHours from './FoodVenueOpeningHours';
 
-export default function EditPlaceInfo({ setVisible, id, user }) {
+export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
+    
+    useEffect(() => {
+        toggleScroll(true);
+        return () => toggleScroll(false); // Re-enable scrolling on cleanup
+    }, []);
+    
     const [picture, setPicture] = useState('');
     const [cover, setCover] = useState('');
     const [venueId, setVenueId] = useState('');
@@ -70,8 +79,6 @@ export default function EditPlaceInfo({ setVisible, id, user }) {
                     otherInfo: response.otherinfo[0],
                     serviceCharge: response.serviceCharge || 0,
                     sstCharge: response.sstCharge || 0,
-                    // profilePicture: response.picture || null,
-                    // coverPicture: response.cover || null,
                     priceRange: response.priceRange || '',
                     openingHours: response.openingHours || {},
                     category: response.category && Array.isArray(response.category)
@@ -85,8 +92,6 @@ export default function EditPlaceInfo({ setVisible, id, user }) {
                 setLongitude(response.longitude || null);
                 setCover(response.cover || null);
                 setPicture(response.picture || null);
-
-
                 console.log(response);
 
             } catch (error) {
@@ -163,22 +168,12 @@ export default function EditPlaceInfo({ setVisible, id, user }) {
                 toast.error(`Unsupported file type. Only Jpeg, Png are allowed.`);
                 return; // Don't proceed further if the file type is invalid
             }
-            // setFormData(prevState => ({
-            //     ...prevState,
-            //     [type]: URL.createObjectURL(file)
-            // }));
             type === 'profilePicture' ? setPicture(URL.createObjectURL(file)) : setCover(URL.createObjectURL(file));
-
         }
     };
 
     const removePicture = (type) => {
-        // setFormData(prevState => ({
-        //     ...prevState,
-        //     [type]: null
-        // }));
         type === 'profilePicture' ? setPicture(null) : setCover(null);
-
     };
 
     const validateForm = () => {
@@ -284,6 +279,7 @@ export default function EditPlaceInfo({ setVisible, id, user }) {
 
             if (response &&  response.success) {
                 toast.success("Food venue updated successfully!");
+                setFoodVenue(response.updatedFoodVenue);
                 // Optionally, redirect or update state here
             } else {
                 toast.error("Error updating food venue");
@@ -293,7 +289,7 @@ export default function EditPlaceInfo({ setVisible, id, user }) {
         }
 
         console.log(formData);
-        // setVisible(false);
+        setVisible(false);
     }
 
     const [address, setAddress] = useState('');
@@ -301,6 +297,64 @@ export default function EditPlaceInfo({ setVisible, id, user }) {
     const [longitude, setLongitude] = useState(); // Default Johor Bahru
     const [error, setError] = useState('');
     const [manualSelection, setManualSelection] = useState(false);
+    const [locationList, setLocationList] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleItemClick = (index) => {
+        const selectedItem = locationList[index]; // Access the selected item directly from the list
+        // Parse lat and lon to floats before applying .toFixed
+        const latitude = parseFloat(selectedItem.lat);
+        const longitude = parseFloat(selectedItem.lon);
+
+        // Check if latitude and longitude are valid numbers
+        if (!isNaN(latitude) && !isNaN(longitude)) {
+            setLatitude(latitude.toFixed(7));  // Fix to 7 decimal places
+            setLongitude(longitude.toFixed(7));  // Fix to 7 decimal places
+            setAddress(selectedItem.display_name);
+        } else {
+            console.error("Invalid latitude or longitude");
+        }
+        setLocationList([]);
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            latitude: '',  // Set error for latitude if invalid
+            longitude: '', // Set error for longitude if invalid
+        }));
+    };
+    const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
+
+    const debouncedSearch = useCallback(
+        debounce((query) => {
+            setIsLoading(true);
+            const params = { q: query, format: "json", addressdetails: 1 };
+            const queryString = new URLSearchParams(params).toString();
+            const requestOptions = {
+                method: "GET",
+                redirect: "follow",
+            };
+            fetch(`${NOMINATIM_BASE_URL}${queryString}`, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    setLocationList(result);
+                    setIsLoading(false);
+                })
+                .catch((err) => {
+                    console.error("Error fetching data: ", err);
+                    setIsLoading(false);
+                });
+        }, 500),
+        [] // Empty dependency array ensures debounce is created only once
+    );
+
+    const handleLocationSearch = (e) => {
+        errors.address && setErrors((prevErrors) => ({
+            ...prevErrors,
+            address: ''
+        }))
+        const query = e.target.value;
+        setAddress(query);
+        debouncedSearch(query); // Call the memoized debounced search function
+    };
 
     const handleGeocode = async () => {
         try {
@@ -334,7 +388,11 @@ export default function EditPlaceInfo({ setVisible, id, user }) {
         setLatitude(latlng.lat.toFixed(7));
         setLongitude(latlng.lng.toFixed(7));
         setManualSelection(false);
-        setError('');
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            latitude: '',  // Set error for latitude if invalid
+            longitude: '', // Set error for longitude if invalid
+        }));
     };
 
     return (
@@ -447,20 +505,35 @@ export default function EditPlaceInfo({ setVisible, id, user }) {
                                         name="address"
                                         value={address}
                                         // onChange={(e) => setAddress(e.target.value)}
-                                        onChange={(e) => {
-                                            setAddress(e.target.value); setErrors((prevErrors) => ({
-                                                ...prevErrors,
-                                                address: ''
-                                            }))
-                                        }}
-                                        required
+                                        // onChange={(e) => {
+                                        //     setAddress(e.target.value); setErrors((prevErrors) => ({
+                                        //         ...prevErrors,
+                                        //         address: ''
+                                        //     }))
+                                        // }}
+                                        // required
+                                        onChange={handleLocationSearch}
                                     />
+                                    {isLoading ? (
+                                        <CircularProgress />
+                                    ) : (
+                                        <List>
+                                            {locationList.length > 0 && locationList.map((loc, index) => (
+                                                <ListItem key={index} button onClick={() => handleItemClick(index)}>
+                                                    <ListItemIcon>
+                                                        <CIcon icon={cilLocationPin} className="icon_size_22" />
+                                                    </ListItemIcon>
+                                                    <ListItemText primary={loc.display_name} />
+                                                </ListItem>
+                                            ))}
+                                        </List>
+                                    )}
                                     {errors.address && <span className="error_message">{errors.address}</span>}
                                     {error && <span className="error_message">{error}</span>}
-                                    <button onClick={handleGeocode} className='green_btn' style={{ margin: '10px 0', padding: '10px', cursor: 'pointer' }}>
+                                    {/* <button onClick={handleGeocode} className='green_btn' style={{ margin: '10px 0', padding: '10px', cursor: 'pointer' }}>
                                         Geocode Address
                                     </button>
-                                    <p style={{ color: 'gray', fontSize: '0.85rem' }}>Geocode address to get the accurate latitude and longitude. If fail to get the latitude and longitude, please adjust the location manually on the map. </p>
+                                    <p style={{ color: 'gray', fontSize: '0.85rem' }}>Geocode address to get the accurate latitude and longitude. If fail to get the latitude and longitude, please adjust the location manually on the map. </p> */}
                                     {/* Map Picker */}
                                     <div style={{ height: '300px', marginBottom: '10px' }}>
                                         <MapPicker
@@ -488,7 +561,6 @@ export default function EditPlaceInfo({ setVisible, id, user }) {
                                                 latitude: ''
                                             }))
                                         }}
-                                    // style={{ width: '35%' }}
                                     />
                                     {errors.latitude && <span className="error_message">{errors.latitude}</span>}
                                 </div>
@@ -552,7 +624,8 @@ export default function EditPlaceInfo({ setVisible, id, user }) {
                                 <div className="edit_place_info_basic_label">
                                     Opening Hours
                                 </div>
-                                <OpeningHours openingHours={formData.openingHours} setFormData={setFormData} />
+                                {/* <OpeningHours openingHours={formData.openingHours} setFormData={setFormData} /> */}
+                                <FoodVenueOpeningHours openingHours={formData.openingHours} setFormData={setFormData} />
                             </div>
                             <div className="edit_place_info_basic_row">
                                 <div className="edit_place_info_basic_label">

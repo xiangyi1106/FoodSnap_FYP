@@ -113,7 +113,13 @@ export default function VisitedPlaceLayout({ user }) {
     const handleClick = (post) => {
         // navigate(`/post/${postId}/${0}`);
         setSelectedPost(post);
+        setIsFeedCommentVisible(true);
     };
+
+    const handleImageClick = (postId, i) => {
+        navigate(`/post/${postId}/${i}`);
+    };
+
     return (
         <div className='search_venue'>
             {isFeedCommentVisible && selectedPost && <FeedComment post={selectedPost} user={user} setIsFeedCommentVisible={setIsFeedCommentVisible} />}
@@ -138,7 +144,7 @@ export default function VisitedPlaceLayout({ user }) {
                                 imageUrl={post.media && post.media.length > 0 ? post.media[0].url : ''} // Check if media exists and get the first image URL
                                 date={new Date(post?.createdAt).toLocaleDateString()} // Convert the date to a readable format
                                 title={post?.text ? post.text : ''} // Check if post content exists, otherwise provide a fallback title
-                                onClick={() => handleClick(post)} // Only allow click if media exists
+                                onClick={() => post?.media.length > 0 ? handleClick(post) : handleImageClick(post._id, 0)} // Only allow click if media exists
                                 location={post.location[0]?.name}
                             />
                         ))

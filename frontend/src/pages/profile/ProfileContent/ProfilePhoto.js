@@ -87,12 +87,12 @@ export default function ProfilePhoto() {
             </PhotoProvider> */}
             <ProfilePhotoGallery photos={photos}/>
             {/* </div> */}
-            {photos.total_count === 0 ?
+            {/* {photos.total_count === 0 ?
                 <div style={{ textAlign: 'center' }}>
                     <img src={`${process.env.PUBLIC_URL}/images/no-image.png`} className="" alt="profile_cover"></img>
                     <div style={{ color: 'gray', fontSize: '0.9rem', marginTop: '3px' }}>Sorry, there are currently no photos available.</div>
                 </div>
-                : ""}
+                : ""} */}
         </div>
     )
 }
