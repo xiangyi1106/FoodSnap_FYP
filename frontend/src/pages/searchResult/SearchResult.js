@@ -6,8 +6,10 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { getSearchResult } from '../../functions/user';
 import UserGrid from '../../components/SearchResult/UserGrid';
+import FeedComment from '../../components/post/FeedComment';
+import SharePostPopUp from '../../components/sharePostPopup';
 
-export default function SearchResult({ user }) {
+export default function SearchResult({ user, dispatch }) {
     const [combinedResults, setCombinedResults] = useState([]);
     const [filteredResults, setFilteredResults] = useState([]);
     const [activeTab, setActiveTab] = useState("All");
@@ -26,7 +28,7 @@ export default function SearchResult({ user }) {
         };
 
         fetchSearchResults();
-    }, [term]);
+    }, []);
 
     useEffect(() => {
         if (activeTab === "User") {
@@ -34,30 +36,52 @@ export default function SearchResult({ user }) {
         } else if (activeTab === "Post") {
             setFilteredResults(combinedResults.filter(item => item.type === 'post'));
         } else {
-            // Duplicate the example user ten times
-            // const exampleUser = {
-            //     type: 'user',
-            //     name: 'Test User',
-            //     username: 'testuser',
-            //     picture: 'https://res.cloudinary.com/dgcctevjo/image/upload/v1724231314/amy.chang/profile_pictures/ojrzff2lqfukkhxgvx5g.jpg'
-            // };
-            // const testUsers = Array(10).fill(exampleUser);
-            // setFilteredResults(testUsers);
             setFilteredResults(combinedResults); // Show all for "All" tab
         }
-        console.log("combine result", combinedResults);
-        console.log("filter result", filteredResults);
-
-        console.log(activeTab);
     }, [activeTab, combinedResults]);
+
+    const [selectedPost, setSelectedPost] = useState("");
+    const [isFeedCommentVisible, setIsFeedCommentVisible] = useState(true);
+    const [isShareVisible, setIsShareVisible] = useState(false);
+    const [sharesCount, setSharesCount] = useState(0);
+    const [selectedSharePost, setSelectedSharePost] = useState(null);
+
+    // const updateProfilePosts = (newPost) => {
+    //     const updatedPosts = filteredResults.map(post =>
+    //         post._id === newPost._id ? newPost : post // Replace the old post with the new post by matching the _id
+    //     );
+    //     setFilteredResults(updatedPosts); // Update the profile posts state
+    // };
+
+    // const fetchPostById = async (postId) => {
+    //     try {
+    //         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/post/${postId}`, {
+    //             headers: {
+    //                 Authorization: `Bearer ${user.token}`,
+    //             },
+    //         });
+    //         setSelectedPost(response.data);
+    //         updateProfilePosts(response.data);
+    //         console.log(response.data);
+    //     } catch (error) {
+    //         console.error('Error fetching the post data:', error);
+    //     }
+    // };
+
+    // useEffect(() => {
+    //     if (selectedPost) {
+    //         fetchPostById(selectedPost._id);
+    //     }
+    // }, [selectedPost])
 
     return (
         <div className='food_event_container'>
+            {isFeedCommentVisible && selectedPost && <FeedComment post={selectedPost} user={user} setIsFeedCommentVisible={setIsFeedCommentVisible} setIsShareVisible={setIsShareVisible} dispatch={dispatch} sharesCount={sharesCount} setSharesCount={setSharesCount} setSelectedSharePost={setSelectedSharePost}/>}
+            {isShareVisible && <SharePostPopUp setIsShareVisible={setIsShareVisible} post={selectedPost} user={user} dispatch={dispatch} />}
             <div style={{ padding: '10px 35px 0px 35px', marginTop: '10px' }}>
                 <div style={{ width: '200px', margin: '10px 0px 20px 0' }}>
                     <Tabs
                         tabs={["All", "User", "Post"]}
-                        // onSelectTab={setActiveTab} // Handler to change the active tab
                         setActiveTab={setActiveTab}
                         activeTab={activeTab}
                     />
@@ -90,6 +114,14 @@ export default function SearchResult({ user }) {
                             subtitle="Displaying posts related to your search term."
                             user={user}
                             activeTab={activeTab}
+                            dispatch={dispatch}
+                            setSharesCount={setSharesCount}
+                            sharesCount={sharesCount}
+                            setSelectedPost={setSelectedPost}
+                            setIsFeedCommentVisible={setIsFeedCommentVisible}
+                            setIsShareVisible={setIsShareVisible}
+                            setSelectedSharePost={setSelectedSharePost}
+
                         />
                     ) : (
                         <div>
@@ -106,13 +138,20 @@ export default function SearchResult({ user }) {
                             )}
                             {filteredResults.filter(item => item.type === 'post').length > 0 && (
                                 <>
-                                <SearchPostList
-                                    posts={filteredResults.filter(item => item.type === 'post')}
-                                    title="Posts"
-                                    subtitle="Displaying posts related to your search term."
-                                    user={user}
-                                    activeTab={activeTab}
-                                />
+                                    <SearchPostList
+                                        posts={filteredResults.filter(item => item.type === 'post')}
+                                        title="Posts"
+                                        subtitle="Displaying posts related to your search term."
+                                        user={user}
+                                        activeTab={activeTab}
+                                        dispatch={dispatch}
+                                        setSharesCount={setSharesCount}
+                                        sharesCount={sharesCount}
+                                        setSelectedPost={setSelectedPost}
+                                        setIsFeedCommentVisible={setIsFeedCommentVisible}
+                                        setIsShareVisible={setIsShareVisible}
+                                        setSelectedSharePost={setSelectedSharePost}
+                                    />
                                 </>
                             )}
                         </div>

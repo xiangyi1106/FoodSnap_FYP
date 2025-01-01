@@ -5,8 +5,9 @@ import dataURItoBlob from "../../helpers/dataURItoBlob";
 import { ClipLoader } from "react-spinners";
 import { uploadMedias } from "../../functions/uploadMedia";
 import { addComment } from "../../functions/post";
+import { toast } from "react-toastify";
 
-export default function CreateComment({ user, postId, setComments, setCount, setCommentCount, focusInput }) {
+export default function CreateComment({ user, postId, setComments, setCount, setCommentCount, focusInput, dispatch, onCommentAdded }) {
     const [picker, setPicker] = useState(false);
     const [text, setText] = useState("");
     const [error, setError] = useState("");
@@ -47,44 +48,85 @@ export default function CreateComment({ user, postId, setComments, setCount, set
         reader.onload = (event) => {
             setCommentImage(event.target.result);
         };
+        console.log(commentImage);
     };
 
     const handleComment = async (e) => {
-        if (e.key === "Enter") {
-            if (commentImage != "") {
-                setLoading(true);
-                const img = dataURItoBlob(commentImage);
-                const path = `${user.username}/comment_images/${postId}`;
-                let formData = new FormData();
-                formData.append("path", path);
-                formData.append("file", img);
-                const imgComment = await uploadMedias(formData, path, user.token);
+        try {
+            if (e.key === "Enter") {
+                if(text === ''){
+                    toast.error("Please enter content before posting comment.");
+                    return;
+                }
+                if (commentImage != "") {
+                    setLoading(true);
+                    const img = dataURItoBlob(commentImage);
+                    const path = `${user.username}/comment_images/${postId}`;
+                    let formData = new FormData();
+                    formData.append("path", path);
+                    formData.append("file", img);
+                    const imgComment = await uploadMedias(formData, path, user.token);
+                    console.log(imgComment);
+                    const comments = await addComment(
+                        postId,
+                        user.id,
+                        text,
+                        imgComment[0].url,
+                        user.token
+                    );
+                    console.log(comments);
+                    setComments((prev) => [comments, ...(prev || [])]);
+                    setCount((prev) => ++prev || 0);
+                    setCommentCount((prev) => ++prev);
+                    dispatch({
+                        type: "UPDATE_COMMENT_COUNT",
+                        payload: {
+                            postId,
+                            updates: {
+                                comments: (prev) => [comments, ...prev],
+                                commentCount: (prevCount) => prevCount + 1,
+                                commentVisibleCount: (prevCount) => prevCount + 1,
+                            },
+                        },
+                    });
+                    setLoading(false);
+                    setText("");
+                    setCommentImage("");
+                    imgInput.current.value = ""; // Reset the file input
+                } else {
 
-                const comments = await addComment(
-                    postId,
-                    user.id,
-                    text,
-                    imgComment[0].url,
-                    user.token
-                );
-                setComments((prevComments) => [comments, ...prevComments]);
-                setCount((prev) => ++prev);
-                setCommentCount((prev) => ++prev);
-                setLoading(false);
-                setText("");
-                setCommentImage("");
-            } else {
-                setLoading(true);
-
-                const comments = await addComment(postId, user.id, text, "", user.token);
-                setComments((prevComments) => [comments, ...prevComments]);
-                setCommentCount((prev) => ++prev);
-                setCount((prev) => ++prev);
-                setLoading(false);
-                setText("");
-                setCommentImage("");
+                    setLoading(true);
+                    const comments = await addComment(postId, user.id, text, "", user.token);
+                    // setComments((prevComments) => [comments, ...prevComments]);
+                    // setCommentCount((prev) => ++prev);
+                    // setCount((prev) => ++prev);
+                    if (comments) {
+                        setComments((prev) => [comments, ...prev]);
+                        setCommentCount((prev) => prev + 1);
+                        setCount((prev) => ++prev);
+                        // onCommentAdded(comments); // Notify parent about the new comment
+                        dispatch({
+                            type: "UPDATE_COMMENT_COUNT",
+                            payload: {
+                                postId,
+                                updates: {
+                                    comments: (prev) => [comments, ...prev],
+                                    commentCount: (prevCount) => prevCount + 1,
+                                    commentVisibleCount: (prevCount) => prevCount + 1,
+                                },
+                            },
+                        });
+                    }
+                    setLoading(false);
+                    setText("");
+                    setCommentImage("");
+                }
             }
+
+        } catch (error) {
+            toast.error("Error creating comment, please try again.");
         }
+
     };
 
     useEffect(() => {
@@ -99,7 +141,7 @@ export default function CreateComment({ user, postId, setComments, setCount, set
                 <div className="comment_input_wrap">
                     {picker && (
                         <div className="comment_emoji_picker">
-                            <Picker onEmojiClick={handleEmoji} height={300} searchDisabled={true} autoFocusSearch={false} skinTonesDisabled={false} previewConfig={{ showPreview: false }} />
+                            <Picker onEmojiClick={handleEmoji} height={180} searchDisabled={true} autoFocusSearch={false} skinTonesDisabled={false} previewConfig={{ showPreview: false }} />
                         </div>
                     )}
                     <input
@@ -149,9 +191,12 @@ export default function CreateComment({ user, postId, setComments, setCount, set
                     <img src={commentImage} alt="" />
                     <div
                         className="small_white_circle"
-                        onClick={() => setCommentImage("")}
+                        onClick={() => {
+                            setCommentImage(""); 
+                            imgInput.current.value = ""; // Reset the file input
+                        }}
                     >
-                        <i className="exit_icon"></i>
+                        <i className="exit_icon" style={{right: '4px', top: '5px'}}></i>
                     </div>
                 </div>
             )}

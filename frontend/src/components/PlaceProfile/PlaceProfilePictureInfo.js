@@ -13,23 +13,21 @@ export default function PlaceProfilePictureInfo({ foodVenue, user, setFoodVenue 
 
   const [wishlist, setWishlist] = useState([]);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [validityToEditFoodVenue, setValidityToEditFoodVenue] = useState(false);
 
   useEffect(() => {
     const checkWishlistStatus = async () => {
       const isInWishlist = await checkFoodVenueInWishlist(foodVenue._id, user.token);
       setIsWishlisted(isInWishlist);
     };
-  
     checkWishlistStatus();
+    if (user.role === 'business' && user.foodVenueOwned === foodVenue._id) {
+      setValidityToEditFoodVenue(true);  // Set validity to true if both conditions are met
+    }
   }, []);
 
 
   const handleWishlistToggle = async () => {
-    // const result = isWishlisted
-    //   ? await removeFromFoodVenueWishlist(foodVenue._id, user.token)
-    //   : await addToFoodVenueWishlist(foodVenue._id, user.token);
-    // setIsWishlisted((prev)=> );
-    // console.log(result);
     try {
       // Toggle wishlist state
       const newWishlistStatus = !isWishlisted;
@@ -47,6 +45,7 @@ export default function PlaceProfilePictureInfo({ foodVenue, user, setFoodVenue 
 
   return (
     <div className='profile_picture_wrapper' style={{ padding: '0 4rem' }}>
+      {/* {visible && validityToEditFoodVenue && <EditPlaceInfo setVisible={setVisible} id={foodVenue._id} user={user} setFoodVenue={setFoodVenue}/>} */}
       {visible && <EditPlaceInfo setVisible={setVisible} id={foodVenue._id} user={user} setFoodVenue={setFoodVenue}/>}
       <div className='profile_picture_left'>
         <div className='profile_picture'>
@@ -72,7 +71,7 @@ export default function PlaceProfilePictureInfo({ foodVenue, user, setFoodVenue 
               </div>
             </span>
             <div className='badge_category_container source-sans-3-bold'>
-              {foodVenue && foodVenue.category.length > 0 && foodVenue.category.map((c) => (
+              {foodVenue && foodVenue?.category?.length > 0 && foodVenue.category.map((c) => (
                 <span className='badge_category' key={c}>
                   {c}
                 </span>
@@ -85,11 +84,12 @@ export default function PlaceProfilePictureInfo({ foodVenue, user, setFoodVenue 
         className='profile_picture_right'
         style={{ gap: '15px', position: 'relative', top: '20px' }}
       >
-        <Tooltip title='Edit Information'>
+        {/* {validityToEditFoodVenue && <Tooltip title='Edit Information'> */}
+          {<Tooltip title='Edit Information'>
           <IconButton aria-label='edit' sx={{ border: '1px solid gray' }} onClick={() => setVisible(true)}>
             <CIcon icon={cilColorBorder} className='icon_size_20' />
           </IconButton>
-        </Tooltip>
+        </Tooltip>}
         <Tooltip title='Save Wishlist Place'>
           <IconButton aria-label='save'
             sx={{

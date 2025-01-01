@@ -83,11 +83,14 @@ exports.saveFoodVenues = async (req, res) => {
       ...venue,
       picture: venue.picture || "",
       cover: venue.cover || "", // URL to a cover image of the venue
-      phone: venue.phone || "",
-      website: venue.website || "",
+      phone: "",
+      website: "",
+      address: venue.address || "",
+      priceRange: venue.priceRange || "",
       description: venue.description || "",
       latitude: venue.latitude || 0,
       longitude: venue.longitude || 0,
+      openingHours: venue.openingHours || {},
       category: venue.category || [], // Default category if not provided
       otherinfo: venue.otherinfo || [{
         halalOptions: 'No',
@@ -103,7 +106,7 @@ exports.saveFoodVenues = async (req, res) => {
         acceptsCreditCards: 'Yes',
         acceptsTNGBoostQRPayment: 'Yes',
       }],
-      dishesType: venue.dishesType || [], // Default to an empty array if not provided
+      // dishesType: venue.dishesType || [], // Default to an empty array if not provided
     }));
 
     // Save the array of foodVenues to the database
@@ -130,7 +133,7 @@ exports.getFoodVenues = async (req, res) => {
     // Use regex to perform a case-insensitive search on the address field
     const foodVenues = await FoodVenue.find({
       address: { $regex: address, $options: 'i' } // 'i' makes it case-insensitive
-    });
+    }).sort({ rating: -1 });
 
     // Check if any food venues were found
     if (foodVenues.length === 0) {
@@ -152,7 +155,7 @@ exports.getFoodVenueDetails = async (req, res) => {
     const id = req.params.id;
     const foodVenue = await FoodVenue.findById(id);
     if (!foodVenue) {
-      return res.status(404).json({ message: 'Event not found' });
+      return res.status(404).json({ message: 'Food venue not found' });
     }
 
     res.json(foodVenue);
@@ -179,27 +182,9 @@ exports.updateFoodVenueDetails = async (req, res) => {
     priceRange,
     openingHours,
     category,
-    profilePicture,
-    coverPicture,
+    // profilePicture,
+    // coverPicture,
   } = req.body;
-
-  console.log(
-    restaurantName,
-    address,
-    latitude,
-    longitude,
-    phone,
-    website,
-    description,
-    otherInfo,
-    serviceCharge,
-    sstCharge,
-    priceRange,
-    openingHours,
-    category,
-    profilePicture,
-    coverPicture,
-  );
 
   try {
     // Find the existing food venue by its ID
@@ -207,6 +192,24 @@ exports.updateFoodVenueDetails = async (req, res) => {
     if (!foodVenue) {
       return res.status(404).json({ success: false, message: 'Food venue not found' });
     }
+
+    const userId = req.user.id; // For example, from a JWT token
+    const user = await User.findById(userId);
+
+    // If user doesn't exist or their role isn't 'business_owner', reject the request
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.',
+      });
+    }
+
+    // if (user.role !== 'business' || user.foodVenueOwned !== id) {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: 'You must be the business owner to edit the information.',
+    //   });
+    // }
 
     let categoryArray = [];
 
@@ -245,7 +248,7 @@ exports.updateFoodVenueDetails = async (req, res) => {
 
     // Save the updated food venue to the database
     await foodVenue.save();
-    
+
     // Return the updated food venue data
     res.json({ success: true, message: 'Food venue updated successfully', updatedFoodVenue: foodVenue });
 
@@ -282,10 +285,18 @@ exports.updateMenu = async (req, res) => {
     }
 
     // Save the updated food venue
-    await foodVenue.save();
+    const updatedFoodVenue = await foodVenue.save();
 
     // Return the updated food venue
-    res.status(200).json(foodVenue);
+    // res.status(200).json(foodVenue.menu);
+    // Return the updated food venue with the menu array
+    res.status(200).json({
+      success: true,
+      message: 'Menu updated successfully',
+      foodVenue: updatedFoodVenue,  // Optionally, return the full updated food venue
+      menu: updatedFoodVenue.menu   // Return just the updated menu
+    });
+
   } catch (error) {
     console.error("Error updating menu:", error);
     res.status(500).json({ error: 'Failed to update menu.' + error.message });
@@ -301,13 +312,18 @@ exports.searchFoodVenue = async (req, res) => {
     console.log(foodVenueName);
     console.log(location);
 
+     // Escape special characters for regex
+     const escapeRegex = (text) => {
+      return text.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+    };
+
     var foodVenues = [];
     if (foodVenueName !== "") {
       foodVenues = await FoodVenue.find({
         $and: [
-          { name: { $regex: `^${foodVenueName}`, $options: 'i' } }, // Match in text
-          { address: { $regex: location, $options: 'i' } }, // Match in text
-          // { location: { $elemMatch: { name: { $regex: location, $options: 'i' } } } } // Match in location array's name field
+          // { name: { $regex: `^${foodVenueName}`, $options: 'i' } }, // Match in text
+          { name: { $regex: escapeRegex(foodVenueName), $options: 'i' } },
+          { address: { $regex: escapeRegex(location), $options: 'i' } }, // Match in text
         ],
       })
         .sort({ rating: -1 }); // Sort by newest to oldest
@@ -317,14 +333,6 @@ exports.searchFoodVenue = async (req, res) => {
       })
         .sort({ rating: -1 }); // Sort by newest to oldest
     }
-    // const foodVenues = await FoodVenue.find({
-    //   $and: [
-    //     { name: { $regex: `^${foodVenueName}`, $options: 'i' } }, // Match in text
-    //     { address: { $regex: location, $options: 'i' } }, // Match in text
-    //     // { location: { $elemMatch: { name: { $regex: location, $options: 'i' } } } } // Match in location array's name field
-    //   ],
-    // })
-    //   .sort({ rating: -1 }); // Sort by newest to oldest
     res.json(foodVenues);
 
   } catch (error) {
@@ -397,11 +405,11 @@ exports.createFoodVenue = async (req, res) => {
       });
     }
 
-    // if (user.role !== 'business') {
-    //   return res.status(403).json({
-    //     message: 'You must be a business owner to create a food venue.',
-    //   });
-    // }
+    if (user.role !== 'business' || user.foodVenueOwned !== null) {
+      return res.status(403).json({
+        message: 'You must be a business owner and not already own a food venue to create one.',
+      });
+    }
 
     let categoryArray = [];
 
@@ -445,7 +453,7 @@ exports.createFoodVenue = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
-        foodVenue: savedFoodVenue._id,  // Associate foodVenue ID with the user
+        foodVenueOwned: savedFoodVenue._id,  // Associate foodVenue ID with the user
       },
       { new: true } // Return the updated document
     );
@@ -463,5 +471,67 @@ exports.createFoodVenue = async (req, res) => {
       message: 'Error creating food venue',
       error: error.message,
     });
+  }
+};
+
+// exports.searchFoodVenuesByFilter = async (req, res) => {
+//   const { categories, priceLevel } = req.body;
+
+//   const query = {};
+
+//   if (categories && categories.length > 0) {
+//     query.category = { $in: categories };
+//   }
+
+//   if (priceLevel) {
+//     query.priceRange = priceLevel;
+//   }
+
+//   // if (features && features.length > 0) {
+//   //   query['otherinfo'] = { $elemMatch: { feature: { $in: features } } };
+//   // }
+
+//   try {
+//     const venues = await FoodVenue.find(query);
+//     res.json(venues);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Error fetching venues' });
+//   }
+// }
+
+exports.searchFoodVenuesByFilter = async (req, res) => {
+  const { categories, priceLevel, location } = req.body;
+
+  const query = {};
+
+  // Handle categories filter
+  if (categories && categories.length > 0) {
+    query.category = { $in: categories };
+  }
+
+  // Handle priceLevel filter
+  if (priceLevel) {
+    if (priceLevel === 'RM1-20') {
+      // Show only RM0-10 price range venues
+      query.priceRange = 'RM1-20';
+    } else if (priceLevel === 'RM20-40') {
+      // Exclude RM0-10 price range venues, show RM10-20 only
+      query.priceRange = { $ne: 'RM1-20' }; // Exclude RM0-10
+    } else {
+      // For other price levels, use them as-is
+      query.priceRange = priceLevel;
+    }
+  }
+
+  if (location) {
+    query.address = { $regex: new RegExp(location, 'i') }; // Case-insensitive regex match for location
+  }
+
+  try {
+    // Find venues with the query filters applied
+    const venues = await FoodVenue.find(query);
+    res.json(venues);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching venues' });
   }
 };

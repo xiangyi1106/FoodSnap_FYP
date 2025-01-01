@@ -6,6 +6,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import MobileBottomNavigation from "../../components/home/BottomNavigation";
 import CreatePostPopUp from "../../components/createPostPopup";
+import MobileNav from "../../components/home/Navbar/MobileNav";
 
 export default function Layout({user}) {
     const location = useLocation();
@@ -24,7 +25,8 @@ export default function Layout({user}) {
             <LeftMenu />
             {visible && <CreatePostPopUp setVisible={setVisible} setIsPostLoading={setIsPostLoading} user={user} />}
             <Outlet />
-            {width481 && <MobileBottomNavigation />}
+            {/* {width481 && <MobileBottomNavigation />} */}
+            {/* {width481 && <MobileNav />} */}
         </div>
     );
 }

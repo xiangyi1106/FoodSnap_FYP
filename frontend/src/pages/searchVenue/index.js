@@ -21,8 +21,10 @@ export default function SearchVenue({user}) {
     const [selected, setSelected] = useState(localStorage.getItem('currentLocation') || '');
     const [foodVenues, setFoodVenues] = useState([]);
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const [isAddFoodVenueOpen, setIsAddFoodVenueOpen] = useState(false);
     const [isAISearchVisible, setIsAISearchVisible] = useState(false);
+    const [validityToCreateFoodVenue, setValidityToCreateFoodVenue] = useState(false);
 
     const getFoodVenuesList = async () => {
         const response = await getFoodVenueData(selected, user.token);
@@ -39,11 +41,18 @@ export default function SearchVenue({user}) {
     };
 
     useEffect(()=>{
+        setLoading(true);
         getFoodVenuesList();
+        setLoading(false);
+        if (user.role === 'business' && user.foodVenueOwned === null) {
+            setValidityToCreateFoodVenue(true);  // Set validity to true if both conditions are met
+          }
     }, [])
+
 
     useEffect(()=>{
         getFoodVenuesList();
+        
     }, [selected])
 
     return (
@@ -53,10 +62,10 @@ export default function SearchVenue({user}) {
                 <Map addresses={addresses} selected={selected} foodVenues={foodVenues}/>
             </div>
             <div className='search_box'>
-                <SearchBox setVisible={setVisible} user={user} foodVenues={foodVenues} error={error} setFoodVenues={setFoodVenues} isAISearchVisible={isAISearchVisible} setIsAISearchVisible={setIsAISearchVisible}/>
+                <SearchBox setVisible={setVisible} user={user} foodVenues={foodVenues} error={error} setFoodVenues={setFoodVenues} isAISearchVisible={isAISearchVisible} setIsAISearchVisible={setIsAISearchVisible} loading={loading} setLoading={setLoading} />
             </div>
             {visible && <ChangeLocationModal setVisible={setVisible} visible={visible} setSelected={setSelected} selected={selected} />}
-            {!isAddFoodVenueOpen && !isAISearchVisible && 
+            {!isAddFoodVenueOpen && !isAISearchVisible && validityToCreateFoodVenue &&
             <Fab
                 color="#30BFBF"
                 aria-label="add"

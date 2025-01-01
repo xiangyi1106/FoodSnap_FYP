@@ -56,23 +56,23 @@ const userSchema = mongoose.Schema({
     gender: {
         type: String,
         enum: ['male', 'female', 'secret'],
-        default: null,
+        default: 'secret',
     },
-    bYear: {
-        type: Number,
-        required: true,
-        trim: true,
-    },
-    bMonth: {
-        type: Number,
-        required: true,
-        trim: true,
-    },
-    bDay: {
-        type: Number,
-        required: true,
-        trim: true,
-    },
+    // bYear: {
+    //     type: Number,
+    //     required: true,
+    //     trim: true,
+    // },
+    // bMonth: {
+    //     type: Number,
+    //     required: true,
+    //     trim: true,
+    // },
+    // bDay: {
+    //     type: Number,
+    //     required: true,
+    //     trim: true,
+    // },
     birthday:{
         type: Date,
         default: null,

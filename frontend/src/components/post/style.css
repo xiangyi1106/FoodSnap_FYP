@@ -104,20 +104,13 @@
   width: 100%;
   height: 610px;
   object-fit: cover;
-  /* height: auto;
-  object-fit: cover;
-  aspect-ratio: 16 / 9;  */
-  /* Or any aspect ratio you prefer */
 }
 
 .grid_1 {
   display: flex;
   height: 610px;
   justify-content: center;
-  /* height: auto;
-  object-fit: cover;
-  aspect-ratio: 16 / 9;  */
-  /* Or any aspect ratio you prefer */
+  background-color: 'black';
 }
 
 .grid_2 {
@@ -147,47 +140,6 @@
 .grid_2 :last-child {
   grid-column: 2 / span 1;
 }
-
-/* .grid_3 {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    background: #fff;
-    gap: 1px;
-  }
-  .grid_3 img, .grid_3 video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .grid_3 .img-0 {
-    width: 100%;
-    grid-column-start: 1;
-    grid-column-end: 2;
-    grid-row-start: 1;
-    grid-row-end: 3;
-    height: 610px;
-    object-fit: cover;
-  }
-  .grid_3 .img-1 {
-    width: 100%;
-    grid-column-start: 2;
-    grid-column-end: 3;
-    grid-row-start: 1;
-    grid-row-end: 2;
-    height: 305px;
-    object-fit: cover;
-  }
-  .grid_3 .img-2 {
-    width: 100%;
-    grid-column-start: 2;
-    grid-column-end: 3;
-    grid-row-start: 2;
-    grid-row-end: 3;
-    height: 305px;
-    object-fit: cover;
-  } */
 
 .grid_3 {
   height: 100%;
@@ -329,6 +281,67 @@
   height: 305px;
   object-fit: cover;
 }
+
+.grid_1 img, .grid_2 img, .grid_3 img, .grid_4 img, .grid_5 img {
+  object-fit: cover;
+  background-color: black;
+  /* width: auto; */
+}
+
+.postDetailsInformation {
+  /* If you want to apply styles to the whole container */
+  .grid_1 img, 
+  .grid_2 img, 
+  .grid_3 img, 
+  .grid_4 img, 
+  .grid_5 img {
+    /* Maintain aspect ratio and ensure images scale within their grid container */
+    width: auto; /* Or adjust it as necessary to fill the container */
+  }
+}
+
+
+/* This is the wrapper for each image/video item */
+.grid_1 .media-item, 
+.grid_2 .media-item, 
+.grid_3 .media-item, 
+.grid_4 .media-item, 
+.grid_5 .media-item,
+.media-background {
+    width: 100%;
+    height: 100%;
+    background-color: black; /* Black background for extra space */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* border-radius: 8px; Optional: add rounded corners to the media container */
+    overflow: hidden; /* Prevent the media from overflowing */
+}
+
+.post_grid_media .media-item{
+    height: 500px;
+}
+
+.post_grid_media .grid_1{
+  height: 500px!important;
+}
+
+.post_grid_media .grid_2 img, .post_grid_media .grid_2 video{
+  height: 500px;
+}
+
+.landscape {
+  width: 100%!important; /* Make landscape images fill the container horizontally */
+  /* object-fit: contain!important; */
+  height: 300px!important;
+}
+
+/* For portrait images */
+.portrait {
+  height: 100%; /* Make portrait images fill the container vertically */
+  object-fit: cover;
+}
+
 
 .more-pics-shadow {
   position: absolute;

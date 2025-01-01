@@ -19,10 +19,10 @@ export const addFoodVenueToProfileMap = async (formData, user) => {
 };
 
 
-export const getFoodVenuesMap = async (user) => {
+export const getFoodVenuesMap = async (user, id) => {
     try {
         const { data } = await axios.get(
-            `${process.env.REACT_APP_BACKEND_URL}/getFoodVenuesProfileMap`,
+            `${process.env.REACT_APP_BACKEND_URL}/getFoodVenuesProfileMap/${id}`,
             {
                 headers: {
                     Authorization: `Bearer ${user.token}`,

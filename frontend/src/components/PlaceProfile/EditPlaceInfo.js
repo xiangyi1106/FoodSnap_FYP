@@ -1,15 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CIcon from '@coreui/icons-react';
-import { cilArrowLeft, cilCheckAlt, cilLocationPin, cilX } from '@coreui/icons';
+import { cilLocationPin, cilX } from '@coreui/icons';
 import './EditPlaceInfo.css';
-import TextField from '@mui/material/TextField';
-import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
-import restaurantTypes from '../../data/restaurantType';
-import johorBahruAreas from '../../data/johorBahruAreas';
-import OpeningHours from './OpeningHours';
-import placeOtherInformation from '../../data/placeOtherInformation';
-import ColorToggleButton from './ToggleButton';
-import { foodVenueTypes } from '../../data/foodVenueTypes';
 import { getFoodVenueDetails, updateFoodVenue } from '../../functions/foodVenue';
 import { toast } from 'react-toastify';
 import OtherInfoToggleButtons from './OtherInfoToggleButtons ';
@@ -22,15 +14,16 @@ import { CircularProgress, List, ListItem, ListItemIcon, ListItemText } from '@m
 import FoodVenueOpeningHours from './FoodVenueOpeningHours';
 
 export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
-    
+
     useEffect(() => {
         toggleScroll(true);
         return () => toggleScroll(false); // Re-enable scrolling on cleanup
     }, []);
-    
+
     const [picture, setPicture] = useState('');
     const [cover, setCover] = useState('');
     const [venueId, setVenueId] = useState('');
+    const [isSubmitLoading, setIsSubmitLoading] = useState(false);
 
     const [formData, setFormData] = useState({
         restaurantName: '',
@@ -220,7 +213,7 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
     };
 
     const handleSave = async () => {
-
+        setIsSubmitLoading(true);
         clearError();
         formData.address = "";
         formData.latitude = null;
@@ -249,6 +242,7 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
         const errors = validateForm();
         if (Object.keys(errors).length > 0) {
             setErrors(errors);
+            setIsSubmitLoading(false);
             return;
         }
 
@@ -277,18 +271,20 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
         try {
             const response = await updateFoodVenue(id, formData, user);
 
-            if (response &&  response.success) {
+            if (response && response.success) {
                 toast.success("Food venue updated successfully!");
                 setFoodVenue(response.updatedFoodVenue);
                 // Optionally, redirect or update state here
             } else {
                 toast.error("Error updating food venue");
             }
+            setIsSubmitLoading(false);
+
         } catch (error) {
             toast.error("Error saving data: " + error.message);
+            setIsSubmitLoading(false);
         }
-
-        console.log(formData);
+        // console.log(formData);
         setVisible(false);
     }
 
@@ -414,13 +410,14 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
                                         accept="image/*"
                                         hidden
                                         ref={pictureInput}
+                                        disabled={isSubmitLoading}
                                         onChange={(e) => handlePictureChange(e, 'profilePicture')}
                                     />
                                     <div className="image_preview_container">
                                         {/* <img src={formData.profilePicture ? formData.profilePicture : `${process.env.PUBLIC_URL}/images/generative-image.png`} alt="Profile" className="profile_image" onClick={() => { pictureInput.current.click(); }} />
                                         {formData.profilePicture && <button onClick={() => removePicture('profilePicture')} className="small_white_circle"><CIcon icon={cilX} className="icon_size_22" /></button>} */}
-                                         <img src={picture ? picture : `${process.env.PUBLIC_URL}/images/generative-image.png`} alt="Profile" className="profile_image" onClick={() => { pictureInput.current.click(); }} />
-                                         {picture && <button onClick={() => removePicture('profilePicture')} className="small_white_circle"><CIcon icon={cilX} className="icon_size_22" /></button>}
+                                        <img src={picture ? picture : `${process.env.PUBLIC_URL}/images/generative-image.png`} alt="Profile" className="profile_image" onClick={() => { pictureInput.current.click(); }} />
+                                        {picture && <button onClick={() => removePicture('profilePicture')} className="small_white_circle"><CIcon icon={cilX} className="icon_size_22" /></button>}
                                     </div>
                                 </div>
 
@@ -432,6 +429,7 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
                                         accept="image/*"
                                         hidden
                                         ref={coverInput}
+                                        disabled={isSubmitLoading}
                                         onChange={(e) => handlePictureChange(e, 'coverPicture')}
                                     />
                                     <div className="image_preview_container">
@@ -454,6 +452,7 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
                                         className="edit_place_info_basic_input"
                                         name="restaurantName"
                                         value={formData.restaurantName}
+                                        disabled={isSubmitLoading}
                                         onChange={handleChange}
                                         required
                                     />
@@ -470,6 +469,7 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
                                         className="edit_place_info_basic_input"
                                         name="priceRange"
                                         value={formData.priceRange}
+                                        disabled={isSubmitLoading}
                                         onChange={handleChange}
                                         placeholder='RM20-40'
                                     // style={{width: '300px'}}
@@ -487,6 +487,7 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
                                         className="edit_place_info_basic_input"
                                         name="category"
                                         value={formData.category}
+                                        disabled={isSubmitLoading}
                                         onChange={handleChange}
                                         required
                                     />
@@ -513,9 +514,12 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
                                         // }}
                                         // required
                                         onChange={handleLocationSearch}
+                                        disabled={isSubmitLoading}
                                     />
                                     {isLoading ? (
-                                        <CircularProgress />
+                                        <div className='center'>
+                                        <CircularProgress size={30} sx={{ color: '#30BFBF' }} />
+                                        </div>
                                     ) : (
                                         <List>
                                             {locationList.length > 0 && locationList.map((loc, index) => (
@@ -554,6 +558,7 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
                                         name="latitude"
                                         // value={formData.latitude}
                                         value={latitude || ''}
+                                        disabled={isSubmitLoading}
                                         // onChange={handleChange}
                                         onChange={(e) => {
                                             setLatitude(e.target.value); setErrors((prevErrors) => ({
@@ -576,6 +581,7 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
                                         name="longitude"
                                         // value={formData.longitude}
                                         value={longitude || ''}
+                                        disabled={isSubmitLoading}
                                         // onChange={handleChange}
                                         onChange={(e) => {
                                             setLongitude(e.target.value); setErrors((prevErrors) => ({
@@ -600,6 +606,7 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
                                         name="phone"
                                         value={formData.phone}
                                         onChange={handleChange}
+                                        disabled={isSubmitLoading}
                                         placeholder='Eg: 012345678'
                                     // style={{ width: '35%' }}
                                     />
@@ -616,6 +623,7 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
                                         className="edit_place_info_basic_input "
                                         name="website"
                                         value={formData.website}
+                                        disabled={isSubmitLoading}
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -635,6 +643,7 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
                                     className="edit_place_info_basic_input"
                                     name="description"
                                     value={formData.description}
+                                    disabled={isSubmitLoading}
                                     onChange={handleChange}
                                     style={{ resize: 'none', height: '120px' }}
                                 />
@@ -654,6 +663,7 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
                                         name="serviceCharge"
                                         value={formData.serviceCharge}
                                         onChange={handleChargeChange}
+                                        disabled={isSubmitLoading}
                                         style={{ width: '35%' }}
                                         type='text'
                                     />
@@ -672,6 +682,7 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
                                         name="sstCharge"
                                         value={formData.sstCharge}
                                         onChange={handleChargeChange}
+                                        disabled={isSubmitLoading}
                                         style={{ width: '35%' }}
                                         type='text'
                                     />
@@ -682,12 +693,15 @@ export default function EditPlaceInfo({ setVisible, id, user, setFoodVenue }) {
 
                         </div>
                         <div className="edit_place_info_actions">
-                            <button className="green_btn save_button" onClick={handleSave}>
+                            {/* <button className="green_btn save_button" onClick={handleSave}>
                                 Save
+                            </button> */}
+                            <button className="green_btn save_button" onClick={handleSave} disabled={isSubmitLoading}>
+                                {!isSubmitLoading ? "Save" : <CircularProgress size={30} sx={{ color: 'white' }} />}
                             </button>
-                            <button className="white_btn cancel_button" onClick={() => setVisible(false)}>
+                            {/* <button className="white_btn cancel_button" onClick={() => setVisible(false)}>
                                 Cancel
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </div>

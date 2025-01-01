@@ -403,15 +403,7 @@ a {
   font-style: italic;
 }
 
-/* Modal */
-/* Ensure the scrollbar is always visible */
-body.modal-open {
-  /* overflow: hidden; */
-  /* padding-right: 17px; Adjust this value based on your scrollbar width */
-}
-
 .body.modal-open{
-  /* overflow: auto; */
   padding-right: 0!important;
 }
 

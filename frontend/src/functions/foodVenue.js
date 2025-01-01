@@ -203,30 +203,6 @@ export const updateFoodVenue = async (
     }
 };
 
-// export const createFoodVenue = async (
-//     formData,
-//     user
-// ) => {
-
-//     try {
-//         const { data } = await axios.post(
-//             `${process.env.REACT_APP_BACKEND_URL}/createFoodVenue`,
-//             {
-//                 formData
-//             },
-//             {
-//                 headers: {
-//                     Authorization: `Bearer ${user.token}`,
-//                 },
-//             }
-//         );
-//         return data;
-
-//     } catch (error) {
-//         console.log(error.response.data.message);
-//         return error.response.data.message;
-//     }
-// };
 export const createFoodVenue = async (formData, user) => {
     try {
         const { data } = await axios.post(
@@ -293,6 +269,35 @@ export const getAllFoodVenues = async (token) => {
     try {
         const { data } = await axios.get(
             `${process.env.REACT_APP_BACKEND_URL}/getAllFoodVenues`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return data;
+
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            return [];
+        }
+        // Handle other errors here if needed
+        console.error("Error:", error.response?.data?.message || "Unknown error");
+        return { message: "Failed to retrieve food venues." };
+    }
+};
+
+export const searchFoodVenuesByFilter = async (location, filters, token) => {
+    try {
+        const { data } = await axios.post(
+            `${process.env.REACT_APP_BACKEND_URL}/searchFoodVenuesByFilter`,
+            {
+                location,       // Include the location
+                // selectedCategories,
+                // selectedPriceLevels,
+                ...filters,
+                // Include all selected filters (categories, price level, features)
+            },
             {
                 headers: {
                     Authorization: `Bearer ${token}`,

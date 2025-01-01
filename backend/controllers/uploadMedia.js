@@ -27,7 +27,7 @@ exports.uploadImagesAndVideos = async (req, res) => {
     return res.json(media);
 
   } catch (error) {
-      return res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -55,10 +55,17 @@ const uploadToCloudinary = async (file, path, resourceType) => {
 };
 
 exports.listImages = async (req, res) => {
-  const { path, sort, max } = req.body;
+  const { path, sort, max, user } = req.body;
+  // Create the search expression to include images under the specified path
+  let searchExpression = `${path} AND resource_type:image`;
+
+  // Exclude images from the comment_images folder for the specific user
+  const excludePath = `${user.username}/comment_images/*`;
+  searchExpression += ` AND NOT public_id:${excludePath}`;
 
   cloudinary.v2.search
-    .expression(`${path} AND resource_type:image`)
+    // .expression(`${path} AND resource_type:image`)
+    .expression(searchExpression)
     .sort_by("created_at", `${sort}`)
     // .max_results(max)
     .execute()
@@ -70,69 +77,6 @@ exports.listImages = async (req, res) => {
       res.status(500).json({ error: err.error.message });
     });
 };
-
-// exports.listImages = async (req, res) => {
-//   const { path, sort, max } = req.body;
-
-//   cloudinary.v2.search
-//     .expression(`${path}`)
-//     .sort_by("created_at", `${sort}`)
-//     .max_results(max)
-//     .execute()
-//     .then((result) => {
-//       res.json(result);
-//     })
-//     .catch((err) => {
-//       console.log(err.error.message);
-//       res.status(500).json({ error: err.error.message });
-//     });
-// };
-
-// exports.listImages = async (req, res) => {
-//   const { path, sort, max } = req.body;
-
-//   try {
-//     const result = await cloudinary.v2.search
-//       .expression(`${path}`)
-//       .sort_by("created_at", `${sort}`)
-//       .max_results(max)
-//       .execute();
-
-//     // Filter the results to include only images and extract URLs
-//     const images = result.resources
-//       .filter(resource => resource.resource_type === "image")
-//       .map(resource => ({ url: resource.secure_url }));
-
-//     res.json(images);
-//   } catch (err) {
-//     console.log(err.error.message);
-//     res.status(500).json({ error: err.error.message });
-//   }
-// };
-
-// exports.listImages = async (req, res) => {
-//   const { path, sort, max } = req.body;
-
-//   try {
-//     const result = await cloudinary.v2.search
-//       .expression(`${path}`)
-//       .sort_by("created_at", `${sort}`)
-//       .max_results(max)
-//       .execute();
-
-//     console.log('Cloudinary response:', result.resources); // Debugging line
-
-//     // Filter the results to include only images
-//     const images = result.resources.filter(resource => resource.resource_type === "image");
-//     console.log(images);
-//     res.json(images);
-//   } catch (err) {
-//     console.log(err.error.message);
-//     res.status(500).json({ error: err.error.message });
-//   }
-// };
-
-
 
 const removeTmp = (path) => {
   fs.unlink(path, (err) => {

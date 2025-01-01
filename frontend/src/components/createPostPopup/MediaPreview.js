@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import CIcon from '@coreui/icons-react';
 import { cilX } from '@coreui/icons';
 import { useDropzone } from 'react-dropzone';
+import { toast } from 'react-toastify';
 
 export default function MediaPreview({ medias, setMedias, setPage, setError }) {
     const { getRootProps, getInputProps, open } = useDropzone({
@@ -17,12 +18,13 @@ export default function MediaPreview({ medias, setMedias, setPage, setError }) {
                     
                     // !file.type.startsWith("image/") &&
                     // !file.type.startsWith("video/")
-                    !['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4'].includes(file.type)
+                    !['image/jpeg', 'image/png', 'image/gif', 'video/mp4'].includes(file.type)
                 ) {
-                    setError(
-                        `Unsupported file type. Only Jpeg, Png, Webp, Gif, mp4 are allowed.`
-                        // `Unsupported file type. Only images and videos files are allowed.`
-                    );
+                    // setError(
+                    //     `Unsupported file type. Only Jpeg, Png, Gif, mp4 are allowed.`
+                    //     // `Unsupported file type. Only images and videos files are allowed.`
+                    // );
+                    toast.error(`Unsupported file type. Only Jpeg, Png, Gif, mp4 are allowed.`);
                     acceptedFiles = acceptedFiles.filter((item) => item.name !== file.name);
                     return;
                 }

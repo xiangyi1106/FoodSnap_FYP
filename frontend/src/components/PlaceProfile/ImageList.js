@@ -56,6 +56,8 @@ export default function MasonryImageList({user, foodVenue}) {
 
   return (
     <Box sx={{ width: '100%' }}>
+      {currentItems && currentItems.length > 0 ?
+      <div>
       <ImageList variant="masonry" cols={cols} gap={8}>
         {currentItems.map((imgUrl, index) => (
           <ImageListItem key={index}>
@@ -68,12 +70,17 @@ export default function MasonryImageList({user, foodVenue}) {
           </ImageListItem>
         ))}
       </ImageList>
+
       <Pagination
         count={Math.ceil(allImages.length / itemsPerPage)}
         page={page}
         onChange={handleChangePage}
         sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}
       />
+      </div> : <div className='center'>
+        No Photo Found
+      </div>
+}
     </Box>
   );
 }

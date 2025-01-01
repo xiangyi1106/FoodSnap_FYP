@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import PostDetailsInformation from '../../pages/PostDetails/PostInformation';
 import { toggleScroll } from '../../functions/fileUtils';
 
-export default function FeedComment({post, user, setIsFeedCommentVisible, dispatch }) {
+export default function FeedComment({ post, user, setIsFeedCommentVisible, dispatch, setIsShareVisible, sharesCount, setSharesCount, setSelectedSharePost, setPosts, fromPage }) {
     const [feedComment, setFeedComment] = useState(true);
     useEffect(() => {
         toggleScroll(true);
@@ -12,10 +12,10 @@ export default function FeedComment({post, user, setIsFeedCommentVisible, dispat
     }, []);
     return (
         <div className='blur place_detail_information'>
-            <div className='container_wrapper' style={{ backgroundColor: 'white', overflowY: 'scroll'  }}>
+            <div className='container_wrapper' style={{ backgroundColor: 'white', overflowY: 'scroll' }}>
                 <div className='close_button hover_style_2' ><CIcon icon={cilX} className="icon_size_22 close_button_icon" onClick={() => { setIsFeedCommentVisible(false); }} /></div>
-                <div style={{marginTop:'30px', padding: '10px 20px'}}>
-                <PostDetailsInformation post={post} user={user} feedComment={feedComment} setFeedComment={setFeedComment} dispatch={dispatch} />
+                <div style={{ marginTop: '30px', padding: '10px 20px' }}>
+                    <PostDetailsInformation post={post} user={user} feedComment={feedComment} setFeedComment={setFeedComment} dispatch={dispatch} setIsShareVisible={setIsShareVisible} sharesCount={sharesCount} setSharesCount={setSharesCount} setSelectedSharePost={setSelectedSharePost} setPosts={setPosts} fromPage={fromPage} />
                 </div>
             </div>
         </div>

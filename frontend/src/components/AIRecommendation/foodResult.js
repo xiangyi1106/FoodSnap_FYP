@@ -41,7 +41,7 @@ export default function FoodResult({ foodSuggestion, user, isFoodLoading, restau
                     </button>
                 ))}
             </div>
-            {visible && restaurantSuggestion.length > 0 && !isLoading && !isFoodLoading && (
+            {/* {visible && restaurantSuggestion.length > 0 && !isLoading && !isFoodLoading && (
                 <div>
                     <div className='' style={{display: 'flex', justifyContent: 'center'}}>
                         Best restaurants serving <span className='' style={{fontWeight: 'bold', margin: '0 4px'}}>{foodChoice}</span> in <span style={{fontWeight: 'bold',  margin: '0 4px'}}>{location}</span>:
@@ -64,7 +64,7 @@ export default function FoodResult({ foodSuggestion, user, isFoodLoading, restau
             {isLoading && <div className='preference_group'>
                 <div className='loader'></div>
                 <p>Loading ...</p>
-            </div>}
+            </div>} */}
         </div>
     )
 }

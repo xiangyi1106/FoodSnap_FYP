@@ -1,7 +1,11 @@
 import React from "react";
 import Post from "../post";
 
-const SearchPostList = ({ posts, title, subtitle, user, activeTab }) => {
+const SearchPostList = ({ posts, title, subtitle, user, activeTab, dispatch, setSharesCount, setSelectedPost, setIsFeedCommentVisible, setIsShareVisible, setSelectedSharePost }) => {
+    const handleShowFeedComment = (post) => {
+        setSelectedPost(post);
+        setIsFeedCommentVisible(true);
+    };
     return (
         <div className="userlists-section" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <h2 className="userlists-title">{title}</h2>
@@ -11,7 +15,7 @@ const SearchPostList = ({ posts, title, subtitle, user, activeTab }) => {
                 {posts && posts.length > 0 && (
                     <div className="posts">
                         {posts.map((post) => (
-                            <Post key={post._id} post={post} user={user} />
+                            <Post key={post._id} post={post} user={user} onShowFeedComment={handleShowFeedComment} dispatch={dispatch} setSharesCount={setSharesCount} setIsShareVisible={setIsShareVisible} setSelectedSharePost={setSelectedSharePost} />
                         ))}
                     </div>
                 )}

@@ -210,10 +210,10 @@
   padding-right: 10px;
 }
 
-.place_detail_information .create_comment_wrap {
+/* .place_detail_information .create_comment_wrap {
   padding: 10px 20px;
 
-}
+} */
 
 .place_detail_information .place_comment_id {
   display: flex;

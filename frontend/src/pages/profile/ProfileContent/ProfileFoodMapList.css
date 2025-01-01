@@ -92,3 +92,16 @@
     width: 400px;
   }
   
+  @media (max-width: 768px) { /* Tablet and below */
+    .foodMapListContainer {
+      grid-template-columns: 1fr; /* Single column layout for mobile */
+      padding: 12px; /* Adjust padding for smaller screens */
+    }
+  }
+  
+  @media (max-width: 480px) { /* Mobile and below */
+    .foodMapListContainer {
+      grid-template-columns: 1fr; /* Single column layout for mobile */
+      padding: 8px; /* Reduce padding for mobile */
+    }
+  }

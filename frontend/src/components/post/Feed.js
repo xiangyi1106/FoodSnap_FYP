@@ -3,6 +3,7 @@ import Post from "../post";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDispatch } from 'react-redux';
 import FeedComment from './FeedComment';
+import SharePostPopUp from '../sharePostPopup';
 
 export default function Feed({ posts, user, fetchMorePosts, hasMore, dispatch }) {
 
@@ -24,24 +25,18 @@ export default function Feed({ posts, user, fetchMorePosts, hasMore, dispatch })
         setIsFeedCommentVisible(true);
     };
 
-    // const dispatch = useDispatch();
-    // const handleUpdatePost = (updatedPost) => {
-    //     dispatch({ type: "UPDATE_POST", payload: updatedPost });
-    // };
+    const [selectedSharePost, setSelectedSharePost] = useState(null);
 
-    // const handleUpdatePost = (updatedPost) => {
-    //     setUserPosts((prevPosts) =>
-    //         prevPosts.map((post) =>
-    //             post._id === updatedPost._id ? { ...post, ...updatedPost } : post
-    //         )
-    //     );
-    // };
+    const [isShareVisible, setIsShareVisible] = useState(false);
+
+    const [sharesCount, setSharesCount] = useState(0);
 
     return (
         <div className='feed_middle' style={{ height: `${height + 80}px` }}>
-            {isFeedCommentVisible && selectedPost && <FeedComment post={selectedPost} user={user} setIsFeedCommentVisible={setIsFeedCommentVisible} dispatch={dispatch} />}
+            {isFeedCommentVisible && selectedPost && <FeedComment post={selectedPost} user={user} setIsFeedCommentVisible={setIsFeedCommentVisible} dispatch={dispatch} setIsShareVisible={setIsShareVisible} sharesCount={sharesCount} setSharesCount={setSharesCount} setSelectedSharePost={setSelectedSharePost} fromPage="feed" />}
+            {isShareVisible && <SharePostPopUp setIsShareVisible={setIsShareVisible} post={selectedSharePost} user={user} dispatch={dispatch} sharesCount={sharesCount} setSharesCount={setSharesCount} />}
             <div className="home_middle" ref={middle}>
-                <div className="posts">
+                <div className="posts postDetailsInformation">
                     {/* {posts.map((post) => (
                         <Post key={post._id} post={post} user={user} />
                     ))} */}
@@ -55,7 +50,7 @@ export default function Feed({ posts, user, fetchMorePosts, hasMore, dispatch })
                         endMessage={<p style={{ textAlign: 'center', color: 'gray' }}>No more posts available</p>}
                     >
                         {posts.map((post) => (
-                            <Post key={post._id} post={post} user={user} onShowFeedComment={handleShowFeedComment} dispatch={dispatch}/>
+                            <Post key={post._id} post={post} user={user} onShowFeedComment={handleShowFeedComment} dispatch={dispatch} setIsShareVisible={setIsShareVisible} setSelectedSharePost={setSelectedSharePost} sharesCount={sharesCount} setSharesCount={setSharesCount} fromPage="feed" />
                         ))}
                     </InfiniteScroll>
                 </div>

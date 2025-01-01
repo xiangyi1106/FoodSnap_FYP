@@ -53,6 +53,25 @@ export const fetchLikeStatus = async (postId, token) => {
   }
 };
 
+export const getCheckSaved = async (id, user) => {
+  try {
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_BACKEND_URL}/checkSaved/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
+
+    return data;
+
+  } catch (error) {
+    console.error(error);
+    return error.response.data.message;
+  }
+};
+
 export const fetchComments = async (postId, token) => {
   try {
     const { data } = await axios.get(
@@ -90,6 +109,7 @@ export const addComment = async (postId, userId, content, image, token) => {
     );
     return data;
   } catch (error) {
+    console.error("Error in addComment:", error.response);  
     return error.response.data.message;
   }
 };

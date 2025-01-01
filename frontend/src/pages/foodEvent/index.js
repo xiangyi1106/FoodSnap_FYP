@@ -8,16 +8,18 @@ import RollingBanner from '../../components/Banner/RollingBanner';
 import { Fab } from '@mui/material';
 import AddEvent from './addEvent/addEvent';
 import AddIcon from '@mui/icons-material/Add';
+import CardSkeleton from '../../components/Skeleton/CardSkeleton';
 
-export default function FoodEvent({user}) {
-    
+export default function FoodEvent({ user }) {
+
     const [events, setEvents] = useState([]);
     const [filteredEvents, setFilteredEvents] = useState([]); // State to store filtered events
     const [isCreateEventVisible, setIsCreateEventVisible] = useState(false);
-
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchEvents = async () => {
+            setLoading(true);
             try {
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/getPublicEvents`,
                 );
@@ -26,6 +28,7 @@ export default function FoodEvent({user}) {
             } catch (error) {
                 toast.error("Error fetching Events: " + error.message);
             }
+            setLoading(false);
         };
 
         fetchEvents();
@@ -52,16 +55,21 @@ export default function FoodEvent({user}) {
     return (
         <div className='food_event_container'>
             <RollingBanner messages={messages} />
-            {isCreateEventVisible && <AddEvent setIsCreateEventVisible={setIsCreateEventVisible} setEvents={setEvents} setFilteredEvents={setFilteredEvents} user={user}/>}
+            {isCreateEventVisible && <AddEvent setIsCreateEventVisible={setIsCreateEventVisible} setEvents={setEvents} setFilteredEvents={setFilteredEvents} user={user} />}
             <div className='food_event_container_title'>Food Events</div>
             <div className='filter_container'><PromotionFilter onResults={handleResults} isEvent={isEvent} /></div>
-            <div className="food_event_card_container">
-                {filteredEvents ? filteredEvents.map((event, index) => (
-                    <FoodEventCard key={index} event={event} isEvent={isEvent} />
-                )) : <div>
-                    No Event Found
-                </div>}
-            </div>
+            {loading ?
+                <>
+                    <CardSkeleton />
+                </> :
+                <div className="food_event_card_container">
+                    {filteredEvents ? filteredEvents.length > 0 && filteredEvents.map((event, index) => (
+                        <FoodEventCard key={index} event={event} isEvent={isEvent} />
+                    )) : <div>
+                        No Event Found
+                    </div>}
+                </div>
+            }
             {!isCreateEventVisible &&
                 <Fab
                     color="#30BFBF"
@@ -72,6 +80,7 @@ export default function FoodEvent({user}) {
                         bottom: 20,
                         right: 20,
                     }}
+                    className='fab_button'
                     onClick={() => setIsCreateEventVisible(true)}
                 >
                     Create Event <AddIcon />

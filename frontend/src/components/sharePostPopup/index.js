@@ -13,8 +13,13 @@ import axios from "axios";
 import PostInput from "../createPostPopup/PostInput";
 import PostTextArea from "../createPostPopup/PostTextArea";
 import { postReducer } from "../../functions/reducers";
+import { toggleScroll } from "../../functions/fileUtils";
 
-export default function SharePostPopUp({ setVisible, user, post }) {
+export default function SharePostPopUp({ setIsShareVisible, user, post, dispatch, setSharesCount }) {
+    useEffect(() => {
+        toggleScroll(true);
+        return () => toggleScroll(false); // Re-enable scrolling on cleanup
+    }, []);
     //Display the picker and media preview
     const [isShowPicker, setIsShowPicker] = useState(false);
     //Keep the cursor to the next of the text after typing emoji
@@ -43,7 +48,7 @@ export default function SharePostPopUp({ setVisible, user, post }) {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleClickClose = () => {
-        setVisible(false);
+        setIsShareVisible(false);
     };
 
     //Click out and close 
@@ -70,11 +75,21 @@ export default function SharePostPopUp({ setVisible, user, post }) {
                     },
                 }
             );
+            if (response.data.success) {
+                // Handle the server response
+                setIsShareVisible(false);
+                console.log(response.data);
+                dispatch({
+                    type: "UPDATE_SHARE_COUNT",
+                    payload: {
+                        _id: post._id, // Ensure post ID is sent
+                        shares: response.data.post.shares, // The updated likes array
+                    },
+                }); 
+                setSharesCount(response.data.post.shares.length);
+                toast.success(response.data.message);
+            }
 
-            // Handle the server response
-            setVisible(false);
-            console.log(response.data); // Log the result from the server
-            toast.success(response.data.message);
 
         } catch (error) {
             // Handle any errors that occur during the request
@@ -85,10 +100,10 @@ export default function SharePostPopUp({ setVisible, user, post }) {
     };
 
     return (
-        <div className="blur">
+        <div className="blur" style={{ zIndex: '999999999' }}>
             <div className="create_post_popup_wrapper" ref={createPostPopUpRef}>
                 <>
-                    <div className="create_post_popup_top">
+                    <div className="create_post_popup_top" style={{ zIndex: '999999999' }}>
                         <div className="create_post_popup_header">
                             <div><CIcon icon={cilX} className="icon_size_22 icon_button" onClick={handleClickClose} /></div>
                             <span className="create_post_popup_header_title">Share Post</span>

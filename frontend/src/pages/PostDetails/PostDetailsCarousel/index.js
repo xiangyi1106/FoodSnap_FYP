@@ -27,7 +27,7 @@ const PostDetailsCarousel = ({ media, currentIndex, setCurrentIndex, setVisible 
     <PhotoProvider
       toolbarRender={({ onScale, scale, onClose }) => {
         return (
-          <div style={{ display: 'flex', gap: '10px', color: '#fff' }} onClose={() => {setVisible(false);}}>
+          <div style={{ display: 'flex', gap: '10px', color: '#fff' }} onClose={() => { setVisible(false); }}>
             {/* Zoom In Button */}
             <button
               style={{
@@ -57,7 +57,7 @@ const PostDetailsCarousel = ({ media, currentIndex, setCurrentIndex, setVisible 
             >
               <CIcon icon={cilZoomOut} className="icon_size_20" />
             </button>
-            
+
           </div>
         );
       }}
@@ -65,10 +65,11 @@ const PostDetailsCarousel = ({ media, currentIndex, setCurrentIndex, setVisible 
     >
       <Slider {...settings}>
         {media.map((item, index) => (
-          <div key={index} >
+          <div key={index}>
             <PhotoView src={item.url} >
               {item.type === 'image' ? (
                 <img
+                  loading="lazy"
                   src={item.url}
                   alt={`media-${index}`}
                   style={{

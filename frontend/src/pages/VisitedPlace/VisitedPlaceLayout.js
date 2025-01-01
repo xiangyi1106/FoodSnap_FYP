@@ -9,8 +9,9 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import FeedComment from '../../components/post/FeedComment';
+import SharePostPopUp from '../../components/sharePostPopup';
 
-export default function VisitedPlaceLayout({ user }) {
+export default function VisitedPlaceLayout({ user, dispatch }) {
 
     const [posts, setPosts] = useState([]);
     const [selectedMonth, setSelectedMonth] = useState(dayjs().month());  // Make sure to call month() correctly with parentheses
@@ -52,10 +53,7 @@ export default function VisitedPlaceLayout({ user }) {
                 setPosts([]);
                 setFilteredPosts([]);
                 setFormattedSelectedDate(null);
-
             }
-           
-
         } catch (error) {
             if (error.response && error.response.status === 404) {
                 // Handle 404 (no posts found)
@@ -109,10 +107,14 @@ export default function VisitedPlaceLayout({ user }) {
 
     const [selectedPost, setSelectedPost] = useState("");
     const [isFeedCommentVisible, setIsFeedCommentVisible] = useState(true);
+    const [isShareVisible, setIsShareVisible] = useState(false);
+    const [sharesCount, setSharesCount] = useState(0);
+    const [selectedSharePost, setSelectedSharePost] = useState(null);
 
     const handleClick = (post) => {
         // navigate(`/post/${postId}/${0}`);
-        setSelectedPost(post);
+        // setSelectedPost(post);
+        fetchPostById(post._id);
         setIsFeedCommentVisible(true);
     };
 
@@ -120,9 +122,25 @@ export default function VisitedPlaceLayout({ user }) {
         navigate(`/post/${postId}/${i}`);
     };
 
+    // Fetch the specific post data when a post is selected (re-fetch to get updated like count)
+    const fetchPostById = async (postId) => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/post/${postId}`, {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            });
+            setSelectedPost(response.data); // Update selectedPost with latest data
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error fetching the post data:', error);
+        }
+    };
+
     return (
         <div className='search_venue'>
-            {isFeedCommentVisible && selectedPost && <FeedComment post={selectedPost} user={user} setIsFeedCommentVisible={setIsFeedCommentVisible} />}
+            {isFeedCommentVisible && selectedPost && <FeedComment post={selectedPost} user={user} setIsFeedCommentVisible={setIsFeedCommentVisible} setIsShareVisible={setIsShareVisible} dispatch={dispatch} sharesCount={sharesCount} setSharesCount={setSharesCount} setSelectedSharePost={setSelectedSharePost}/>}
+            {isShareVisible && <SharePostPopUp setIsShareVisible={setIsShareVisible} post={selectedPost} user={user} dispatch={dispatch} />}
             <div className='map' style={{ height: '100vh' }}>
                 <div className='month_selector source-sans-3-bold'>
                     <CustomCalendarHeader setSelectedMonth={setSelectedMonth} setSelectedYear={setSelectedYear} />
@@ -144,8 +162,15 @@ export default function VisitedPlaceLayout({ user }) {
                                 imageUrl={post.media && post.media.length > 0 ? post.media[0].url : ''} // Check if media exists and get the first image URL
                                 date={new Date(post?.createdAt).toLocaleDateString()} // Convert the date to a readable format
                                 title={post?.text ? post.text : ''} // Check if post content exists, otherwise provide a fallback title
-                                onClick={() => post?.media.length > 0 ? handleClick(post) : handleImageClick(post._id, 0)} // Only allow click if media exists
-                                location={post.location[0]?.name}
+                                onClick={() => {
+                                    if (post?.media && post.media.length > 0) {
+                                        handleImageClick(post?._id, 0); // Handle fallback if no media exists
+                                    } else {
+                                        handleClick(post); // Handle image click if media exists
+                                    }
+                                }}
+                                location={post?.location && post.location.length > 0 ? post.location[0]?.name : 'No Location'} // Check if location exists
+                                setSelectedSharePost={setSelectedSharePost}
                             />
                         ))
                     ) : (

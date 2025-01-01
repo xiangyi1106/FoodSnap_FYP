@@ -6,13 +6,15 @@ import AddPromotion from '../../pages/foodPromotion/AddPromotion/AddPromotion';
 import AddIcon from '@mui/icons-material/Add';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import CardSkeleton from '../Skeleton/CardSkeleton';
 
 export default function PlaceProfilePromotions({ user }) {
-  const { foodVenue } = useOutletContext(); // Fetch the user profile data from context
+  const { foodVenue} = useOutletContext(); // Fetch the user profile data from context
   const [promotions, setPromotions] = useState([]);
   const [filteredPromotions, setFilteredPromotions] = useState([]); // State to store filtered promotions
   const [isEvent, setIsEvent] = useState(false);
   const [isCreatePromotionVisible, setIsCreatePromotionVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchPromotions = async () => {
@@ -40,6 +42,10 @@ export default function PlaceProfilePromotions({ user }) {
   return (
     <div className='place_profile_photos'>
       {isCreatePromotionVisible && <AddPromotion setIsCreatePromotionVisible={setIsCreatePromotionVisible} user={user} setPromotions={setPromotions} setFilteredPromotions={setFilteredPromotions} foodVenue={foodVenue} />}
+      {loading ?
+        <>
+          <CardSkeleton />
+        </> :
       <div className="food_event_card_container">
         {filteredPromotions.length > 0 ? filteredPromotions.map((event, index) => (
           <FoodEventCard key={index} event={event} isEvent={isEvent} />
@@ -47,6 +53,7 @@ export default function PlaceProfilePromotions({ user }) {
           No Promotion Found
         </div>}
       </div>
+      }
       {!isCreatePromotionVisible &&
         <Fab
           color="#30BFBF"

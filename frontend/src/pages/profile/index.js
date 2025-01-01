@@ -19,6 +19,8 @@ import { Fab } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import ProfileFoodMapAddVenue from "./ProfileContent/ProfileFoodMap/ProfileFoodMapAddVenue";
 import { getFoodVenuesMap } from "../../functions/foodVenueMap";
+import ProfileSkeleton from "../../components/Skeleton/ProfileSkeleton";
+import { HashLoader } from "react-spinners";
 
 export default function Profile() {
   const { username } = useParams();
@@ -61,7 +63,7 @@ export default function Profile() {
         try {
           const images = await axios.post(
             `${process.env.REACT_APP_BACKEND_URL}/listImages`,
-            { path, sort, max },
+            { path, sort, max, user },
             {
               headers: {
                 Authorization: `Bearer ${user.token}`,
@@ -95,14 +97,16 @@ export default function Profile() {
   useEffect(() => {
     const fetchFoodVenues = async () => {
       try {
-        const response = await getFoodVenuesMap(user);
-        // Check if the response is not empty
-        if (response.success) {
-          setFoodVenuesMap(response.foodVenues); // Set all promotions
+        if (profile && profile._id) {
+          const response = await getFoodVenuesMap(user, profile._id);
+          if (response.success) {
+            setFoodVenuesMap(response.foodVenues || []);
+          }
+          console.log(response.foodVenues);
+        } else {
+          console.log("Profile ID is undefined or missing.");
         }
-        console.log(response.foodVenues);
       } catch (error) {
-        // setError(error.message); // Capture error message
         console.log("Error fetching food venues for my food map: " + error.message);
         setFoodVenuesMap([]);
       }
@@ -110,7 +114,7 @@ export default function Profile() {
     };
 
     fetchFoodVenues();
-  }, [user]);
+  }, [user, profile]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 2;
@@ -127,13 +131,17 @@ export default function Profile() {
 
   return (
     <div className="profile">
-      <Header />
+      <Header profile />
       <div className="profile_top">
         <div className="profile_container">
           {visible && <ProfileFoodMapAddVenue setVisible={setVisible} user={user} setFoodVenuesMap={setFoodVenuesMap} />}
-          <Cover visitor={visitor} cover={profile.cover} />
-          <ProfilePictureInfo profile={profile} visitor={visitor} user={user} />
-          {(isMyFoodMap || isMobile) && <ProfileMenu username={username} />}
+          {loading ? <ProfileSkeleton visitor={visitor} /> :
+            <>
+              <Cover visitor={visitor} cover={profile.cover} />
+              <ProfilePictureInfo profile={profile} visitor={visitor} user={user} dispatch={dispatch} />
+              {(isMyFoodMap || isMobile) && <ProfileMenu username={username} />}
+            </>
+          }
         </div>
       </div>
       <div className="profile_bottom">
@@ -146,11 +154,11 @@ export default function Profile() {
                   <div>
                     {!isMobile && <ProfileSidebar username={username} />}
                     <div className="relative_copyright" style={{ display: isMobile ? 'none' : '' }}>
-                      <Link to="/">Privacy </Link>
+                      {/* <Link to="/">Privacy </Link>
                       <span>. </span>
                       <Link to="/">Terms </Link>
                       <span>. </span>
-                      <Link to="/">Cookies</Link> <span>. </span>
+                      <Link to="/">Cookies</Link> <span>. </span> */}
                       FoodSnap © 2024
                     </div>
                   </div>
@@ -159,14 +167,21 @@ export default function Profile() {
                     <div className='profile_card_header'>
                       My Favorite Food Venue List
                     </div>
-                    <ProfileFoodMapList
-                      foodVenuesMap={foodVenuesMap}
-                      currentPage={currentPage}
-                      itemsPerPage={itemsPerPage}
-                      onPageChange={handlePageChange}
-                      isVisible={isVisible}
-                      setIsVisible={setIsVisible}
-                    />
+                    {loading ?
+                      <>
+                        <div className="skelton_loader">
+                          <HashLoader color="#30BFBF" />
+                        </div>
+                      </> :
+                      <ProfileFoodMapList
+                        foodVenuesMap={foodVenuesMap}
+                        currentPage={currentPage}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={handlePageChange}
+                        isVisible={isVisible}
+                        setIsVisible={setIsVisible}
+                      />
+                    }
                   </div>
                 }
               </div>
@@ -178,6 +193,8 @@ export default function Profile() {
                     foodVenuesMap: paginatedFoodVenues,
                     user,
                     dispatch,
+                    visitor,
+                    loading,
                   }}
                 />
               </div>

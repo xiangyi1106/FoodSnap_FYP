@@ -37,6 +37,10 @@ export function EditProfileForm({ user, profile, dispatch }) {
     });
 
     useEffect(() => {
+        if (!profile) {
+            console.log('Profile data is not loaded yet');
+            return;
+        }
         console.log(profile);
         const fetchProfileData = async () => {
             try {
@@ -56,12 +60,12 @@ export function EditProfileForm({ user, profile, dispatch }) {
 
                 setInitialValues({
                     birthday: formatBirthday(profile.birthday) || '',
-                    about: profile.details.about,
-                    currentCity: profile.details.currentCity,
-                    favouriteFood: profile.details.favouriteFood,
-                    facebook: profile.details.facebook,
-                    instagram: profile.details.instagram,
-                    youtube: profile.details.youtube,
+                    about: profile.details.about || '',
+                    currentCity: profile.details.currentCity || '',
+                    favouriteFood: profile.details.favouriteFood || '',
+                    facebook: profile.details.facebook || '',
+                    instagram: profile.details.instagram || '',
+                    youtube: profile.details.youtube || '',
                     gender: profile.gender
                 });
 
@@ -72,7 +76,7 @@ export function EditProfileForm({ user, profile, dispatch }) {
         };
 
         fetchProfileData();
-    }, [user._id, user.token]);
+    }, [profile]);
 
 
     const formik = useFormik({
@@ -144,7 +148,8 @@ export function EditProfileForm({ user, profile, dispatch }) {
                         className="profile_form_input"
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        value={formik.values.gender}
+                        // value={formik.values.gender}
+                        value={formik.values.gender || 'secret'}
                     >              
                         {genders.map((option) => (
                             <option key={option.value} value={option.value}>

@@ -1,0 +1,67 @@
+.hamburger_menu {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: block;
+}
+
+.menu_icon {
+    font-size: 28px;
+    color: #333;
+}
+
+.mobile_menu {
+    display: none;
+    position: absolute;
+    top: 60px;
+    /* right: 0; */
+    left: 0;
+    background-color: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 10px;
+    /* display: flex; */
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1000;
+}
+
+.mobile_menu.open {
+    display: flex;
+}
+
+.mobile_menu a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    padding: 10px;
+    border-bottom: 1px solid #f1f1f1;
+    border-radius: 8px;
+}
+
+.mobile_menu a:last-child {
+    border-bottom: none;
+}
+
+.mobile_link{
+    display: flex;
+    gap: 10px;
+    text-decoration: none;
+    align-items: center;
+}
+
+.mobile_link:hover{
+    background-color: var(--bg-secondary);
+}
+
+.mobile_link_active {
+    font-weight: bold!important;
+    color: #30BFBF!important;
+}
+
+/* Optionally, add responsiveness */
+@media (min-width: 481px) {
+    .mobile_nav {
+        display: none; /* Hide mobile menu on larger screens */
+    }
+}

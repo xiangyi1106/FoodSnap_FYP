@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { Fab } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import AddPromotion from './AddPromotion/AddPromotion';
+import CardSkeleton from '../../components/Skeleton/CardSkeleton';
 
 export default function FoodPromotion({ user }) {
 
@@ -13,9 +14,11 @@ export default function FoodPromotion({ user }) {
     const [filteredPromotions, setFilteredPromotions] = useState([]); // State to store filtered promotions
     const [isEvent, setIsEvent] = useState(false);
     const [isCreatePromotionVisible, setIsCreatePromotionVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchPromotions = async () => {
+            setLoading(true);
             try {
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/getPublicPromotions`,
                 );
@@ -24,6 +27,7 @@ export default function FoodPromotion({ user }) {
             } catch (error) {
                 toast.error("Error fetching Promotions: " + error.message);
             }
+            setLoading(false);
         };
 
         fetchPromotions();
@@ -46,28 +50,19 @@ export default function FoodPromotion({ user }) {
                 <div className='food_event_container_title'>Food Promotions</div>
             </div>
             <div className='filter_container'><PromotionFilter onResults={handleResults} isEvent={isEvent} /></div>
-            <div className="food_event_card_container">
-                {filteredPromotions ? filteredPromotions.map((event, index) => (
-                    <FoodEventCard key={index} event={event} isEvent={isEvent} />
-                )) : <div>
-                    No Promotion Found
-                </div>}
-            </div>
-            {/* Floating Action Button */}
-            {/* {!isCreatePromotionVisible && 
-            <Fab
-                color="#30BFBF"
-                aria-label="add"
-                variant="extended"
-                style={{
-                    position: 'fixed',
-                    bottom: 20,
-                    right: 20,
-                }}
-                onClick={() => setIsCreatePromotionVisible(true)}
-            >
-                Create Promotion <AddIcon />
-            </Fab>} */}
+            {loading ?
+                <>
+                    <CardSkeleton />
+                </> :
+                <div className="food_event_card_container">
+                    {filteredPromotions && filteredPromotions.length > 0 ? filteredPromotions.map((event, index) => (
+                        <FoodEventCard key={index} event={event} isEvent={isEvent} />
+                    )) : 
+                    <div>
+                        No Promotion Found
+                    </div>}
+                </div>
+            }
         </div>
 
     )

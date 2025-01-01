@@ -25,7 +25,7 @@ const foodVenueSchema = new Schema({
     phone: { type: String }, // Contact phone number
     website: { type: String }, // Website URL
     description: { type: String }, // Description of the venue
-    address: { type: String }, // Description of the venue
+    address: { type: String, require: true }, // Description of the venue
     // address: [{
     //     street: { type: String },
     //     city: { type: String },

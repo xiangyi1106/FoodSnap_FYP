@@ -16,7 +16,7 @@ import { cilZoomIn, cilZoomOut } from '@coreui/icons';
 export default function PlaceProfileFoodMenu() {
   const [medias, setMedias] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { foodVenue, user } = useOutletContext(); // Fetch the user profile data from context
+  const { foodVenue, user, setFoodVenue } = useOutletContext(); // Fetch the user profile data from context
   const [isMenuPreviewOpen, setIsMenuPreviewOpen] = useState(false);
   const [foodVenueMenu, setFoodVenueMenu] = useState([]);
   const mediainputref = useRef(null);
@@ -36,14 +36,19 @@ export default function PlaceProfileFoodMenu() {
     });
   };
 
+  const [validityToEditFoodVenue, setValidityToEditFoodVenue] = useState(false);
+
   useEffect(() => {
-    // Only update foodVenueMenu if foodVenue.menu is not null or empty
-    if (foodVenue?.menu && foodVenue.menu.length > 0) {
-      setFoodVenueMenu(foodVenue.menu);
-    } else {
-      setFoodVenueMenu([]);  // Set it to empty array if menu is null or empty
+    if (foodVenue) {
+      // Check if foodVenue has a valid menu and set it
+      setFoodVenueMenu(foodVenue.menu || []);
+      if (foodVenue._id && user.role === 'business' && user.foodVenueOwned === foodVenue._id) {
+        setValidityToEditFoodVenue(true);
+      }
+      console.log(validityToEditFoodVenue);
     }
-  }, [foodVenue]);  // This effect runs whenever foodVenue changes
+  }, [foodVenue]);  // Only runs when `foodVenue` changes
+
 
   const handleClick = (e) => {
     mediainputref.current.click();
@@ -51,9 +56,16 @@ export default function PlaceProfileFoodMenu() {
 
   const menuSubmit = async () => {
     try {
-      console.log(medias);
+      // console.log(medias);
+      // Store the previous state before the optimistic update
+      // const previousMenuState = [...foodVenueMenu];
+
       if (medias && medias.length > 0) {
         setIsLoading(true);
+        // Optimistically update the menu state by adding new media to the local state
+        // const updatedMenu = [...foodVenueMenu, ...medias];
+        // setFoodVenueMenu(updatedMenu);
+
         const menuMedias = medias.map((media) => {
           return dataURItoBlob(media);
         });
@@ -63,45 +75,36 @@ export default function PlaceProfileFoodMenu() {
         menuMedias.forEach((media) => {
           formData.append("file", media);
         });
-        console.log(formData);
+        // console.log(formData);
+
         const response = await uploadMedias(formData, path, user.token);
         // Check if media upload was successful
         if (!response || response.length === 0) {
-          throw new Error("Failed to upload media");
+          // throw new Error("Failed to upload media");
+          toast.error('Failed to upload menu, please try again');
+          return;
         }
+
         // // If the upload is successful, associate media URLs with the venue
         if (response) {
-          //   const updatedMenu = response.map((url) => ({
-          //     url, // URL of uploaded media
-          //   }));
-
-          await updateFoodVenueMenu(foodVenue._id, response, user);
+          const res = await updateFoodVenueMenu(foodVenue._id, response, user);
+          if (res.success) {
+            setFoodVenueMenu(res.menu);
+          }
+          toast.success('Menu updated successfully!');
           setIsLoading(false);
         }
       }
+      setIsMenuPreviewOpen(false);
     } catch (error) {
       console.error('Error submitting menu:', error);
       toast.error('Error submitting menu:', error);
+      // If upload fails, rollback to the previous state (before optimistic update)
+      // setFoodVenueMenu(previousMenuState);
       setIsLoading(false);
+      setIsMenuPreviewOpen(false);
     }
   };
-
-  // Disable outer scroll when popup is open
-  useEffect(() => {
-    if (isMenuPreviewOpen) {
-      // Add class to body to disable scroll
-      document.body.style.overflow = 'hidden';
-    } else {
-      // Restore scrolling when popup is closed
-      document.body.style.overflow = '';
-    }
-
-    return () => {
-      // Cleanup on unmount or when the popup closes
-      document.body.style.overflow = '';
-    };
-  }, [isMenuPreviewOpen]); // This effect will run whenever isMenuPreviewOpen changes
-
 
   const query769px = useMediaQuery({
     query: "(max-width: 769px)",
@@ -117,9 +120,10 @@ export default function PlaceProfileFoodMenu() {
     <div className='place_profile_photos'>
       {/* <MenuList /> */}
       <input type='file' multiple hidden onChange={handleMedias} ref={mediainputref} accept="image/*"></input>
-      {isMenuPreviewOpen && <FoodMenuPreview setIsMenuPreviewOpen={setIsMenuPreviewOpen} medias={medias} setMedias={setMedias} mediainputref={mediainputref} menuSubmit={menuSubmit} />}
-      <button className='green_btn' onClick={handleClick} style={{ marginBottom: '30px' }}>Upload Menu</button>
-      {foodVenue?.menu && foodVenue?.menu.length > 0 ?
+      {isMenuPreviewOpen && <FoodMenuPreview setIsMenuPreviewOpen={setIsMenuPreviewOpen} medias={medias} setMedias={setMedias} mediainputref={mediainputref} menuSubmit={menuSubmit} isLoading={isLoading} />}
+      {/* {validityToEditFoodVenue && <button className='green_btn' onClick={handleClick} style={{ marginBottom: '30px' }}>Upload Menu</button>} */}
+      {<button className='green_btn' onClick={handleClick} style={{ marginBottom: '30px' }}>Upload Menu</button>}
+      {foodVenueMenu && foodVenueMenu.length > 0 ?
         <Box sx={{ width: '100%' }}>
           <ImageList variant="masonry" cols={cols} gap={8}>
             <PhotoProvider
@@ -159,7 +163,6 @@ export default function PlaceProfileFoodMenu() {
                 );
               }}
             >
-
               {foodVenueMenu.map((imgUrl, index) => (
                 <ImageListItem key={index}>
                   <PhotoView src={imgUrl.url} >
@@ -168,7 +171,12 @@ export default function PlaceProfileFoodMenu() {
                       src={`${imgUrl.url}?w=248&fit=crop&auto=format`}
                       alt="Food venue media"
                       loading="lazy"
-                      style={{cursor: 'pointer'}}
+                      style={{
+                        cursor: 'pointer',
+                        width: '100%',
+                        height: 'auto', // Maintain aspect ratio
+                        maxWidth: '400px', // Max size for large screens
+                      }}
                     />
                   </PhotoView>
                 </ImageListItem>

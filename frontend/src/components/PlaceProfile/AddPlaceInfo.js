@@ -15,6 +15,7 @@ import { toggleScroll, validateFileType, validateImageType } from '../../functio
 import { debounce } from 'lodash';
 import { CircularProgress, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import FoodVenueOpeningHours from './FoodVenueOpeningHours';
+import Cookies from 'js-cookie';
 
 export default function AddPlaceInfo({ setVisible, user }) {
     useEffect(() => {
@@ -330,7 +331,7 @@ export default function AddPlaceInfo({ setVisible, user }) {
     };
 
     const handleSave = async () => {
-
+        setIsSubmitLoading(true);
         clearError();
         formData.address = "";
         formData.latitude = null;
@@ -359,6 +360,7 @@ export default function AddPlaceInfo({ setVisible, user }) {
         const errors = validateForm();
         if (Object.keys(errors).length > 0) {
             setErrors(errors);
+            setIsSubmitLoading(false);
             return;
         }
 
@@ -414,17 +416,23 @@ export default function AddPlaceInfo({ setVisible, user }) {
                     return;
                 }
 
+                const updatedUser = {
+                    ...user,
+                    foodVenueOwned: venueId,
+                };
+                Cookies.set("user", JSON.stringify(updatedUser));
+                console.log("Updated user cookie:", Cookies.get("user")); // Log to debug
             }
 
             // Show a single success message after all operations are complete
             toast.success("Food venue created successfully!");
+            setIsSubmitLoading(false);
 
         } catch (error) {
             toast.error("Error saving data: " + error);
+            setIsSubmitLoading(false);
         }
-
-        console.log(formData);
-
+        // console.log(formData);
         setVisible(false);
     }
 
@@ -435,6 +443,7 @@ export default function AddPlaceInfo({ setVisible, user }) {
     const [manualSelection, setManualSelection] = useState(false);
     const [locationList, setLocationList] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isSubmitLoading, setIsSubmitLoading] = useState(false);
 
     const handleItemClick = (index) => {
         const selectedItem = locationList[index]; // Access the selected item directly from the list
@@ -645,7 +654,9 @@ export default function AddPlaceInfo({ setVisible, user }) {
                                         onChange={handleLocationSearch}
                                     />
                                     {isLoading ? (
-                                        <CircularProgress />
+                                        <div className='center'>
+                                            <CircularProgress size={30} sx={{ color: '#30BFBF' }} />
+                                        </div>
                                     ) : (
                                         <List>
                                             {locationList.length > 0 && locationList.map((loc, index) => (
@@ -821,12 +832,12 @@ export default function AddPlaceInfo({ setVisible, user }) {
 
                         </div>
                         <div className="edit_place_info_actions">
-                            <button className="green_btn save_button" onClick={handleSave}>
-                                Save
+                            <button className="green_btn save_button" onClick={handleSave} disabled={isSubmitLoading}>
+                                {!isSubmitLoading ? "Save" : <CircularProgress size={30} sx={{ color: 'white' }} />}
                             </button>
-                            <button className="white_btn cancel_button" onClick={() => setVisible(false)}>
+                            {/* <button className="white_btn cancel_button" onClick={() => setVisible(false)}>
                                 Cancel
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </div>

@@ -22,7 +22,7 @@ exports.getComments = async (req, res) => {
 exports.addComment = async (req, res) => {
   try {
     const { postId, userId, content, image } = req.body;
-
+    console.log(postId, userId, content, image );
     // Create and save the new comment
     const newComment = new Comment({
       postId,
@@ -33,26 +33,6 @@ exports.addComment = async (req, res) => {
 
     await newComment.save();
 
-    //bug
-    // const originalPost = await Post.findById(postId).populate("user", "picture name username _id");
-
-    // console.log(originalPost.user._id);
-
-    // // Populate the comment's userId field with the name of the user who commented (only once)
-    // await newComment.populate("userId", "name");
-
-    // // Notify the post owner
-    // const commentNotification = {
-    //   userId: originalPost.user._id, // Post owner
-    //   type: 'comment',
-    //   fromUserId: userId,
-    //   postId: postId,
-    //   message: `${newComment.userId.name} commented on your post`,
-    // };
-
-    // await Notification.create(commentNotification);
-
-    
     // Populate the user details
     await newComment.populate("userId", "picture name username");
 

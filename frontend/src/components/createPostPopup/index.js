@@ -205,7 +205,8 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
                 toast.error("Failed to create post: " + response);
             }
         } else {
-            console.log("nothing");
+            // console.log("nothing");
+            toast.error("Please add content before posting.");
         }
     };
 

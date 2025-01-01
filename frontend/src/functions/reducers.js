@@ -18,6 +18,32 @@ export function postReducer(state, action) {
       );
       return { ...state, posts: updatedPosts };
     }
+    case "UPDATE_SHARE_COUNT": {
+      const updatedPosts = state.posts.map((post) =>
+        post._id === action.payload._id ? { ...post, ...action.payload } : post
+      );
+      return { ...state, posts: updatedPosts };
+    }
+    case "UPDATE_COMMENT_COUNT": {
+      const { postId, updates } = action.payload;
+      return {
+        ...state,
+        posts: state.posts.map((post) =>
+          post._id === postId
+            ? {
+              ...post,
+              ...Object.keys(updates).reduce((acc, key) => {
+                acc[key] =
+                  typeof updates[key] === "function"
+                    ? updates[key](post[key])
+                    : updates[key];
+                return acc;
+              }, {}),
+            }
+            : post
+        ),
+      };
+    }
     case "SET_POSTS":
       return { ...state, posts: action.payload };
     case "ADD_POST":
@@ -28,6 +54,12 @@ export function postReducer(state, action) {
         posts: updatedPosts,
         loading: false,
         error: "",
+      };
+
+    case 'RESET_POSTS':
+      return {
+        ...state,
+        posts: [],
       };
     default:
       return state;
@@ -48,9 +80,63 @@ export function profileReducer(state, action) {
     case "PROFILE_ERROR":
       return { ...state, loading: false, error: action.payload };
     case "PROFILE_UPDATE_SUCCESS":
-      console.log("Updating profile state with:", action.payload);
+      // console.log("Updating profile state with:", action.payload);
       return { ...state, profile: { ...state.profile, ...action.payload } }; // Merge updated fields
+    case "UPDATE_POST": {
+      // Update the specific post by replacing it with the new post data
+      const updatedPosts = state.profile.posts.map((post) =>
+        post._id === action.payload._id ? { ...post, ...action.payload } : post
+      );
+      // Return updated state with the modified posts
+      return { ...state, profile: { ...state.profile, posts: updatedPosts } };
+    }
 
+    case "UPDATE_SHARE_COUNT": {
+      // Update share count for the specific post
+      const updatedPosts = state.profile.posts.map((post) =>
+        post._id === action.payload._id ? { ...post, ...action.payload } : post
+      );
+      // Return updated state with the modified posts
+      return { ...state, profile: { ...state.profile, posts: updatedPosts } };
+    }
+
+    case "UPDATE_COMMENT_COUNT": {
+      const { postId, updates } = action.payload;
+      return {
+        ...state,
+        profile: {
+          ...state.profile,
+          posts: state.profile.posts.map((post) =>
+            post._id === postId
+              ? {
+                ...post,
+                ...Object.keys(updates).reduce((acc, key) => {
+                  acc[key] =
+                    typeof updates[key] === "function"
+                      ? updates[key](post[key])
+                      : updates[key];
+                  return acc;
+                }, {}),
+              }
+              : post
+          ),
+        },
+      };
+    }
+    
+    case "UPDATE_FOLLOWERS": {
+      // Add the new follower to the followers list
+      const updatedFollowers = [...state.profile.followers, action.payload.follower];
+
+      return {
+        ...state,
+        profile: {
+          ...state.profile,
+          followers: updatedFollowers, // Update the followers list
+          followersCount: updatedFollowers.length, // Update the followers count
+        },
+      };
+    }
     default:
       return state;
   }

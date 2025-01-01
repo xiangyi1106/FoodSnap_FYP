@@ -148,8 +148,8 @@ export default function LoginForm() {
                                                 emailOrUsername: values.emailOrUsername,
                                                 password: values.password,
                                             });
-                                            console.log(values);
-                                            console.log(data);
+                                            // console.log(values);
+                                            // console.log(data);
 
                                             dispatch({ type: "LOGIN", payload: data });
                                             Cookies.set("user", JSON.stringify(data));

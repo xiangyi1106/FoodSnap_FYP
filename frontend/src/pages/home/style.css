@@ -27,6 +27,29 @@
     background-color: var(--bg-secondary);
 }
 
+@media (max-width: 480px) {
+    .public_feed_middle{
+        margin-left: 0;
+        width: auto;
+        padding: 0;
+    }
+}
+
+@media (max-width: 865px) and (min-width: 481px) {
+    .public_feed_middle{
+        margin-left: 38px;
+    }
+
+}
+
+@media (max-width: 481px) {
+    .public_feed_middle {
+        margin-left: 0;
+        width: auto;
+        padding: 0;
+    }
+}
+
 /* Media Queries */
 /* 3 parts hide left link span at 1030px */
 @media (max-width:865px) {
@@ -45,10 +68,14 @@
         padding: 12px 10px !important;
     }
 
-    .home_middle {
+    /* .home_middle {
         position: relative;
         margin-left: 38px;
-    }
+    } */
+
+    /* .public_feed_middle{
+        margin-left: 38px;
+    } */
 
     /* .post,
     .send_verification {

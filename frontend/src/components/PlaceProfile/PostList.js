@@ -56,7 +56,7 @@ export default function PostList({ user, foodVenue }) {
     // const currentItems = itemData.slice(startIndex, endIndex);
 
     return (
-        <Box sx={{ width: '100%', minHeight: 829 }}>
+        <Box sx={{ width: '100%'}}>
             {foodVenuePost && foodVenuePost?.length > 0 ?
                 <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={2}>
                     {foodVenuePost?.map((post, index) => (
@@ -94,7 +94,9 @@ export default function PostList({ user, foodVenue }) {
                         </Post>
                     ))}
                 </Masonry>
-                : <div></div>
+                : <div className='center'>
+                    No Related Post Found
+                </div>
             }
             {/* <Pagination
                 count={Math.ceil(itemData.length / itemsPerPage)}

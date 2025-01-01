@@ -5,6 +5,8 @@
     margin-left: 20vw;
     width: calc(100vw - 20vw);
     height: calc(100vh - 56px);
+    width: calc(100vw - 38px);
+    margin-left: 38px;
 }
 .restaurant_wishlist_section {
     height: 100%;

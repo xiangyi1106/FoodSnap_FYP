@@ -80,6 +80,7 @@
   /* Limiting to 2 lines and adding ellipsis */
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   /* Number of lines to show */
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -122,12 +123,14 @@
 
 .food_event_card_card_meta p {
   font-size: 0.9rem;
-    /* Limiting to 2 lines and adding ellipsis */
-    display: -webkit-box;
-    -webkit-line-clamp: 1; /* Number of lines to show */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  /* Limiting to 2 lines and adding ellipsis */
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  /* Number of lines to show */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .food_event_card_card_meta svg {
@@ -139,16 +142,24 @@
   top: 3px;
 }
 
+
+
 /* Container for the entire event section */
 .food_event_container {
   margin-top: 56px;
-  margin-left: 20vw;
-  /* Adjust this value to match the width of the left navigation */
   overflow-y: scroll;
   overflow-x: hidden;
-  width: calc(100vw - 20vw);
-  /* Adjust the width calculation accordingly */
+  width: calc(100vw - 38px);
+  margin-left: 38px;
   height: calc(100vh - 56px);
+}
+
+@media (min-width: 865px) {
+  .food_event_container, .search_venue, .myWishlist {
+    margin-left: 20vw;
+    width: calc(100vw - 20vw);
+
+  }
 }
 
 .food_event_container_title {
@@ -156,15 +167,26 @@
   font-size: 2rem;
 }
 
+@media (max-width: 769px) and (min-width: 481px) {
+  .food_event_container {
+    margin-left: 38px;
+  }
+}
+
+@media (max-width: 480px) {
+  .food_event_container {
+    margin-left: 0px;
+  }
+}
+
 @media (max-width: 769px) {
   .food_event_container {
     margin-top: 56px;
-    margin-left: 0;
+    /* margin-left: 38px; */
     /* Adjust this value to match the width of the left navigation */
     overflow-y: scroll;
     overflow-x: hidden;
     width: 100vw;
-    /* Adjust the width calculation accordingly */
     height: 100vh;
   }
 

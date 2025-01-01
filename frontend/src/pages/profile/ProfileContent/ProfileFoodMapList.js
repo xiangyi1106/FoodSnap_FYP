@@ -6,17 +6,6 @@ import ProfileFoodMapVenueDetails from './ProfileFoodMap/ProfileFoodMapVenueDeta
 const ProfileFoodMapList = ({ foodVenuesMap, currentPage, itemsPerPage, onPageChange, setIsVisible, isVisible }) => {
   // const [currentPage, setCurrentPage] = useState(1);
   const [selectedVenue, setSelectedVenue] = useState(null);
-  // const venuesPerPage = 5;
-
-  // // Handle pagination
-  // const indexOfLastVenue = currentPage * venuesPerPage;
-  // const indexOfFirstVenue = indexOfLastVenue - venuesPerPage;
-  // const currentVenues = foodVenuesMap.slice(indexOfFirstVenue, indexOfLastVenue);
-
-  // const handleChangePage = (_, value) => {
-  //   setCurrentPage(value);
-  // };
-
    // Calculate paginated venues
    const indexOfLastVenue = currentPage * itemsPerPage;
    const indexOfFirstVenue = indexOfLastVenue - itemsPerPage;

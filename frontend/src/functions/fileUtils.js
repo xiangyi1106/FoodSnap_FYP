@@ -81,3 +81,21 @@ export const toggleScroll = (shouldDisable) => {
         body.style.overflow = '';
     }
 };
+
+export const convertTo12HourFormat = (time) => {
+    if (!time) return ''; // Return empty string if the time is not provided
+
+    const [hours, minutes] = time.split(':');
+    const hour = parseInt(hours, 10);
+    const minute = minutes || '00';
+
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const formattedHour = hour % 12 || 12;  // Convert 0 to 12 (12AM or 12PM)
+    return `${formattedHour}:${minute} ${period}`;
+};
+
+export const getCurrentDayAbbreviation = () => {
+    const daysOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    const today = new Date();
+    return daysOfWeek[today.getDay()]; // Returns the current abbreviated day (e.g., "Mon")
+};

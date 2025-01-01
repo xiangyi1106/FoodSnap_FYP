@@ -223,7 +223,15 @@ exports.getPostDetails = async (req, res) => {
   try {
     const postId = req.params.id;
     // const post = await Post.findById(postId).exec();
-    const post = await Post.findById(postId).populate("user", "name picture username gender");
+    const post = await Post.findById(postId)
+    .populate("user", "name picture username gender")
+    .populate({
+      path: 'sharedPost', // Populate the sharedPost field
+      populate: {
+          path: 'user', // Populate the user inside sharedPost
+          select: 'name picture username gender _id' // Select fields to retrieve from user
+      }
+  });
 
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
@@ -232,6 +240,21 @@ exports.getPostDetails = async (req, res) => {
     res.json(post);
   } catch (error) {
     console.error('Error fetching post:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.checkSaved = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    const checkSaved = user?.savedPosts.find(
+      (x) => x.post.toString() === req.params.id
+    );
+    res.json({
+      checkSaved: checkSaved ? true : false,
+    });
+  
+  } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -394,7 +417,7 @@ exports.sharePost = async (req, res) => {
         }
       });
 
-    res.status(201).json({ message: 'Post shared successfully to your profile page.', post: populatedPost });
+    res.status(201).json({ message: 'Post shared successfully to your profile page.', post: populatedPost, success: true });
   } catch (error) {
     // Log error details for debugging
     console.error("Error sharing post:", error.message);

@@ -96,50 +96,6 @@ export default function UpdateProfilePicture({
                     payload: res[0].url,
                 });
                 setShow(false);
-                // if (updated_picture === "ok") {
-                //     const new_post = await createPost(
-                //         "profilePicture",
-                //         description,
-                //         res,
-                //         null,
-                //         null,
-                //         null,
-                //         null,
-                //         user.id,
-                //         user.token
-                //     );
-                //     if (new_post === "ok") {
-                //         setLoading(false);
-                //         setImage("");
-                //         pRef.current.style.backgroundImage = `url(${res[0].url})`;
-                //         // Cookies.set(
-                //         //     "user",
-                //         //     JSON.stringify({
-                //         //         ...user,
-                //         //         picture: res[0].url,
-                //         //     })
-                //         // );
-                //         // Set the cookie with the updated user object
-                //         const updatedUser = {
-                //             ...user,
-                //             picture: res[0].url,
-                //         };
-                //         Cookies.set("user", JSON.stringify(updatedUser));
-                //         console.log("Updated user cookie:", Cookies.get("user")); // Log to debug
-
-                //         dispatch({
-                //             type: "UPDATEPICTURE",
-                //             payload: res[0].url,
-                //         });
-                //         setShow(false);
-                //         setTimeout(() => {
-                //             window.location.reload(false);
-                //         }, 2000);
-                //     } else {
-                //         setLoading(false);
-
-                //         setError(new_post);
-                //     }
             } else {
                 setLoading(false);
                 // setError(updated_picture);

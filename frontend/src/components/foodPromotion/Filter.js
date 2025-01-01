@@ -40,7 +40,6 @@ export default function PromotionFilter({ onResults, isEvent }) {
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 variant="outlined"
-                // style={{ marginRight: '16px', minWidth: '350px' }}
                 style={{ marginRight: '16px', minWidth: '30%' }}
                 className='filter_select'
                 sx={{

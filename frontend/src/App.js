@@ -88,7 +88,14 @@ function App() {
     if (user) {
       getAllPosts(page); // Fetch posts for the current page
     }
-  }, [page, user]);
+  }, [page]);
+
+  useEffect(() => {
+    if (user) {
+      dispatch({ type: 'RESET_POSTS' });
+      getAllPosts(page); // Fetch posts for the current page
+    }
+  }, [user]);
 
 
   const getAllPosts = async (currentPage) => {
@@ -159,7 +166,7 @@ function App() {
             path="/profile/:username"
             element={<Profile />}
           >
-            <Route index element={<ProfilePost user={user} />} />
+            <Route index element={<ProfilePost user={user} dispatch={dispatch} />} />
             <Route path="intro" element={<ProfileIntroCarousel />} />
             <Route path="photos" element={<ProfilePhoto />} />
             <Route path="following" element={<ProfileFollowing />} />
@@ -194,13 +201,13 @@ function App() {
           <Route path="/" element={<Layout user={user} />}>
             {/* <Route index element={<Feed posts={posts} user={user} />} /> */}
             <Route index element={<Feed posts={posts} user={user} fetchMorePosts={fetchMorePosts} hasMore={hasMore} dispatch={dispatch} />} />
-            <Route path="discover" element={<PublicFeed user={user} />} />
+            <Route path="discover" element={<PublicFeed user={user} dispatch={dispatch} />} />
             <Route path="searchVenue" element={<SearchVenue user={user} />} />
-            <Route path="myFoodJourney" element={<VisitedPlaceLayout user={user} />} />
+            <Route path="myFoodJourney" element={<VisitedPlaceLayout user={user} dispatch={dispatch} />} />
             <Route path="foodVenueWishlist" element={<MyFoodMap user={user} />} />
             <Route path="foodEvent" element={<FoodEvent user={user} />} />
             <Route path="foodPromotion" element={<FoodPromotion user={user} />} />
-            <Route path="searchResult/:term" element={<SearchResult user={user} />} />
+            <Route path="searchResult/:term" element={<SearchResult user={user} dispatch={dispatch} />} />
           </Route>
           <Route path="/foodEvent/:id/" element={<EventDetails user={user} />} exact />
           <Route path="/foodPromotion/:id/" element={<PromotionDetails user={user} />} exact />

@@ -467,6 +467,14 @@
   border-bottom: 3px solid var(--blue-color);
 }
 
+.skelton_loader {
+  height: 100px;
+  width: 100%;
+  display: grid;
+  place-items: center;
+}
+
+
 
 /* Media queries */
 /*-----profile card--------*/

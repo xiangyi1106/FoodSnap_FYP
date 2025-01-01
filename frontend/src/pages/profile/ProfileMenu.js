@@ -27,9 +27,9 @@ export default function ProfileMenu({ username }) {
         <Link to={`/profile/${username}/myFoodMap`} className={currentPath === `/profile/${username}/myFoodMap` ? 'logo_color_text' : 'logo_color_hover'}>
           My Food Map
         </Link>
-        <Link to={`/profile/${username}/myVoucher`} className={currentPath === `/profile/${username}/myVoucher` ? 'logo_color_text' : 'logo_color_hover'}>
+        {/* <Link to={`/profile/${username}/myVoucher`} className={currentPath === `/profile/${username}/myVoucher` ? 'logo_color_text' : 'logo_color_hover'}>
           Voucher
-        </Link>
+        </Link> */}
         <Link to={`/profile/${username}/savedPost`} className={currentPath === `/profile/${username}/savedPost` ? 'logo_color_text' : 'logo_color_hover'}>
           Saved Post
         </Link>

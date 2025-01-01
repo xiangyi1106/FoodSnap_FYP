@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import DiscoverPostList from '../../pages/Discover/DiscoverPostList';
 import { useLocation } from 'react-router-dom';
 
-export default function PublicFeed({ user }) {
+export default function PublicFeed({ user, dispatch }) {
     const [posts, setPosts] = useState([]);
     useEffect(() => {
         const fetchPosts = async () => {
@@ -21,7 +21,7 @@ export default function PublicFeed({ user }) {
                 }));
 
                 setPosts(processedPosts);
-                console.log(processedPosts);
+                // console.log(processedPosts);
             } catch (error) {
                 toast.error("Error fetching posts: " + error.message);
             }
@@ -44,25 +44,10 @@ export default function PublicFeed({ user }) {
     // Extract the current path to determine the active menu item
     const currentPath = location.pathname;
 
-    //Hide the outer scrollbar
-    //   useEffect(() => {
-    //     const mainContainer = document.querySelector('.home');
-    //     if (currentPath === '/discover') {
-    //       mainContainer.classList.add('overflow_hidden');
-    //     } else {
-    //       mainContainer.classList.remove('overflow_hidden');
-    //     }
-
-    //     return () => {
-    //       mainContainer.classList.remove('overflow_hidden');
-    //     };
-    //   }, []);
-
-
     return (
         <div className='feed_middle' style={{ height: `${height + 80}px` }}>
             <div className="public_feed_middle" ref={middle} style={{ overflowY: 'auto' }}>
-                <DiscoverPostList posts={posts} user={user} setPosts={setPosts}/>
+                <DiscoverPostList posts={posts} user={user} setPosts={setPosts} dispatch={dispatch} />
             </div>
         </div>
     )

@@ -13,7 +13,7 @@ import {
 } from '@coreui/icons';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 
-export default function ProfilePictureInfo({ profile, visitor, user }) {
+export default function ProfilePictureInfo({ profile, visitor, user, dispatch }) {
     const [show, setShow] = useState(false);
     const refInput = useRef(null);
     const pRef = useRef(null);
@@ -38,24 +38,43 @@ export default function ProfilePictureInfo({ profile, visitor, user }) {
 
     // Handle the follow action
     const handleFollow = async () => {
-        await follow(profile._id, user.token);
-        // Update the local profile state to reflect the following status and increase the followers count
-        setProfileData({
-            ...profileData,
-            follow: { ...profileData.follow, following: true },
-            followersCount: profileData.followersCount + 1,
-        });
+        try {
+            const res = await follow(profile._id, user.token);
+            // Update the local profile state to reflect the following status and increase the followers count
+            setProfileData({
+                ...profileData,
+                follow: { ...profileData.follow, following: true },
+                followersCount: profileData.followersCount + 1,
+            });
+
+            // dispatch({
+            //     type: "UPDATE_FOLLOWERS",
+            //     payload: {
+            //         follower: res.sender,
+            //     },
+            // });
+
+        } catch (error) {
+            toast.error("Error following user, please try again");
+        }
+
     };
 
     // Handle the unfollow action
     const handleUnfollow = async () => {
-        await unfollow(profile._id, user.token);
-        // Update the local profile state to reflect the unfollow status and decrease the followers count
-        setProfileData({
-            ...profileData,
-            follow: { ...profileData.follow, following: false },
-            followersCount: profileData.followersCount - 1,
-        });
+        try {
+            await unfollow(profile._id, user.token);
+            // Update the local profile state to reflect the unfollow status and decrease the followers count
+            setProfileData({
+                ...profileData,
+                follow: { ...profileData.follow, following: false },
+                followersCount: profileData.followersCount - 1,
+                followers: profileData.followers?.filter((f) => f._id !== user.id),
+            });
+        } catch (error) {
+            toast.error("Error unfollowing user, please try again");
+        }
+
     };
 
     return (

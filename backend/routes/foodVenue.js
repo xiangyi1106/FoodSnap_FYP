@@ -1,5 +1,5 @@
 const express = require("express");
-const { saveFoodVenues, getFoodVenues, getFoodVenueDetails, updateFoodVenueDetails, updateMenu, searchFoodVenue, getAllFoodVenues, createFoodVenue } = require("../controllers/foodVenue");
+const { saveFoodVenues, getFoodVenues, getFoodVenueDetails, updateFoodVenueDetails, updateMenu, searchFoodVenue, getAllFoodVenues, createFoodVenue, searchFoodVenuesByFilter } = require("../controllers/foodVenue");
 const { authUser } = require("../middleware/auth")
 const router = express.Router();
 
@@ -18,5 +18,7 @@ router.put("/api/food-venue/update/:id", authUser, updateFoodVenueDetails);
 router.put("/api/food-venue/menu/update/:placeId", authUser, updateMenu);
 
 router.get("/api/search/foodVenue", authUser, searchFoodVenue);
+
+router.post("/searchFoodVenuesByFilter", authUser, searchFoodVenuesByFilter);
 
 module.exports = router;

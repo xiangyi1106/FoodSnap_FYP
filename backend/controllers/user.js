@@ -18,12 +18,11 @@ const register = async (req, res) => {
             name,
             email,
             password,
-            bYear,
-            bMonth,
-            bDay,
-            gender,
+            // bYear,
+            // bMonth,
+            // bDay,
+            // gender,
         } = req.body;
-
 
         const isUsernameTaken = await User.exists({ username });
 
@@ -72,10 +71,12 @@ const register = async (req, res) => {
             name,
             email,
             password: cryptedPassword,
-            bYear,
-            bMonth,
-            bDay,
-            gender,
+            role: 'user',
+            foodVenueOwned: null,
+            // bYear,
+            // bMonth,
+            // bDay,
+            // gender,
         }).save();
 
         const emailVerificationToken = generateToken(
@@ -91,12 +92,15 @@ const register = async (req, res) => {
             name: user.name,
             token: token,
             verified: user.verified,
-            message: "Register successfully! Please activation your email to start."
+            role: user.role,
+            foodVenueOwned: user.foodVenueOwned || null,
+            // message: "Register successfully! Please activation your email to start."
+            message: "Register successfully!"
         });
 
     } catch (error) {
         console.error("Error during registration:", error);
-        res.status(500).json({ message: "Internal Server Error" });
+        res.status(500).json({ message: "Internal Server Error, please try again" });
     }
 }
 
@@ -141,6 +145,7 @@ const login = async (req, res) => {
             token: token,
             verified: user.verified,
             role: user.role,
+            foodVenueOwned: user.foodVenueOwned,
         });
 
     } catch (error) {
@@ -149,24 +154,6 @@ const login = async (req, res) => {
     }
 }
 
-// const searchPeople = async (req, res) => {
-
-//     try {
-//         const userID = req.headers['user_id'];// Assuming you have the current user object available in the request
-//         // Check if userID is undefined or null
-//         if (!userID) {
-//             return res.status(400).json({ message: 'User ID is required' });
-//         }
-
-//         const users = await User.find().sort({ name: 1 }); // Sort by username in ascending order
-//         const filteredUsers = users.filter(user => user._id.toString() !== userID.toString()); // Filter out the current user
-//         console.log(filteredUsers);
-//         res.json(filteredUsers);
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).json({ message: 'Server Error' });
-//     }
-// }
 
 const searchPeople = async (req, res) => {
     try {
@@ -235,6 +222,25 @@ const findUser = async (req, res) => {
     }
 
 }
+
+// const verifyBusinessOwner = async (req, res) => {
+//     try {
+//         const userId = req.user.id;
+//         const user = await User.findOne({ userId }).select("-password");
+//         if (!user) {
+//             return res.status(400).json({
+//                 message: "Account does not exists.",
+//             });
+//         }
+//         return res.status(200).json({
+//             foodVenueOwned: user.foodVenueOwned,
+//             role: user.picture,
+//         });
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+
+// }
 
 const sendResetPasswordCode = async (req, res) => {
     try {
@@ -368,6 +374,88 @@ const getProfile = async (req, res) => {
     }
 };
 
+// const getProfile = async (req, res) => {
+//     try {
+//         const { username } = req.params;
+//         const user = await User.findById(req.user.id);
+
+//         // Find the profile user
+//         const profile = await User.findOne({ username })
+//             .select("-password")
+//             .populate('following', 'username name picture') // Adjust the fields as needed
+//             .populate('followers', 'username name picture'); // Adjust the fields as needed
+
+//         if (!profile) {
+//             return res.status(404).json({ ok: false, message: "Profile not found" });
+//         }
+
+//         const follow = {
+//             following: user.following.includes(profile._id), // Check if the user follows this profile
+//         };
+
+//         // Now, we filter savedPosts by checking if the post still exists
+//         const savedPosts = await Promise.all(
+//             profile.savedPosts.map(async (savedPost) => {
+//                 const post = await Post.findById(savedPost.post);
+
+//                 // If the post exists, keep it, otherwise skip it
+//                 if (post) {
+//                     // Populate the necessary fields in the saved post
+//                     await savedPost.populate({
+//                         path: 'post',
+//                         populate: [
+//                             {
+//                                 path: 'user', 
+//                                 select: 'name picture username _id'
+//                             },
+//                             {
+//                                 path: 'sharedPost',
+//                                 populate: {
+//                                     path: 'user',
+//                                     select: 'name picture username _id',
+//                                 },
+//                             },
+//                         ],
+//                     });
+
+//                     return savedPost; // Return the saved post if the post exists
+//                 }
+
+//                 // If the post doesn't exist, return null or a custom message indicating it's deleted
+//                 return null;
+//             })
+//         );
+
+//         // Filter out any null savedPosts (posts that were deleted)
+//         const filteredSavedPosts = savedPosts.filter(savedPost => savedPost !== null);
+
+//         const posts = await Post.find({ user: profile._id })
+//             .populate("user")
+//             .populate({
+//                 path: "sharedPost",
+//                 populate: {
+//                     path: "user",
+//                     select: "name picture username gender _id"
+//                 }
+//             })
+//             .sort({ createdAt: -1 });
+
+//         res.json({
+//             ...profile.toObject(),
+//             posts,
+//             follow,
+//             postsCount: posts.length,
+//             followersCount: profile.followers.length,
+//             followingCount: profile.following.length,
+//             savedPosts: filteredSavedPosts, // Send only the valid savedPosts
+//         });
+
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// };
+
+
 const getListImages = async (req, res) => {
     try {
         const { userId } = req.params;
@@ -475,7 +563,7 @@ const updateDetails = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     try {
-   
+
         const { about, birthday, currentCity, favouriteFood, facebook, instagram, youtube, gender } = req.body;
 
         // Find the user by ID
@@ -570,7 +658,7 @@ const follow = async (req, res) => {
 
                 await Notification.create(notification);
 
-                res.json({ message: "Following successfully" });
+                res.json({ message: "Following successfully", sender: sender });
             } else {
                 return res.status(400).json({ message: "Already following" });
             }
@@ -823,7 +911,7 @@ const clearSearchHistory = async (req, res) => {
 const searchResult = async (req, res) => {
     try {
         const searchTermParam = req.params.term;
-        console.log(searchTermParam);
+        // console.log(searchTermParam);
         const userId = req.user.id; // Assuming you get user ID from auth middleware
 
         // Step 1: Search in User model for matching users
@@ -842,6 +930,13 @@ const searchResult = async (req, res) => {
             ]
         })
             .populate('user', 'name username picture')
+            .populate({
+                path: 'sharedPost', // Populate the sharedPost field
+                populate: {
+                    path: 'user', // Populate the user inside sharedPost
+                    select: 'name picture username gender _id' // Select fields to retrieve from user
+                }
+            })
             .sort({ likes: -1, createdAt: -1 })  // Sort by likes and recency for relevance
             .lean()
             .exec();
@@ -938,39 +1033,69 @@ const checkFoodVenueInWishlist = async (req, res) => {
 
 const getFoodVenueMapList = async (req, res) => {
     try {
+        const { username } = req.params;
+        const user = await User.findOne({ username });
         // Assuming user is authenticated and we have req.user.id
-        const user = await User.findById(req.user.id); // Populate wishlist with restaurant details
+        // const user = await User.findById(req.user.id); // Populate wishlist with restaurant details
         if (!user) return res.status(404).json({ message: "User not found" });
 
         res.json(user.foodVenueMaplist); // Respond with populated wishlist
+        
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server error" + error });
     }
 };
 
+// const getSavedPost = async (req, res) => {
+//     try {
+//       // Find the user by their ID and populate the saved posts' post details
+//       const user = await User.findById(req.user.id)
+//         .populate('savedPost.post');  // Populate the post field within savedPost
+//         // .exec();
+
+//       if (!user) {
+//         return res.status(404).json({ message: 'User not found' });
+//       }
+
+//       // You may want to transform the data before sending it back
+//       const savedPosts = user.savedPost.map(saved => ({
+//         post: saved.post,  // This is the populated post document
+//         savedAt: saved.savedAt
+//       }));
+
+//       res.json({ savedPosts });
+//     } catch (error) {
+//       res.status(500).json({ message: error.message });
+//     }
+//   };
 const getSavedPost = async (req, res) => {
     try {
-      // Find the user by their ID and populate the saved posts' post details
-      const user = await User.findById(req.user.id)
-        .populate('savedPost.post');  // Populate the post field within savedPost
-        // .exec();
-  
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      // You may want to transform the data before sending it back
-      const savedPosts = user.savedPost.map(saved => ({
-        post: saved.post,  // This is the populated post document
-        savedAt: saved.savedAt
-      }));
-  
-      res.json({ savedPosts });
+        const { username } = req.params;
+        // const profile = await User.findOne({ username })
+        // Find the user by their ID and populate the saved posts' post details
+        const user = await User.findOne({ username })
+            .populate('savedPost.post');  // Populate the post field within savedPost
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Filter out any saved posts where the post does not exist
+        const savedPosts = user.savedPost
+            .filter(saved => saved.post !== null && saved.post !== undefined)  // Only keep saved posts with a valid post
+            .map(saved => ({
+                post: saved.post,  // This is the populated post document
+                savedAt: saved.savedAt
+            }));
+
+        console.log(savedPosts);
+        // Return the filtered list of saved posts
+        res.json({ savedPosts });
     } catch (error) {
-      res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
-  };
+};
 
 module.exports = {
     register,

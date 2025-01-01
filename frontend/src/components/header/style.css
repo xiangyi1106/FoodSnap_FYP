@@ -351,6 +351,12 @@ header {
     }
 }
 
+@media (max-width: 796px) {
+    .btn_create_post span {
+        display: none;
+    }
+}
+
 @media (max-width: 769px) {
 
     header {
@@ -394,15 +400,17 @@ header {
         font-size: 14px;
     }
 
-    .btn_create_post span {
-        display: none;
-    }
-
     .btn_create_post{
         padding: 8px 8px;
     }
 
 
+}
+
+@media (max-width: 481px){
+    .search{
+        width: auto;
+    }
 }
 
 @media (max-width: 554px) {

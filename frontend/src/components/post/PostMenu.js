@@ -29,6 +29,7 @@ export default function PostMenu({
     savePost(postId, token);
     if (checkSaved) {
       setCheckSaved(false);
+      postRef.current.style.display = 'none';
     } else {
       setCheckSaved(true);
     }

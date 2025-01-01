@@ -83,8 +83,8 @@ router.get('/getFoodVenueWishlist', authUser, getFoodVenueWishlist);
 
 router.get("/checkFoodVenueInWishlist/:id", authUser, checkFoodVenueInWishlist );
 
-router.get('/getFoodVenueMapList', authUser, getFoodVenueMapList);
+router.get('/getFoodVenueMapList/:username', authUser, getFoodVenueMapList);
 
-router.get("/getSavedPost", authUser, getSavedPost);
+router.get("/getSavedPost/:username", authUser, getSavedPost);
 
 module.exports = router;

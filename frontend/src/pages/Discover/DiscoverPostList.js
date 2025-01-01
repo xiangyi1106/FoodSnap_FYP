@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { toast } from 'react-toastify';
 import FeedComment from '../../components/post/FeedComment';
+import SharePostPopUp from '../../components/sharePostPopup';
 
 const Post = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -21,7 +22,7 @@ const Post = styled(Paper)(({ theme }) => ({
     borderRadius: '8px',
 }));
 
-export default function DiscoverPostList({ posts, user, setPosts }) {
+export default function DiscoverPostList({ posts, user, setPosts, dispatch }) {
     const navigate = useNavigate();
 
     const handleClick = (postId) => {
@@ -30,6 +31,9 @@ export default function DiscoverPostList({ posts, user, setPosts }) {
 
     const [selectedPost, setSelectedPost] = useState("");
     const [isFeedCommentVisible, setIsFeedCommentVisible] = useState("");
+    const [selectedSharePost, setSelectedSharePost] = useState(null);
+    const [isShareVisible, setIsShareVisible] = useState(false);
+    const [sharesCount, setSharesCount] = useState(0);
 
     const handleShowFeedComment = (post) => {
         setSelectedPost(post);
@@ -72,7 +76,8 @@ export default function DiscoverPostList({ posts, user, setPosts }) {
 
     return (
         <Box sx={{ width: '100%' }}>
-            {isFeedCommentVisible && selectedPost && <FeedComment post={selectedPost} user={user} setIsFeedCommentVisible={setIsFeedCommentVisible} />}
+            {isFeedCommentVisible && selectedPost && <FeedComment post={selectedPost} user={user} setIsFeedCommentVisible={setIsFeedCommentVisible} setIsShareVisible={setIsShareVisible} sharesCount={sharesCount} setSharesCount={setSharesCount} setSelectedSharePost={setSelectedSharePost} dispatch={dispatch} setPosts={setPosts} fromPage="discover" />}
+            {isShareVisible && selectedSharePost && <SharePostPopUp setIsShareVisible={setIsShareVisible} post={selectedSharePost} user={user} sharesCount={sharesCount} setSharesCount={setSharesCount} dispatch={dispatch}/>}
             <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={2}>
                 {posts.map((post, index) => (
                     <Post key={index} className="discover_post" onClick={() => post.media.length > 0 ? handleClick(post._id) : handleShowFeedComment(post)}>

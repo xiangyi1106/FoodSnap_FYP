@@ -23,32 +23,89 @@ const formatTime = (time) => {
 };
 
 
+// const isOpenNow = (openingHours) => {
+//   const daysOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+//   const currentDay = daysOfWeek[new Date().getDay()]; // Get current day (0 = Sunday, 6 = Saturday)
+
+//   if (!openingHours || !openingHours[currentDay] || openingHours[currentDay].length === 0) {
+//     // return false; // Return false if no opening hours for the current day
+//     return null;
+//   }
+
+//   const todayHours = openingHours[currentDay][0]; // Assuming one entry per day (open-close)
+//   if (!todayHours || !todayHours.open || !todayHours.close) {
+//     // return false; // Return false if open or close time is missing
+//     return null;
+//   }
+
+//   const currentTime = new Date();
+//   // const openTime = formatTime(todayHours.open);
+//   // let closeTime = formatTime(todayHours.close);
+//   const openTime = todayHours.open;
+//   let closeTime = todayHours.close;
+
+//   // Handle the case when close time is after midnight (next day)
+//   if (closeTime <= openTime) {
+//     closeTime = new Date(closeTime).setDate(currentTime.getDate() + 1); // Move to the next day
+//   }
+
+//   console.log(openTime, closeTime);
+
+
+//   return currentTime >= openTime && currentTime <= closeTime;
+// };
+
 const isOpenNow = (openingHours) => {
   const daysOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
   const currentDay = daysOfWeek[new Date().getDay()]; // Get current day (0 = Sunday, 6 = Saturday)
 
   if (!openingHours || !openingHours[currentDay] || openingHours[currentDay].length === 0) {
-    // return false; // Return false if no opening hours for the current day
-    return null;
+    return false; // No opening hours for today
   }
 
   const todayHours = openingHours[currentDay][0]; // Assuming one entry per day (open-close)
   if (!todayHours || !todayHours.open || !todayHours.close) {
-    // return false; // Return false if open or close time is missing
-    return null;
+    return false; // Missing opening or closing time
   }
 
   const currentTime = new Date();
-  const openTime = formatTime(todayHours.open);
-  let closeTime = formatTime(todayHours.close);
+
+  // Convert open and close times to Date objects
+  const [openHours, openMinutes] = todayHours.open.split(':').map(Number);
+  const [closeHours, closeMinutes] = todayHours.close.split(':').map(Number);
+
+  const openTime = new Date();
+  openTime.setHours(openHours, openMinutes, 0, 0); // Set open time
+
+  let closeTime = new Date();
+  closeTime.setHours(closeHours, closeMinutes, 0, 0); // Set close time
 
   // Handle the case when close time is after midnight (next day)
   if (closeTime <= openTime) {
-    closeTime = new Date(closeTime).setDate(currentTime.getDate() + 1); // Move to the next day
+    closeTime.setDate(currentTime.getDate() + 1); // Move to the next day
   }
 
   return currentTime >= openTime && currentTime <= closeTime;
 };
+
+
+// const getOpeningTime = (openingHours) => {
+//   const daysOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+//   const currentDay = daysOfWeek[new Date().getDay()]; // Get current day (0 = Sunday, 6 = Saturday)
+
+//   if (!openingHours || !openingHours[currentDay] || openingHours[currentDay].length === 0) {
+//     return null; // Return null if no opening hours for the current day
+//   }
+
+//   const todayHours = openingHours[currentDay][0]; // Assuming one entry per day (open-close)
+//   if (!todayHours || !todayHours.open || !todayHours.close) {
+//     return null; // Return null if open or close time is missing
+//   }
+
+//   console.log(todayHours);
+
+//   return todayHours;
+// };
 
 const getOpeningTime = (openingHours) => {
   const daysOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
@@ -67,6 +124,24 @@ const getOpeningTime = (openingHours) => {
 };
 
 
+// const convertTo12HourFormat = (time) => {
+//   const [hours, minutes] = time.split(':');
+//   const hoursIn12HourFormat = (hours % 12) || 12;  // Convert 0 to 12 for midnight
+//   const ampm = hours >= 12 ? 'PM' : 'AM';
+//   return `${hoursIn12HourFormat}:${minutes} ${ampm}`;
+// }
+const convertTo12HourFormat = (time) => {
+  if (!time) return null;  // Handle empty or invalid time
+  const [hours, minutes] = time.split(':').map(Number);
+
+  if (isNaN(hours) || isNaN(minutes)) {
+    return null; // Return null if time is invalid
+  }
+
+  const hoursIn12HourFormat = (hours % 12) || 12; // Convert 0 to 12 for midnight
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  return `${hoursIn12HourFormat}:${minutes < 10 ? `0${minutes}` : minutes} ${ampm}`;
+};
 
 const FoodVenueListCard = ({ place }) => {
   const navigate = useNavigate();
@@ -98,7 +173,7 @@ const FoodVenueListCard = ({ place }) => {
               <>
                 {isCurrentlyOpen ? <span style={{color: '#30BFBF', marginRight: '5px'}}>Open Now</span> : <span style={{color: '#9B1003', marginRight: '5px'}}>Closed Now</span>}
                 {/* <span>{isCurrentlyOpen ? "Open Now: " : "Closed Now: "}</span> */}
-                <span>{openingTime.open} - {openingTime.close}</span>
+                <span>{convertTo12HourFormat(openingTime.open)} - {convertTo12HourFormat(openingTime.close)}</span>
               </>
             ) : (
               <span>Today Closed</span>

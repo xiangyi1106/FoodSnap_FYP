@@ -12,7 +12,8 @@ export const follow = async (id, token) => {
         },
       }
     );
-    return "ok";
+    // return "ok";
+    return data;
   } catch (error) {
     console.log(error.response.data.message);
     return error.response.data.message;
@@ -256,11 +257,10 @@ export const markNotificationAsRead = async (notificationId, token) => {
   }
 };
 
-export const getSavedPost = async (token) => {
+export const getSavedPost = async (token, username) => {
   try {
     const { data } = await axios.get(
-      `${process.env.REACT_APP_BACKEND_URL}/getSavedPost`,
-
+      `${process.env.REACT_APP_BACKEND_URL}/getSavedPost/${username}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

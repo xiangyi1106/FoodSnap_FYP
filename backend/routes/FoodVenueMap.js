@@ -4,6 +4,6 @@ const { addFoodVenueToProfileMap, getFoodVenuesProfileMap } = require("../contro
 const router = express.Router();
 
 router.post("/addFoodVenueToProfileMap", authUser, addFoodVenueToProfileMap);
-router.get("/getFoodVenuesProfileMap", authUser, getFoodVenuesProfileMap);
+router.get("/getFoodVenuesProfileMap/:id", authUser, getFoodVenuesProfileMap);
 
 module.exports = router;

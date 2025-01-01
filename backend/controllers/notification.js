@@ -13,7 +13,8 @@ exports.getNotifications = async (req, res) => {
         // console.log("Notifications found:", notifications);
 
         if (notifications.length === 0) {
-            return res.status(404).json({ message: "No notifications found" });
+            // return res.status(404).json({ message: "No notifications found" });
+            return res.json([]);
         }
 
         res.json(notifications);

@@ -18,8 +18,10 @@ import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import ChangeLocationModal from './ChangeLocationModal';
 import SearchFoodCategoryModal from './SearchFoodCategoryModal';
 import { searchFoodVenue } from '../../functions/foodVenue';
+import { toggleScroll } from '../../functions/fileUtils';
+import { HashLoader } from 'react-spinners';
 
-export default function SearchBox({ setVisible, user, foodVenues, error, setFoodVenues, isAISearchVisible, setIsAISearchVisible }) {
+export default function SearchBox({ setVisible, user, foodVenues, error, setFoodVenues, isAISearchVisible, setIsAISearchVisible, loading, setLoading }) {
 
     const [isPlaceDetailsVisible, setPlaceDetailsVisible] = useState(false);
     const [isFoodVenueFinderVisible, setFoodVenueFinderVisible] = useState(false);
@@ -30,22 +32,6 @@ export default function SearchBox({ setVisible, user, foodVenues, error, setFood
     const location = localStorage.getItem('currentLocation') || 'Johor Bahru';
     const [searchTerm, setSearchTerm] = useState("");
 
-    //Hide the outer scrollbar
-    useEffect(() => {
-        if (isPlaceDetailsVisible) {
-            // Add no-scroll class to body when popup is open
-            document.body.classList.add('overflow_hidden');
-        } else {
-            // Remove no-scroll class from body when popup is closed
-            document.body.classList.remove('overflow_hidden');
-        }
-
-        // Cleanup function to remove the class when the component unmounts
-        return () => {
-            document.body.classList.remove('overflow_hidden');
-        };
-    }, [isPlaceDetailsVisible]);
-
     // Function to handle search submission
     const handleSearchSubmit = async (event) => {
         event.preventDefault(); // Prevent form submission from reloading the page
@@ -53,22 +39,35 @@ export default function SearchBox({ setVisible, user, foodVenues, error, setFood
     };
 
     const performSearch = async () => {
+        setLoading(true);
         try {
             // Make an API call to the backend with the search term and location
             const response = await searchFoodVenue(searchTerm, location, user.token);
             setFoodVenues(response);
+            setLoading(false);
         } catch (error) {
             console.error("Error:", error);
             setFoodVenues([]);
+            setLoading(false);
         }
     }
 
     const handleClearSearch = async () => {
-        setSearchTerm('');  // Clear the input field
-        // Make an API call to the backend with the search term and location
-        const response = await searchFoodVenue("", location, user.token);
-        // Store the search results in state
-        setFoodVenues(Array.isArray(response) ? response : []);
+        setLoading(true);
+        try {
+            setSearchTerm('');  // Clear the input field
+            // Make an API call to the backend with the search term and location
+            const response = await searchFoodVenue("", location, user.token);
+            // Store the search results in state
+            setFoodVenues(Array.isArray(response) ? response : []);
+            setLoading(false);
+
+        } catch (error) {
+            console.error("Error:", error);
+            setFoodVenues([]);
+            setLoading(false);
+        }
+
     };
 
     const searchHandler = async (e) => {
@@ -77,8 +76,19 @@ export default function SearchBox({ setVisible, user, foodVenues, error, setFood
         }
     };
 
+    useEffect(() => {
+        toggleScroll(true);
+        return () => toggleScroll(false); // Re-enable scrolling on cleanup
+    }, []);
+
+    useEffect(() => {
+        if (!searchTerm) {
+            handleClearSearch();  // If the search term is empty, fetch all food venues
+        }
+    }, [searchTerm]);
+
     return (
-        <Card sx={{ width: '100%', marginLeft: "auto", marginRight: "auto" }}>
+        <Card sx={{ width: '100%', marginLeft: "auto", marginRight: "auto", height: '100vh' }}>
             {isPlaceDetailsVisible && <PlaceDetails setVisible={setPlaceDetailsVisible} />}
             {isAISearchVisible && <FoodSuggestion setVisible={setIsAISearchVisible} user={user} />}
             <CardContent>
@@ -108,16 +118,26 @@ export default function SearchBox({ setVisible, user, foodVenues, error, setFood
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="AI Food Suggestion by Google Gemini">
-                    <IconButton aria-label="AISearch" onClick={() => setIsAISearchVisible(true)}>
-                        <TipsAndUpdatesIcon style={{ color: '#F5A762' }} />
-                    </IconButton>
+                        <IconButton aria-label="AISearch" onClick={() => setIsAISearchVisible(true)}>
+                            <TipsAndUpdatesIcon style={{ color: '#F5A762' }} />
+                        </IconButton>
                     </Tooltip>
                 </div>
-                {(foodVenues || foodVenues.length > 0) && <FoodVenueList setVisible={setPlaceDetailsVisible} foodVenues={foodVenues} />}
-                {(!foodVenues || foodVenues.length === 0) && error && <p style={{ textAlign: 'center', color: 'gray', marginTop: '20px' }}>Sorry, there is no food venue found. Please change to another location to find another food venue.</p>}
-                {(!foodVenues || foodVenues.length === 0 || !Array.isArray(foodVenues)) && <p style={{ textAlign: 'center', color: 'gray', marginTop: '20px' }}>Sorry, there is no food venue found.</p>}
+                {loading ?
+                    <>
+                        <div className="skelton_loader">
+                            <HashLoader color="#30BFBF" />
+                        </div>
+                    </> :
+                    <>
+                        {(foodVenues && foodVenues.length > 0) ?
+                            <FoodVenueList setVisible={setPlaceDetailsVisible} foodVenues={foodVenues} />
+                            : <p style={{ textAlign: 'center', color: 'gray', marginTop: '20px' }}>Sorry, there is no food venue found.</p>}
+                    </>}
+                {/* {(!foodVenues || foodVenues.length === 0) && error && <p style={{ textAlign: 'center', color: 'gray', marginTop: '20px' }}>Sorry, there is no food venue found. Please change to another location to find another food venue.</p>} */}
+                {/* {(!foodVenues || foodVenues.length === 0 || !Array.isArray(foodVenues)) && <p style={{ textAlign: 'center', color: 'gray', marginTop: '20px' }}>Sorry, there is no food venue found.</p>} */}
             </CardContent>
-            <SearchFoodCategoryModal setVisible={setIsFiterVisible} visible={isFilterVisible} setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory} />
+            <SearchFoodCategoryModal setVisible={setIsFiterVisible} visible={isFilterVisible} setSelectedCategory={setSelectedCategory} selectedCategory={selectedCategory} user={user} setFoodVenues={setFoodVenues} />
         </Card>
     );
 }

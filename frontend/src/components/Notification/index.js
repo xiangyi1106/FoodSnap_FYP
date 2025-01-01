@@ -37,7 +37,7 @@ export default function Notification({
     <div className="notifications" ref={notificationMenu}>
       <h2 className="notifications-title">Notifications</h2>
       <div className="notification-list">
-        {notifications && notifications.length > 0 && notifications.map((n) => {
+        {notifications && notifications.length > 0 ? notifications.map((n) => {
           // If it's a 'new_follower' type notification, wrap it in a Link to the profile
           if (n.type === 'new_follower') {
             return (
@@ -148,7 +148,9 @@ export default function Notification({
               </div>
             </div>
           );
-        })}
+        })
+      :<p className='center'>No notification yet.</p>
+      }
       </div>
     </div>
   );
