@@ -1,8 +1,14 @@
 import CIcon from '@coreui/icons-react';
 import { cilX } from '@coreui/icons';
 import { EditPromotionForm } from './EditPromotionForm';
+import { useEffect } from 'react';
+import { toggleScroll } from '../../../functions/fileUtils';
 
 export default function EditPromotion({ setVisible, promotionId, user }) {
+    useEffect(() => {
+        toggleScroll(true);
+        return () => toggleScroll(false); // Re-enable scrolling on cleanup
+    }, []);
     return (
         <>
             <div className='blur place_detail_information'>

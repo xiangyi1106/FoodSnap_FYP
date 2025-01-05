@@ -64,7 +64,20 @@ exports.getPublicPromotions = async (req, res) => {
     try {
         const promotions = await Promotion.find() // Fetch only public promotions
             .sort({ createdAt: -1 }); // Sort by newest to oldest
-        res.json(promotions);
+            res.json(promotions);
+            // .sort([
+            //     // First, sort by date
+            //     { date: 1 },
+            //     // Then, if two events have the same date, sort by time
+            //     { time: 1 },
+            // ]);
+
+            // const promotions = await Promotion.find()
+            // .sort([
+            //     // { date: 1 },  // Sort by date (ascending)
+            //     { time: 1 },  // Then by time (ascending)
+            // ]);
+            // res.json(promotions);
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
@@ -134,7 +147,7 @@ exports.searchPromotion = async (req, res) => {
 
         // Location filter (if provided)
         if (location && location !== 'none') {
-            query['location.name'] = { $regex: location, $options: 'i' }; // Partial match for location with case insensitive
+            query['location.address'] = { $regex: location, $options: 'i' }; // Partial match for location with case insensitive
         }
 
         // Date filter (if provided)
@@ -205,7 +218,7 @@ exports.searchPromotion = async (req, res) => {
 
 // Update promotion controller without validationResult
 exports.updatePromotion = async (req, res) => {
-    const { promotionName, date, time, endDate, endTime, location, description, promotionImage, privacy } = req.body;
+    const { promotionName, date, time, endDate, endTime, location, description, promotionImage, privacy, termsAndConditions } = req.body;
     const promotionId = req.params.id;
 
     try {
@@ -241,9 +254,9 @@ exports.updatePromotion = async (req, res) => {
                 };
             }
         }
-        if (description) promotion.description = description;
-        if (termsAndConditions) promotion.termsAndConditions = termsAndConditions;
-        if (promotionImage) promotion.image = promotionImage;
+        if (description) promotion.description = description || '';
+        if (termsAndConditions) promotion.termsAndConditions = termsAndConditions || '';
+        if (promotionImage) promotion.image = promotionImage || '';
         if (privacy) promotion.privacy = privacy;
 
         // Save the updated promotion

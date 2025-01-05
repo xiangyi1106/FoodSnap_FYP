@@ -23,7 +23,7 @@ export default function PlaceDetailsLayout({ user }) {
     const [isMounted, setIsMounted] = useState(true); // Track if the component is mounted
     // Generate breadcrumbs using the reusable function
     const breadcrumbs = location.state?.from ? generateBreadcrumbs(location, 'Food Venue Wishlist', location.state?.from, foodVenue?.name) : generateBreadcrumbs(location, 'Search Venue', '/searchVenue', foodVenue?.name);
-    console.log(location.state?.from);
+    // console.log(location.state?.from);
     useEffect(() => {
         const fetchFoodVenue = async () => {
             setLoading(true);

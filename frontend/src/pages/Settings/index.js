@@ -12,10 +12,10 @@ const sidebarNavItems = [
         title: "Account",
         href: "/settings",
     },
-    {
-        title: "Password",
-        href: "/settings/password",
-    },
+    // {
+    //     title: "Password",
+    //     href: "/settings/password",
+    // },
     // {
     //     title: "Notifications",
     //     href: "/examples/forms/notifications",

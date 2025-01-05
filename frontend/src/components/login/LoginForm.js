@@ -238,7 +238,7 @@ export default function LoginForm() {
                                 )}
                             </Formik>
 
-                            <Link to="/resetpassword" className="small pb-lg-2 text-black-50 underline">Forgot password?</Link>
+                            {/* <Link to="/resetpassword" className="small pb-lg-2 text-black-50 underline">Forgot password?</Link> */}
 
                             {submitError && <div className="error_text">{submitError}</div>}
 

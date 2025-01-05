@@ -20,8 +20,8 @@ export function EditPromotionForm({ user, promotionId, setVisible }) {
     const [locationText, setLocationText] = useState('');
     const [locationList, setLocationList] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [tags, setTags] = useState('');
-    const [foodVenue, setFoodVenue] = useState(''); // Optional food venue from DB
+    // const [tags, setTags] = useState('');
+    // const [foodVenue, setFoodVenue] = useState(''); // Optional food venue from DB
     const [address, setAddress] = useState([]);
     const today = new Date();
     const [image, setImage] = useState('');
@@ -53,15 +53,15 @@ export function EditPromotionForm({ user, promotionId, setVisible }) {
                 const formattedEndDate = response.data.endDate ? new Date(promotion.endDate).toISOString().slice(0, 10) : '';
                 // Set initial values from the response
                 setInitialValues({
-                    promotionName: promotion.name,
+                    promotionName: promotion.name || '',
                     date: formattedDate,
                     time: promotion.time,
                     endDate: formattedEndDate,
-                    endTime: promotion.endTime,
-                    location: promotion.location.name,
-                    description: promotion.description,
-                    promotionImage: promotion.image,
-                    privacy: promotion.privacy,
+                    endTime: promotion.endTime || '',
+                    location: promotion.location.name || '',
+                    description: promotion.description || '',
+                    promotionImage: promotion.image || '',
+                    privacy: promotion.privacy || 'public',
                 });
                 setLocationText(promotion.location.name);
                 setAddress(promotion.location); // Set the location in state
@@ -108,7 +108,10 @@ export function EditPromotionForm({ user, promotionId, setVisible }) {
             }),
         description: Yup.string()
             .max(500, "Description must not exceed 500 characters."),
-        privacy: Yup.string().required("Privacy setting is required"),
+        termsAndConditions: Yup.string()
+            // .min(10, "Description must be at least 10 characters.")
+            .max(500, "Term And Condition must not exceed 500 characters."),
+        // privacy: Yup.string().required("Privacy setting is required"),
     });
 
     const updatePicture = async (img) => {
@@ -129,12 +132,14 @@ export function EditPromotionForm({ user, promotionId, setVisible }) {
     };
 
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
     const formik = useFormik({
         initialValues,
         enableReinitialize: true, // Ensures formik updates when initialValues change
         validationSchema: promotionFormSchema,
         onSubmit: async (values, { resetForm }) => {
+            setLoading(true);
             try {
                 // If an promotion image is selected, upload it
                 if (image) {
@@ -148,6 +153,18 @@ export function EditPromotionForm({ user, promotionId, setVisible }) {
                         values.promotionImage = '';
                     }
                 }
+
+                // if (foodVenue) {
+                //     const locationData = {
+                //         name: foodVenue.name,
+                //         address: foodVenue.address,
+                //         latitude: foodVenue.latitude || null, // No latitude available
+                //         longitude: foodVenue.longitude || null, // No longitude available
+                //     };
+                //     // formik.setFieldValue('location', locationData);
+                //     values.location = locationData;
+                //     values.foodVenue = foodVenue._id;
+                // } else {
 
                 // Now process the location: check if address is selected from suggestions
                 if (!address || !address.latitude || !address.longitude) {
@@ -167,6 +184,7 @@ export function EditPromotionForm({ user, promotionId, setVisible }) {
                     // formik.setFieldValue('location', locationData);
                     values.location = locationData;
                 }
+                // }
 
                 // Finally, post the promotion data to the backend
                 const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/promotion/update/${promotionId}`, values, {
@@ -186,9 +204,10 @@ export function EditPromotionForm({ user, promotionId, setVisible }) {
                     navigate(`/foodPromotion/${promotionId}`, { replace: true });
                 }
             } catch (error) {
-                console.error("Error creating promotion:", error);
-                toast.error("Failed to create promotion: " + (error.response?.data?.message || error.message));
+                console.error("Error updating promotion:", error);
+                toast.error("Failed to updating promotion: " + (error.response?.data?.message || error.message));
             }
+            setLoading(false);
         },
     });
 
@@ -412,7 +431,7 @@ export function EditPromotionForm({ user, promotionId, setVisible }) {
 
                 />
 
-                <div>
+                {/* <div>
                     <FormControl component="fieldset" style={{ marginTop: '20px' }}>
                         <FormLabel component="legend" style={{ color: 'black', fontSize: '0.9rem', marginBottom: '0.5rem', }}>Privacy</FormLabel>
                         <RadioGroup
@@ -455,12 +474,13 @@ export function EditPromotionForm({ user, promotionId, setVisible }) {
                         </RadioGroup>
                     </FormControl>
                     <p className="profile_form_description">Select the privacy of the promotion.</p>
-                </div>
+                </div> */}
                 <button
                     type="submit"
                     className="event_form_button profile_form_button"
                 >
-                    Update Promotion
+                  {loading ? <CircularProgress size={30} sx={{ color: 'white' }} /> :  "Update Promotion" }
+                    
                 </button>
             </form>
         </FormikProvider>

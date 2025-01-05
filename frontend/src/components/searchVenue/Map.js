@@ -5,6 +5,7 @@ import L from 'leaflet';
 import axios from 'axios';
 import 'leaflet-control-geocoder';
 import johorBahruAreasCoordinates from '../../data/johorBahruAreasCoordinates';
+import StarRating from './StarRating';
 
 // Fix for the default marker icon not displaying correctly
 delete L.Icon.Default.prototype._getIconUrl;
@@ -193,6 +194,7 @@ export default function Map({ addresses, selected, foodVenues }) {
                     <Marker key={index} position={[location.latitude, location.longitude]} icon={customMarkerIcon}>
                         <Popup className="">
                             <h6>{location?.name}</h6>
+                            <h6><StarRating rating={location?.rating} /></h6>
                             <p>{location?.priceRange}</p>
                             </Popup>
                     </Marker>

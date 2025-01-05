@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost } from "../../functions/post";
@@ -11,6 +11,7 @@ import { uploadMedias } from "../../functions/uploadMedia";
 import { useNavigate } from 'react-router-dom'; // Import useHistory
 import "./profilePicture.css";
 import { toast } from "react-toastify";
+import { toggleScroll } from "../../functions/fileUtils";
 
 export default function UpdateProfilePicture({
     setImage,
@@ -108,7 +109,12 @@ export default function UpdateProfilePicture({
         }
     };
 
-    console.log(user);
+    // console.log(user);
+    useEffect(() => {
+        toggleScroll(true);
+        return () => toggleScroll(false); // Re-enable scrolling on cleanup
+    }, []);
+
     return (
         <div className="blur">
             <div className="postBox update_img">
@@ -118,14 +124,14 @@ export default function UpdateProfilePicture({
                     </div>
                     <span>Update profile picture</span>
                 </div>
-                <div className="update_image_desc">
+                {/* <div className="update_image_desc">
                     <textarea
                         placeholder="Description"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         className="textarea_blue details_input"
                     ></textarea>
-                </div>
+                </div> */}
 
                 <div className="update_center">
                     <div className="crooper">

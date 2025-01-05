@@ -52,6 +52,10 @@ a {
   z-index: 99;
 }
 
+.MuiMasonry-root {
+  min-height: 100vh; /* Example to fix the shaking issue */
+}
+
 /* Color */
 .logo_color{
   background: linear-gradient(to right, rgb(43, 192, 228), rgb(234, 236, 198));

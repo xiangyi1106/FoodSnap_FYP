@@ -77,6 +77,9 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
             toast.error("Failed to uploads picture: " + error.message);
         }
     };
+    
+    // console.log(foodVenue);
+    const [loading, setLoading] = useState(false);
 
     const formik = useFormik({
         initialValues: {
@@ -95,6 +98,7 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
         },
         validationSchema: eventFormSchema,
         onSubmit: async (values, { resetForm }) => {
+            setLoading(true);
             try {
                 // If an event image is selected, upload it
                 if (image) {
@@ -116,7 +120,7 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
                 if (foodVenue) {
                     const locationData = {
                         name: foodVenue.name,
-                        address: foodVenue.location,
+                        address: foodVenue.address,
                         latitude: foodVenue.latitude || null, // No latitude available
                         longitude: foodVenue.longitude || null, // No longitude available
                     };
@@ -124,17 +128,18 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
                     values.location = locationData;
                     values.foodVenue = foodVenue._id;
                 } else {
+                    console.log(address);
                     // Now process the location: check if address is selected from suggestions
                     if (!address || !address.latitude || !address.longitude) {
-                        const manualAddress = locationText;
-                        const addressText = {
-                            fullAddress: manualAddress,
-                        };
+                        // const manualAddress = locationText;
+                        // const addressText = {
+                        //     fullAddress: manualAddress,
+                        // };
 
                         // Set the manually entered location data
                         const locationData = {
-                            name: manualAddress,
-                            address: addressText,
+                            name: locationText,
+                            address: locationText,
                             latitude: null, // No latitude available
                             longitude: null, // No longitude available
                         };
@@ -142,6 +147,8 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
                         // formik.setFieldValue('location', locationData);
                         values.location = locationData;
                         // user.role === 'business_account' && values.foodVenue = user.foodVenue;
+                    }else{
+
                     }
                 }
 
@@ -172,6 +179,7 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
                 console.error("Error creating event:", error);
                 toast.error("Failed to create event: " + (error.response?.data?.message || error.message));
             }
+            setLoading(false);
         },
     });
 
@@ -225,14 +233,14 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
         // Set the location state with the full address details
         const selectedAddress = {
             place_id: selectedItem.place_id,
-            name: selectedItem.display_name,
-            address: selectedItem.address,
+            name: selectedItem.name,
+            address: selectedItem.display_name,
             latitude: selectedItem.lat,
             longitude: selectedItem.lon,
         };
         setAddress(selectedAddress); // Store the selected address in state
         formik.setFieldValue('location', selectedAddress); // Update formik value
-        setLocationText(selectedItem.display_name); // Update input state with selected location
+        setLocationText(selectedItem.name); // Update input state with selected location
         setLocationList([]); // Clear location list after selection
     };
 
@@ -252,7 +260,7 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
 
     //     fetchFoodVenues();
     // }, []); // Empty dependency array ensures this runs once when the component mounts
-
+    
     return (
         <FormikProvider value={formik}>
             <form onSubmit={formik.handleSubmit} className="event_form_space_y_8">
@@ -552,7 +560,8 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
                     type="submit"
                     className="event_form_button profile_form_button"
                 >
-                    Add Event
+                    {/* Add Event */}
+                  {loading ? <CircularProgress size={30} sx={{ color: 'white' }} /> :  "Add Event" }
                 </button>
             </form>
         </FormikProvider>

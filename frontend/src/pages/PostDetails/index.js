@@ -17,33 +17,23 @@ const PostDetailsPage = ({ user, dispatch }) => {
     const [currentIndex, setCurrentIndex] = useState(parseInt(mediaIndex, 10) || 0);
     const [visible, setVisible] = useState(false);
 
-    useEffect(() => {
-        const fetchPosts = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/post/${id}`); // Include ID in the request URL
-                setPost(response.data);
-            } catch (error) {
-                toast.error("Error fetching posts: " + error.message);
-            }
-        };
+    const fetchPosts = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/post/${id}`); // Include ID in the request URL
+            setPost(response.data);
+            console.log(currentIndex);
+        } catch (error) {
+            toast.error("Error fetching posts: " + error.message);
+        }
+    };
 
-        fetchPosts();
+    useEffect(() => {
+        if (id) {
+            fetchPosts();
+            console.log(post);
+        }
         // console.log(dispatch);
     }, [id, dispatch]);
-
-    // useEffect(() => {
-    //     if (!post) {
-    //         const fetchPosts = async () => {
-    //             try {
-    //                 const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/post/${id}`);
-    //                 setPost(response.data);
-    //             } catch (error) {
-    //                 toast.error("Error fetching posts: " + error.message);
-    //             }
-    //         };
-    //         fetchPosts();
-    //     }
-    // }, [id]);
 
     useEffect(() => {
         if (mediaIndex) {
@@ -62,12 +52,12 @@ const PostDetailsPage = ({ user, dispatch }) => {
     if (!post) return <div>Loading...</div>;
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh', overflow: 'hidden'}}>
-            {isShareVisible && selectedSharePost && <SharePostPopUp setIsShareVisible={setIsShareVisible} post={selectedSharePost} user={user} dispatch={dispatch} sharesCount={sharesCount} setSharesCount={setSharesCount}/>}
+        <Box sx={{ display: 'flex', flexDirection: 'row', height: '100vh', overflow: 'hidden' }}>
+            {isShareVisible && selectedSharePost && <SharePostPopUp setIsShareVisible={setIsShareVisible} post={selectedSharePost} user={user} dispatch={dispatch} sharesCount={sharesCount} setSharesCount={setSharesCount} />}
             {/* Left part - Media */}
-            <Box sx={{ flex: 2, marginRight: 2}}  className='media-background'>
+            <Box sx={{ flex: 2, marginRight: 2 }} className='media-background'>
                 {!visible && <div className='close_button hover_style_2' style={{ left: '12px', right: '0' }}><CIcon icon={cilX} className="icon_size_22 close_button_icon" onClick={() => navigate(-1)} /></div>}
-                <PostDetailsCarousel media={post.media} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex}  setVisible={setVisible} />
+                <PostDetailsCarousel media={post.media} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} setVisible={setVisible} />
             </Box>
             <PostDetailsInformation post={post} user={user} dispatch={dispatch} setIsShareVisible={setIsShareVisible} postDetailsPage sharesCount={sharesCount} setSharesCount={setSharesCount} feedComment={feedComment} setSelectedSharePost={setSelectedSharePost} fromPage={'imagePost'} />
         </Box>

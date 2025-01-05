@@ -27,6 +27,7 @@ const {
     getFoodVenueMapList,
     getSavedPost,
     updateProfile,
+    updateName,
 } = require("../controllers/user");
 
 const { authUser } = require("../middleware/auth");
@@ -86,5 +87,7 @@ router.get("/checkFoodVenueInWishlist/:id", authUser, checkFoodVenueInWishlist )
 router.get('/getFoodVenueMapList/:username', authUser, getFoodVenueMapList);
 
 router.get("/getSavedPost/:username", authUser, getSavedPost);
+
+router.patch("/api/users/:userId/update-name", authUser, updateName);
 
 module.exports = router;

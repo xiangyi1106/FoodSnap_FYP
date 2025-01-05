@@ -160,7 +160,7 @@ function App() {
           <Route path="/resetpassword" element={<ResetPassword />} exact />
         </Route>
         <Route element={<LoginRoutes />}>
-          <Route path="/post/:id/:initialIndex" element={<PostDetailsPage user={user} dispatch={dispatch} />} exact />
+          <Route path="/post/:id/:mediaIndex" element={<PostDetailsPage user={user} dispatch={dispatch} />} exact />
           <Route path="/post/:id" element={<PostPopup user={user} />} />
           <Route
             path="/profile/:username"
@@ -177,7 +177,7 @@ function App() {
           </Route>
 
           <Route path="/settings" element={<Settings />}>
-            <Route index element={<SettingsPage />} />
+            <Route index element={<SettingsPage user={user} />} />
             <Route path="password" element={<PasswordSettingsPage />} />
           </Route>
           <Route path="/foodVenue/:id" element={<PlaceDetailsLayout user={user} />}>

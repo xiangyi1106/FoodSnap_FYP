@@ -125,7 +125,14 @@ export default function Post({ post, user, profile, skip, onShowFeedComment, dep
                 </div>}
             </div>
             <>
-                <div className="post_text"><p>{formattedText}</p></div>
+                {post?.text && <div className="post_text"><p>{formattedText}</p></div>}
+                {post?.tag && post?.tag.length > 0 && <div className="post_text">
+                    {post?.tag?.map((tag, index) => (
+                        <span key={index} className="tag_badge">
+                            {tag.name} @{tag.username}
+                        </span>
+                    ))}
+                </div>}
 
                 {/* Render shared post if it exists and is available */}
                 {post?.sharedPost && isOriginalPostAvailable && depth < 2 && (
@@ -162,7 +169,7 @@ export default function Post({ post, user, profile, skip, onShowFeedComment, dep
                                     {mediaItem.type === "image" ? (
                                         <img src={mediaItem.url} key={`image-${i}`} alt="" onLoad={handleImageLoad} className={`img-${i} post_grid_media`} style={{ cursor: 'pointer' }} onClick={() => handleClick(post._id, i)} />
                                     ) : mediaItem.type === "video" ? (
-                                        <video key={`video-${i}`} className={`video-${i}`} style={{ cursor: 'pointer' }} controls onClick={() => handleClick(post.id, i)}>
+                                        <video key={`video-${i}`} className={`video-${i}`} style={{ cursor: 'pointer' }} controls onClick={() => handleClick(post._id, i)}>
                                             <source src={mediaItem.url} type="video/mp4" />
                                             Your browser does not support the video tag.
                                         </video>

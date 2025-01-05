@@ -45,7 +45,7 @@ export default function PlaceProfileFoodMenu() {
       if (foodVenue._id && user.role === 'business' && user.foodVenueOwned === foodVenue._id) {
         setValidityToEditFoodVenue(true);
       }
-      console.log(validityToEditFoodVenue);
+      // console.log(validityToEditFoodVenue);
     }
   }, [foodVenue]);  // Only runs when `foodVenue` changes
 
@@ -120,9 +120,9 @@ export default function PlaceProfileFoodMenu() {
     <div className='place_profile_photos'>
       {/* <MenuList /> */}
       <input type='file' multiple hidden onChange={handleMedias} ref={mediainputref} accept="image/*"></input>
-      {isMenuPreviewOpen && <FoodMenuPreview setIsMenuPreviewOpen={setIsMenuPreviewOpen} medias={medias} setMedias={setMedias} mediainputref={mediainputref} menuSubmit={menuSubmit} isLoading={isLoading} />}
-      {/* {validityToEditFoodVenue && <button className='green_btn' onClick={handleClick} style={{ marginBottom: '30px' }}>Upload Menu</button>} */}
-      {<button className='green_btn' onClick={handleClick} style={{ marginBottom: '30px' }}>Upload Menu</button>}
+      {/* {isMenuPreviewOpen && <FoodMenuPreview setIsMenuPreviewOpen={setIsMenuPreviewOpen} medias={medias} setMedias={setMedias} mediainputref={mediainputref} menuSubmit={menuSubmit} isLoading={isLoading} />} */}
+      {validityToEditFoodVenue && <button className='green_btn' onClick={handleClick} style={{ marginBottom: '30px' }}>Upload Menu</button>}
+      {/* {<button className='green_btn' onClick={handleClick} style={{ marginBottom: '30px' }}>Upload Menu</button>} */}
       {foodVenueMenu && foodVenueMenu.length > 0 ?
         <Box sx={{ width: '100%' }}>
           <ImageList variant="masonry" cols={cols} gap={8}>

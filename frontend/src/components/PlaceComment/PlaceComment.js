@@ -41,7 +41,7 @@ const PlaceComment = ({ author, date, text, avatarUrl, children, id, user, setCo
             <p className="comment_text">{text}</p>
             {/* <MediaCarousel media={media} /> */}
             {media && media.length > 0 && (
-                <div>
+                <div className='' style={{display: 'flex', gap: '10px'}}>
                     {media.map((item, index) => {
                         // Check the media type (you can extend this with more checks for different media types)
                         if (item.type === "image") {

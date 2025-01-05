@@ -129,12 +129,13 @@ export function EditEventForm({ user, eventId, setVisible }) {
     };
 
     const navigate = useNavigate();
-
+    const [loading, setLoading] = useState(false);
     const formik = useFormik({
         initialValues,
         enableReinitialize: true, // Ensures formik updates when initialValues change
         validationSchema: eventFormSchema,
         onSubmit: async (values, { resetForm }) => {
+            setLoading(true);
             try {
                 // If an event image is selected, upload it
                 if (image) {
@@ -189,6 +190,8 @@ export function EditEventForm({ user, eventId, setVisible }) {
                 console.error("Error creating event:", error);
                 toast.error("Failed to create event: " + (error.response?.data?.message || error.message));
             }
+            setLoading(false);
+
         },
     });
 
@@ -412,7 +415,7 @@ export function EditEventForm({ user, eventId, setVisible }) {
 
                 />
 
-                <div>
+                {/* <div>
                     <FormControl component="fieldset" style={{ marginTop: '20px' }}>
                         <FormLabel component="legend" style={{ color: 'black', fontSize: '0.9rem', marginBottom: '0.5rem', }}>Privacy</FormLabel>
                         <RadioGroup
@@ -455,12 +458,13 @@ export function EditEventForm({ user, eventId, setVisible }) {
                         </RadioGroup>
                     </FormControl>
                     <p className="profile_form_description">Select the privacy of the event.</p>
-                </div>
+                </div> */}
                 <button
                     type="submit"
                     className="event_form_button profile_form_button"
                 >
-                    Update Event
+                    {/* Update Event */}
+                  {loading ? <CircularProgress size={30} sx={{ color: 'white' }} /> :  "Update Event" }
                 </button>
             </form>
         </FormikProvider>

@@ -36,7 +36,7 @@ const eventSchema = new Schema({
         //  required: true 
         }, // Display name or place name
       address: {
-        type: Object, // Instead of Map
+        type: String, // Instead of Map
         // required: true
       },
       latitude: { type: Number, 

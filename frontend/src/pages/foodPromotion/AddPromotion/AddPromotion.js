@@ -1,8 +1,14 @@
 import CIcon from '@coreui/icons-react';
 import { cilX } from '@coreui/icons';
 import { AddPromotionForm } from './AddPromotionForm';
+import { toggleScroll } from '../../../functions/fileUtils';
+import { useEffect } from 'react';
 
 export default function AddPromotion({ setIsCreatePromotionVisible, user, setPromotions, setFilteredPromotions, foodVenue }) {
+    useEffect(() => {
+        toggleScroll(true);
+        return () => toggleScroll(false); // Re-enable scrolling on cleanup
+    }, []);
     return (
         <>
             <div className='blur place_detail_information'>

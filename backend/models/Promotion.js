@@ -42,8 +42,12 @@ const promotionSchema = new Schema({
       name: { type: String,
         //  required: true 
         }, // Display name or place name
+      // address: {
+      //   type: Object, // Instead of Map
+      //   // required: true
+      // },
       address: {
-        type: Object, // Instead of Map
+        type: String, // Instead of Map
         // required: true
       },
       latitude: { type: Number, 

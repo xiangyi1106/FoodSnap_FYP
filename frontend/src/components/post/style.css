@@ -646,6 +646,16 @@
   overflow-y: scroll;
 }
 
+.tag_badge{
+  display: inline-block;
+  margin-right: 8px;
+  padding: 4px 8px;
+  background-color: #f0f0f0;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #333;
+}
+
 /*----Comment-----------*/
 
 @media (max-width: 415px) {

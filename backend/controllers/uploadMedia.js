@@ -63,6 +63,32 @@ exports.listImages = async (req, res) => {
   const excludePath = `${user.username}/comment_images/*`;
   searchExpression += ` AND NOT public_id:${excludePath}`;
 
+  // Exclude images from multiple folders
+  // const excludePaths = [
+  //   `${user.username}/comment_images/*`,
+  //   `${user.username}/promotion/*`,  // Exclude another folder
+  //   `${user.username}/event/*` // Exclude yet another folder
+  // ];
+
+  // // Add exclusions to the search expression
+  // excludePaths.forEach(excludePath => {
+  //   searchExpression += ` AND NOT public_id:${excludePath}`;
+  // });
+
+  // Define an array of folders to exclude
+  // const excludePaths = [
+  //   `${user.username}/comment_images/*`,
+  //   `${user.username}/promotion/*`,
+  //   `${user.username}/event/*`
+  // ];
+
+  // // Build the exclusion part of the search expression
+  // let exclusionExpression = excludePaths.map(path => `NOT public_id:${path}`).join(' AND ');
+
+  // // Incorporate the exclusion expression into the search expression
+  // searchExpression += ` AND (${exclusionExpression})`;
+
+
   cloudinary.v2.search
     // .expression(`${path} AND resource_type:image`)
     .expression(searchExpression)

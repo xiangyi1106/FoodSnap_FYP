@@ -83,6 +83,7 @@ export function AddPromotionForm({ setIsCreatePromotionVisible, user, setPromoti
         }
     };
     const [locationError, setLocationError] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const formik = useFormik({
         initialValues: {
@@ -104,6 +105,7 @@ export function AddPromotionForm({ setIsCreatePromotionVisible, user, setPromoti
         },
         validationSchema: promotionFormSchema,
         onSubmit: async (values, { resetForm }) => {
+            setLoading(true);
             try {
                 // If an promotion image is selected, upload it
                 if (image) {
@@ -118,14 +120,10 @@ export function AddPromotionForm({ setIsCreatePromotionVisible, user, setPromoti
                     }
                 }
 
-                // if (locationText === "" || null) {
-                //     setLocationError(true);
-                //     return;
-                // }
                 if (foodVenue) {
                     const locationData = {
                         name: foodVenue.name,
-                        address: foodVenue.location,
+                        address: foodVenue.address,
                         latitude: foodVenue.latitude || null, // No latitude available
                         longitude: foodVenue.longitude || null, // No longitude available
                     };
@@ -179,6 +177,7 @@ export function AddPromotionForm({ setIsCreatePromotionVisible, user, setPromoti
                 console.error("Error creating promotion:", error);
                 toast.error("Failed to create promotion: " + (error.response?.data?.message || error.message));
             }
+            setLoading(false);
         },
     });
 
@@ -506,7 +505,7 @@ export function AddPromotionForm({ setIsCreatePromotionVisible, user, setPromoti
                     type="submit"
                     className="event_form_button profile_form_button"
                 >
-                    Add Promotion
+                  {loading ? <CircularProgress size={30} sx={{ color: 'white' }} /> :  "Add Promotion" }
                 </button>
             </form>
         </FormikProvider>

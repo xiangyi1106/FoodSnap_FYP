@@ -52,7 +52,7 @@ export default function EditProfile({ setVisible, user, profile, dispatch }) {
                         </div>
                         <div className="settings_separator"></div>
                         <div className="settings_container">
-                            <EditProfileForm user={user} profile={profile} dispatch={dispatch} />
+                            <EditProfileForm user={user} profile={profile} dispatch={dispatch} setVisible={setVisible} />
                         </div>
                     </div>
                 </div>

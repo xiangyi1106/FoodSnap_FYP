@@ -2,8 +2,14 @@ import CIcon from '@coreui/icons-react';
 import { cilX } from '@coreui/icons';
 import { AddEventForm } from "./AddEventForm";
 import './style.css';
+import { useEffect } from 'react';
+import { toggleScroll } from '../../../functions/fileUtils';
 
 export default function AddEvent({ setIsCreateEventVisible, setEvents, setFilteredEvents, user, foodVenue }) {
+    useEffect(() => {
+        toggleScroll(true);
+        return () => toggleScroll(false); // Re-enable scrolling on cleanup
+    }, []);
     return (
         <>
             <div className='blur place_detail_information'>

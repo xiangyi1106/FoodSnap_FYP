@@ -10,6 +10,7 @@ import CIcon from '@coreui/icons-react';
 import { cilColorBorder, cilBookmark } from '@coreui/icons';
 import { FavoriteBorderOutlined } from '@mui/icons-material';
 import EditPromotion from '../EditPromotion/EditPromotion';
+import { convertTo12HourFormat } from '../../../functions/fileUtils';
 
 const PromotionDetails = ({ user }) => {
     const { id } = useParams();
@@ -58,8 +59,8 @@ const PromotionDetails = ({ user }) => {
                                                 <span className=''>{promotion?.location?.name}</span>
                                             </div>
                                         </span>
-                                        <p style={{ color: '#30BFBF' }}>{new Date(promotion?.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} {promotion?.time} {promotion?.endDate && <span style={{color: 'black', margin: '0 5px'}}>- </span>}
-                                            {promotion?.endDate && new Date(promotion?.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} {promotion?.endTime && promotion?.endTime}
+                                        <p style={{ color: '#30BFBF' }}>{new Date(promotion?.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} {convertTo12HourFormat(promotion?.time)} {promotion?.endDate && <span style={{color: 'black', margin: '0 5px'}}>- </span>}
+                                            {promotion?.endDate && new Date(promotion?.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} {promotion?.endTime && convertTo12HourFormat(promotion?.endTime)}
                                         </p>
                                         <div className="discover_post_user">
                                             <Link
@@ -68,11 +69,11 @@ const PromotionDetails = ({ user }) => {
                                             >
                                                 <div className="discover_post_user_name">
                                                     <Avatar
-                                                        alt={promotion?.organizer.name}
-                                                        src={promotion?.organizer.picture}
+                                                        alt={promotion?.organizer?.name}
+                                                        src={promotion?.organizer?.picture}
                                                         sx={{ width: 18, height: 18 }}
                                                     />
-                                                    {promotion?.organizer.name}
+                                                    {promotion?.organizer?.name}
                                                 </div>
                                             </Link>
                                         </div>

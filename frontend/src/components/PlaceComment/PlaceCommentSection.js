@@ -93,7 +93,8 @@ const PlaceCommentSection = ({ initialComments, comments, onAddComment, user, se
                             {comment.replies.length <= 2 ? (
                                 // If there are 2 or fewer replies, show them all without the "See More" button
                                 comment.replies.map((subcomment) => (
-                                    <div key={subcomment._id} style={{ paddingLeft: (depth + 1) * 20 }}>
+                                    // <div key={subcomment._id} style={{ paddingLeft: (depth + 1) * 20 }}>
+                                    <div key={`${comment._id}-reply-${subcomment._id}`} style={{ paddingLeft: (depth + 1) * 20 }}>
                                         <PlaceComment
                                             author={subcomment?.user?.name}
                                             date={subcomment?.createdAt}
@@ -110,7 +111,7 @@ const PlaceCommentSection = ({ initialComments, comments, onAddComment, user, se
                                 // If there are more than 2 replies, show only the first 2 and the "See More" button
                                 <>
                                     {comment.replies.slice(0, 2).map((subcomment) => (
-                                        <div key={subcomment._id} style={{ paddingLeft: (depth + 1) * 20 }}>
+                                        <div key={`${comment._id}-reply-${subcomment._id}`} style={{ paddingLeft: (depth + 1) * 20 }}>
                                             <PlaceComment
                                                 author={subcomment?.user?.name}
                                                 date={subcomment?.createdAt}
@@ -125,7 +126,7 @@ const PlaceCommentSection = ({ initialComments, comments, onAddComment, user, se
                                     ))}
                                     
                                     {showAllReplies && comment.replies.slice(2).map((subcomment) => (
-                                        <div key={subcomment._id} style={{ paddingLeft: (depth + 1) * 20 }}>
+                                        <div key={`${comment._id}-reply-${subcomment._id}`} style={{ paddingLeft: (depth + 1) * 20 }}>
                                             <PlaceComment
                                                 author={subcomment?.user?.name}
                                                 date={subcomment?.createdAt}

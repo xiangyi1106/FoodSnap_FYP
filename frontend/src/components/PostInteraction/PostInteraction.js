@@ -61,7 +61,7 @@ export default function PostInteraction({ post, user, isPost, onShowFeedComment,
     };
 
     useEffect(() => {
-        console.log("Updated comment count:", commentCount);
+        // console.log("Updated comment count:", commentCount);
         dispatch({
             type: "UPDATE_COMMENT_COUNT",
             payload: {

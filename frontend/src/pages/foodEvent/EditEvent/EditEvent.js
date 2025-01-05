@@ -1,8 +1,14 @@
 import CIcon from '@coreui/icons-react';
 import { cilX } from '@coreui/icons';
 import { EditEventForm } from './EditEventForm';
+import { useEffect } from 'react';
+import { toggleScroll } from '../../../functions/fileUtils';
 
 export default function EditEvent({ setVisible, eventId, user }) {
+    useEffect(() => {
+        toggleScroll(true);
+        return () => toggleScroll(false); // Re-enable scrolling on cleanup
+    }, []);
     return (
         <>
             <div className='blur place_detail_information'>

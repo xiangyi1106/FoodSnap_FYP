@@ -14,6 +14,8 @@ export default function PlaceProfileEvents({ user }) {
   const [filteredEvents, setFilteredEvents] = useState([]); // State to store filtered events
   const [isCreateEventVisible, setIsCreateEventVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [validityToEditFoodVenue, setValidityToEditFoodVenue] = useState(false);
+
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
@@ -41,9 +43,17 @@ export default function PlaceProfileEvents({ user }) {
     fetchEvents();
   }, [foodVenue?._id]); // Empty dependency array to run only once on component mount
 
+  useEffect(()=>{
+    if(foodVenue){
+      if (foodVenue._id && user.role === 'business' && user.foodVenueOwned === foodVenue._id) {
+        setValidityToEditFoodVenue(true);
+      }
+    }
+  },[user, foodVenue]);
+
   return (
     <div className='place_profile_photos'>
-      {isCreateEventVisible && <AddEvent setIsCreateEventVisible={setIsCreateEventVisible} user={user} setEvents={setEvents} setFilteredEvents={setFilteredEvents} foodVenue={foodVenue} />}
+      {isCreateEventVisible && validityToEditFoodVenue && <AddEvent setIsCreateEventVisible={setIsCreateEventVisible} user={user} setEvents={setEvents} setFilteredEvents={setFilteredEvents} foodVenue={foodVenue} />}
       {loading ?
         <>
           <CardSkeleton />
@@ -56,7 +66,7 @@ export default function PlaceProfileEvents({ user }) {
           </div>}
         </div>}
 
-      {!isCreateEventVisible &&
+      {!isCreateEventVisible && validityToEditFoodVenue &&
         <Fab
           color="#30BFBF"
           aria-label="add"

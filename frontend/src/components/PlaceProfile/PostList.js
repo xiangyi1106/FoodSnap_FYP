@@ -80,9 +80,9 @@ export default function PostList({ user, foodVenue }) {
                                 <div>
                                     <div className='discover_post_user'>
                                         <div className='discover_post_user_name'>
-                                            <Avatar alt={post.user.name} src={post.user.picture} sx={{ width: 18, height: 18 }} />{post.user.name}
+                                            <Avatar alt={post?.user?.name} src={post?.user?.picture} sx={{ width: 18, height: 18 }} />{post?.user?.name}
                                         </div>
-                                        <div>{post?.likes.length !== 0} <CIcon icon={cilThumbUp} className="icon_size_16 icon_button" style={{ position: 'relative', bottom: '1px', marginLeft: '0' }} /></div>
+                                        {/* <div>{post?.likes.length !== 0} <CIcon icon={cilThumbUp} className="icon_size_16 icon_button" style={{ position: 'relative', bottom: '1px', marginLeft: '0' }} /></div> */}
                                     </div>
                                     <div className='discover_post_content'>
                                         <Typography variant="body2" component="p" gutterBottom>

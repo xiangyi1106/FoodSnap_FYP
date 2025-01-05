@@ -412,8 +412,8 @@ export default function AddPlaceInfo({ setVisible, user }) {
                         // Optionally, redirect or update state here
                     } else {
                         toast.error("Error updating food venue's photo, please try again.");
+                        return;
                     }
-                    return;
                 }
 
                 const updatedUser = {

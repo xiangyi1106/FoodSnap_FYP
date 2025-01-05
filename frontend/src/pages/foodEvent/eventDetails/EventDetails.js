@@ -11,6 +11,7 @@ import CIcon from '@coreui/icons-react';
 import { cilColorBorder, cilBookmark } from '@coreui/icons';
 import { FavoriteBorderOutlined } from '@mui/icons-material';
 import EditEvent from '../EditEvent/EditEvent';
+import { convertTo12HourFormat } from '../../../functions/fileUtils';
 
 const EventDetails = ({ user }) => {
     const { id } = useParams();
@@ -60,8 +61,8 @@ const EventDetails = ({ user }) => {
                                                 <span className=''>{event?.location?.name}</span>
                                             </div>
                                         </span>
-                                        <p style={{ color: '#30BFBF' }}>{new Date(event?.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} {event?.time} {event?.endDate && 'to'}
-                                            {event?.endDate && new Date(event?.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} {event?.endTime && event?.endTime}
+                                        <p style={{ color: '#30BFBF' }}>{new Date(event?.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} {convertTo12HourFormat(event?.time)} {event?.endDate && 'to'}
+                                            {event?.endDate && new Date(event?.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} {event?.endTime && convertTo12HourFormat(event?.endTime)}
                                         </p>
                                         <div className="discover_post_user">
                                             <Link
@@ -74,7 +75,7 @@ const EventDetails = ({ user }) => {
                                                         src={event?.organizer.picture}
                                                         sx={{ width: 18, height: 18 }}
                                                     />
-                                                    {event?.organizer.name}
+                                                    {event?.organizer?.name}
                                                 </div>
                                             </Link>
                                         </div>

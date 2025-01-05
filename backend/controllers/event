@@ -11,6 +11,7 @@ exports.addEvent = async (req, res) => {
         location,
         description,
         privacy,
+        foodVenue,
     } = req.body;
 
     try {
@@ -45,6 +46,7 @@ exports.addEvent = async (req, res) => {
             description,
             organizer, // Save current user as the organizer
             privacy,
+            foodVenue,
         });
 
         await newEvent.save();
@@ -59,7 +61,15 @@ exports.getPublicEvents = async (req, res) => {
     try {
         const events = await Event.find() // Fetch only public events
             .sort({ createdAt: -1 }); // Sort by newest to oldest
-        res.json(events);
+            res.json(events);
+            
+            // .sort([
+                // First, sort by date
+                // { date: 1 },
+                // Then, if two events have the same date, sort by time
+                // { time: 1 },
+            // ])
+            // res.json(events);
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
@@ -79,7 +89,7 @@ exports.getEventsByID = async (req, res) => {
         if (events.length === 0) {
             return res.status(404).json({ message: "No events found." }); // Handle empty result
         }
-        console.log(events);
+        // console.log(events);
 
         return res.json(events); // Return the promotions
 
@@ -124,9 +134,8 @@ exports.searchEvent = async (req, res) => {
             ];
         }
 
-        // Location filter (if provided)
         if (location && location !== 'none') {
-            query['location.name'] = { $regex: location, $options: 'i' }; // Partial match for location with case insensitive
+            query['location.address'] = { $regex: location, $options: 'i' }; // Partial match for location with case insensitive
         }
 
         // Date filter (if provided)
@@ -182,11 +191,11 @@ exports.searchEvent = async (req, res) => {
                     break;
             }
         }
-        console.log(query);
+        // console.log(query);
 
         // Query the database for matching events
         const events = await Event.find(query).sort({ date: -1 });;
-        console.log(events);
+        // console.log(events);
 
         res.status(200).json(events);
     } catch (error) {

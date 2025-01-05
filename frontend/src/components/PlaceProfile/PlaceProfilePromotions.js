@@ -29,7 +29,6 @@ export default function PlaceProfilePromotions({ user }) {
           setFilteredPromotions(response.data); // Set filtered promotions to show all initially
         }
       } catch (error) {
-        // setError(error.message); // Capture error message
         console.log("Error fetching promotions: " + error.message);
       } finally {
         // setLoading(false); // Set loading state to false once the fetch completes
@@ -38,23 +37,34 @@ export default function PlaceProfilePromotions({ user }) {
 
     fetchPromotions();
   }, [foodVenue?._id]); // Empty dependency array to run only once on component mount
+  
+  const [validityToEditFoodVenue, setValidityToEditFoodVenue] = useState(false);
+
+  useEffect(()=>{
+    if(foodVenue){
+      if (foodVenue._id && user.role === 'business' && user.foodVenueOwned === foodVenue._id) {
+        setValidityToEditFoodVenue(true);
+      }
+    }
+  },[user, foodVenue]);
+
 
   return (
     <div className='place_profile_photos'>
-      {isCreatePromotionVisible && <AddPromotion setIsCreatePromotionVisible={setIsCreatePromotionVisible} user={user} setPromotions={setPromotions} setFilteredPromotions={setFilteredPromotions} foodVenue={foodVenue} />}
+      {isCreatePromotionVisible && validityToEditFoodVenue && <AddPromotion setIsCreatePromotionVisible={setIsCreatePromotionVisible} user={user} setPromotions={setPromotions} setFilteredPromotions={setFilteredPromotions} foodVenue={foodVenue} />}
       {loading ?
         <>
           <CardSkeleton />
         </> :
       <div className="food_event_card_container">
         {filteredPromotions.length > 0 ? filteredPromotions.map((event, index) => (
-          <FoodEventCard key={index} event={event} isEvent={isEvent} />
+          <FoodEventCard key={index} event={event} isEvent={isEvent} foodVenue={foodVenue} />
         )) : <div>
           No Promotion Found
         </div>}
       </div>
       }
-      {!isCreatePromotionVisible &&
+      {!isCreatePromotionVisible && validityToEditFoodVenue &&
         <Fab
           color="#30BFBF"
           aria-label="add"

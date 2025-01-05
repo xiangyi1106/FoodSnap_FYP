@@ -8,7 +8,7 @@ import { toast } from "react-toastify"
 import { updateProfile } from "../../../functions/user"
 import { useDispatch } from "react-redux"
 
-export function EditProfileForm({ user, profile, dispatch }) {
+export function EditProfileForm({ user, profile, dispatch, setVisible }) {
     const profileFormSchema = Yup.object({
         // birthday: Yup.date(),
         about: Yup.string()
@@ -84,7 +84,6 @@ export function EditProfileForm({ user, profile, dispatch }) {
         enableReinitialize: true,
         validationSchema: profileFormSchema,
         onSubmit: async (values) => {
-            alert(JSON.stringify(values, null, 2));
             try {
                 const response = await updateProfile(values, user);
                 console.log(response);
@@ -95,6 +94,7 @@ export function EditProfileForm({ user, profile, dispatch }) {
                         type: "PROFILE_UPDATE_SUCCESS",
                         payload: response.updatedFields, // Assuming `response.profile` contains the updated profile data
                     });
+                    setVisible(false);
 
                 } else {
                     toast.error(response.message || "Failed to update profile");

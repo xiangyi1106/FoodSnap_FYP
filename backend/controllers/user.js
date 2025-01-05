@@ -565,7 +565,7 @@ const updateProfile = async (req, res) => {
     try {
 
         const { about, birthday, currentCity, favouriteFood, facebook, instagram, youtube, gender } = req.body;
-
+        console.log(about, birthday, currentCity, favouriteFood, facebook, instagram, youtube, gender);
         // Find the user by ID
         const user = await User.findById(req.user.id);
 
@@ -916,6 +916,7 @@ const searchResult = async (req, res) => {
 
         // Step 1: Search in User model for matching users
         const userResults = await User.find({
+            // name: { $regex: `\\b${searchTermParam}\\b`, $options: 'i' }
             name: { $regex: searchTermParam, $options: 'i' }
         })
             .select("name username picture")
@@ -925,6 +926,8 @@ const searchResult = async (req, res) => {
         // Step 2: Search in Post model for matching posts
         const postResults = await Post.find({
             $or: [
+                // { text: { $regex: `\\b${searchTermParam}\\b`, $options: 'i' } },
+                // { hashtag: { $regex: `#${searchTermParam}\\b`, $options: 'i' } }
                 { text: { $regex: searchTermParam, $options: 'i' } },
                 { hashtag: { $regex: searchTermParam, $options: 'i' } }
             ]
@@ -1040,7 +1043,7 @@ const getFoodVenueMapList = async (req, res) => {
         if (!user) return res.status(404).json({ message: "User not found" });
 
         res.json(user.foodVenueMaplist); // Respond with populated wishlist
-        
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server error" + error });
@@ -1097,6 +1100,35 @@ const getSavedPost = async (req, res) => {
     }
 };
 
+const updateName = async (req, res) => {
+    const { userId } = req.params
+    const { name } = req.body
+
+    if (!name || name.trim() === "") {
+        return res.status(400).json({ message: "Name cannot be empty" })
+    }
+
+    try {
+        // Find the user by ID and update their name
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { name },
+            { new: true } // Return the updated user
+        )
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" })
+        }
+
+        // Send back the updated user
+        res.status(200).json(user);
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ message: "An error occurred while updating the name" })
+    }
+}
+
 module.exports = {
     register,
     login,
@@ -1127,5 +1159,6 @@ module.exports = {
     getFoodVenueMapList,
     getSavedPost,
     updateProfile,
+    updateName,
     // auth,
 };

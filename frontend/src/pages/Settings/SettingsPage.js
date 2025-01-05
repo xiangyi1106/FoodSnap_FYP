@@ -1,7 +1,7 @@
 import React from 'react';
 import { SettingsForm } from './SettingsForm';
 
-export default function SettingsPage() {
+export default function SettingsPage({ user }) {
     return (
         <div className="space-y-6">
             <div>
@@ -11,7 +11,7 @@ export default function SettingsPage() {
                 </p>
             </div>
             <div className="separator" />
-            <SettingsForm />
+            <SettingsForm user={user} />
         </div>
     );
 }

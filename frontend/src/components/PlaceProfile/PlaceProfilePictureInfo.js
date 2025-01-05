@@ -45,8 +45,8 @@ export default function PlaceProfilePictureInfo({ foodVenue, user, setFoodVenue 
 
   return (
     <div className='profile_picture_wrapper' style={{ padding: '0 4rem' }}>
-      {/* {visible && validityToEditFoodVenue && <EditPlaceInfo setVisible={setVisible} id={foodVenue._id} user={user} setFoodVenue={setFoodVenue}/>} */}
-      {visible && <EditPlaceInfo setVisible={setVisible} id={foodVenue._id} user={user} setFoodVenue={setFoodVenue}/>}
+      {visible && validityToEditFoodVenue && <EditPlaceInfo setVisible={setVisible} id={foodVenue._id} user={user} setFoodVenue={setFoodVenue}/>}
+      {/* {visible && <EditPlaceInfo setVisible={setVisible} id={foodVenue._id} user={user} setFoodVenue={setFoodVenue}/>} */}
       <div className='profile_picture_left'>
         <div className='profile_picture'>
           <div
@@ -84,13 +84,13 @@ export default function PlaceProfilePictureInfo({ foodVenue, user, setFoodVenue 
         className='profile_picture_right'
         style={{ gap: '15px', position: 'relative', top: '20px' }}
       >
-        {/* {validityToEditFoodVenue && <Tooltip title='Edit Information'> */}
-          {<Tooltip title='Edit Information'>
+        {validityToEditFoodVenue && <Tooltip title='Edit Food Venue Information'>
+          {/* {<Tooltip title='Edit Information'> */}
           <IconButton aria-label='edit' sx={{ border: '1px solid gray' }} onClick={() => setVisible(true)}>
             <CIcon icon={cilColorBorder} className='icon_size_20' />
           </IconButton>
         </Tooltip>}
-        <Tooltip title='Save Wishlist Place'>
+        <Tooltip title='Save to Food Venue Wishlist'>
           <IconButton aria-label='save'
             sx={{
               border: '1px solid gray',

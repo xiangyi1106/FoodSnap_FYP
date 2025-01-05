@@ -1,95 +1,121 @@
-import React, { useEffect, useState } from 'react';
-import { PhotoProvider, PhotoView } from 'react-photo-view';
-import 'react-photo-view/dist/react-photo-view.css';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import CIcon from '@coreui/icons-react';
-import {
-  cilZoomIn, cilZoomOut
-} from '@coreui/icons';
+import React, { useState } from 'react';
+import { Box, Button, Grid } from '@mui/material';
+import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 
-const PostDetailsCarousel = ({ media, currentIndex, setCurrentIndex, setVisible }) => {
+const PostDetailsCarousel = ({ media, currentIndex, setCurrentIndex }) => {
+  // const [currentIndex, setCurrentIndex] = useState(0);
 
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % media.length);
+  };
 
-  const settings = {
-    dots: true,
-    infinite: media.length > 1,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    initialSlide: currentIndex,
-    arrows: true, // Enable default navigation,
-    afterChange: (current) => setCurrentIndex(current),
+  const handleBack = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? media.length - 1 : prevIndex - 1
+    );
   };
 
   return (
-    <PhotoProvider
-      toolbarRender={({ onScale, scale, onClose }) => {
-        return (
-          <div style={{ display: 'flex', gap: '10px', color: '#fff' }} onClose={() => { setVisible(false); }}>
-            {/* Zoom In Button */}
-            <button
-              style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                color: 'white',
-                border: 'none',
-                padding: '8px 12px',
-                cursor: 'pointer',
-                borderRadius: '4px',
-              }}
-              onClick={() => onScale(scale + 1)}
-            >
-              <CIcon icon={cilZoomIn} className="icon_size_20" />
-
-            </button>
-            {/* Zoom Out Button */}
-            <button
-              style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                color: 'white',
-                border: 'none',
-                padding: '8px 12px',
-                cursor: 'pointer',
-                borderRadius: '4px',
-              }}
-              onClick={() => onScale(scale - 1)}
-            >
-              <CIcon icon={cilZoomOut} className="icon_size_20" />
-            </button>
-
-          </div>
-        );
-      }}
-      onVisibleChange={(isVisible) => setVisible(isVisible)}
+    <Box 
+    // sx={{ maxWidth: 600, margin: 'auto', position: 'relative' }}
+    sx={{
+      flex: 1, // Matches the parent's flex size
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent:'center',
+      position: 'relative',
+      width: '100%',
+      height: '100%', // Matches parent height
+      overflow: 'hidden',
+    }}
     >
-      <Slider {...settings}>
-        {media.map((item, index) => (
-          <div key={index}>
-            <PhotoView src={item.url} >
-              {item.type === 'image' ? (
-                <img
-                  loading="lazy"
-                  src={item.url}
-                  alt={`media-${index}`}
-                  style={{
-                    width: '100%',
-                    height: 'auto',
-                    objectFit: 'contain',
-                    maxHeight: '93vh', // Prevent overflow
-                    backgroundColor: '#000', // Extra space with a background
-                  }}
-                />
-              ) : (
-                <video controls style={{ width: '100%' }}>
-                  <source src={item.url} type="video/mp4" />
-                </video>
-              )}
-            </PhotoView>
-          </div>
+      {/* Display Current Media */}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: 400, // Adjust height
+          backgroundColor: '#000',
+          overflow: 'hidden',
+          borderRadius: 2,
+        }}
+      >
+        {media[currentIndex]?.type === 'image' ? (
+          <img
+            src={media[currentIndex]?.url}
+            alt={`media-${currentIndex}`}
+            style={{
+              maxWidth: '100%',
+              maxHeight: '100%',
+              objectFit: 'contain',
+            }}
+            loading="lazy"
+          />
+        ) : (
+          <video controls style={{ maxWidth: '100%', maxHeight: '100%' }}>
+            <source src={media[currentIndex]?.url} type="video/mp4" />
+          </video>
+        )}
+      </Box>
+
+      {/* Navigation Buttons */}
+      <Button
+        size="large"
+        onClick={handleBack}
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: 16,
+          transform: 'translateY(-50%)',
+          zIndex: 1,
+          color: '#fff',
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.8)' },
+        }}
+      >
+        <KeyboardArrowLeft />
+      </Button>
+
+      <Button
+        size="large"
+        onClick={handleNext}
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          right: 16,
+          transform: 'translateY(-50%)',
+          zIndex: 1,
+          color: '#fff',
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.8)' },
+        }}
+      >
+        <KeyboardArrowRight />
+      </Button>
+
+      {/* Pagination Dots */}
+      <Grid
+        container
+        justifyContent="center"
+        sx={{ mt: 2 }}
+      >
+        {media.map((_, index) => (
+          <Box
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            sx={{
+              width: 12,
+              height: 12,
+              backgroundColor: currentIndex === index ? '#30BFBF' : '#c4c4c4',
+              borderRadius: '50%',
+              margin: '0 4px',
+              cursor: 'pointer',
+            }}
+          />
         ))}
-      </Slider>
-    </PhotoProvider>
+      </Grid>
+    </Box>
   );
 };
 

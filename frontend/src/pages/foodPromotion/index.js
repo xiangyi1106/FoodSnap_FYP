@@ -7,6 +7,8 @@ import { Fab } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import AddPromotion from './AddPromotion/AddPromotion';
 import CardSkeleton from '../../components/Skeleton/CardSkeleton';
+import RollingBanner from '../../components/Banner/RollingBanner';
+import { zeorHungerMessage } from '../../data/zeroHungryMessage';
 
 export default function FoodPromotion({ user }) {
 
@@ -45,6 +47,7 @@ export default function FoodPromotion({ user }) {
 
     return (
         <div className='food_event_container'>
+            <RollingBanner messages={zeorHungerMessage} />
             {isCreatePromotionVisible && <AddPromotion setIsCreatePromotionVisible={setIsCreatePromotionVisible} user={user} setPromotions={setPromotions} setFilteredPromotions={setFilteredPromotions} />}
             <div>
                 <div className='food_event_container_title'>Food Promotions</div>

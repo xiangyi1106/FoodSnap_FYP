@@ -30,14 +30,14 @@ export default function PublicFeed({ user, dispatch }) {
         fetchPosts();
     }, []);
 
-    const middle = useRef(null);
-    const [height, setHeight] = useState();
+    // const middle = useRef(null);
+    // const [height, setHeight] = useState();
 
-    useEffect(() => {
-        if (middle.current) {
-            setHeight(middle.current.clientHeight);
-        }
-    }, [posts]);
+    // useEffect(() => {
+    //     if (middle.current) {
+    //         setHeight(middle.current.clientHeight);
+    //     }
+    // }, [posts]);
 
     const location = useLocation();
 
@@ -45,10 +45,15 @@ export default function PublicFeed({ user, dispatch }) {
     const currentPath = location.pathname;
 
     return (
-        <div className='feed_middle' style={{ height: `${height + 80}px` }}>
-            <div className="public_feed_middle" ref={middle} style={{ overflowY: 'auto' }}>
-                <DiscoverPostList posts={posts} user={user} setPosts={setPosts} dispatch={dispatch} />
+        // <div className='feed_middle' style={{ height: `${height + 80}px` }}>
+        //     <div className="public_feed_middle" ref={middle} style={{ overflowY: 'auto' }}>
+        //         <DiscoverPostList posts={posts} user={user} setPosts={setPosts} dispatch={dispatch} />
+        //     </div>
+        // </div>
+                <div className='feed_middle' style={{ minHeight: '100vh' }} >
+                <div className="public_feed_middle" style={{ overflowY: 'auto' }}>
+                    <DiscoverPostList posts={posts} user={user} setPosts={setPosts} dispatch={dispatch} />
+                </div>
             </div>
-        </div>
     )
 }

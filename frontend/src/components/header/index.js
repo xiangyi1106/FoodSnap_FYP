@@ -88,6 +88,9 @@ export default function Header({ setVisible, visible, page, currentPath, profile
         query: "(max-width: 481px)"
     });
 
+    // Check if we are on the homepage, discover, or search result page
+    const isSearchResultPage = currentPath ? currentPath.startsWith('/searchResult') : false;
+
     return (
         <header>
             <div className="header_left">
@@ -106,7 +109,7 @@ export default function Header({ setVisible, visible, page, currentPath, profile
                 </Link>}
             </div>
             <div className="header_middle">
-                {(currentPath === "/" || currentPath === "/discover") && <SearchBar user={user} />}
+                {(currentPath === "/" || currentPath === "/discover" || isSearchResultPage ) && <SearchBar user={user} />}
             </div>
             <div className="header_right">
                 {currentPath === "/" && <Tooltip title="Create Post"><MDBBtn outline href='#' className="btn_create_post" onClick={() => setVisible(true)}>

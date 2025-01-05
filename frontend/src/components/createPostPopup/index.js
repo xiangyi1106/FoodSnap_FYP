@@ -34,6 +34,7 @@ import { useDispatch } from "react-redux";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PostInput from "./PostInput";
+import { toggleScroll } from "../../functions/fileUtils";
 
 export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLoading, user }) {
     //Display the picker and media preview
@@ -133,8 +134,10 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
     });
 
     const dispatch = useDispatch();
+    const [loading, setLoading] = useState(false);
 
     const postSubmit = async () => {
+        setLoading(true);
         if (medias && medias.length) {
             setIsPostLoading(true);
             const postMedias = medias.map((media) => {
@@ -208,7 +211,13 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
             // console.log("nothing");
             toast.error("Please add content before posting.");
         }
+        setLoading(false);
     };
+
+    useEffect(() => {
+        toggleScroll(true);
+        return () => toggleScroll(false); // Re-enable scrolling on cleanup
+    }, []);
 
     return (
         <div className="blur">
@@ -224,8 +233,8 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
                             <div><CIcon icon={cilX} className="icon_size_22 icon_button" onClick={handleClickOpen} /></div>
                             <span className="create_post_popup_header_title">Create Post</span>
                             <div className='create_post_popup_submit'>
-                                {!isLoading && <button className="logo_color_text" type="submit" onClick={postSubmit}>Post</button>}
-                                {isLoading && <button className="logo_color_text">Posting <CircularProgress className='logo_color_text' style={{ width: "13px", height: "13px" }} /></button>}
+                                {!loading && <button className="logo_color_text" type="submit" onClick={postSubmit}>Post</button>}
+                                {loading && <button className="logo_color_text">Posting <CircularProgress className='logo_color_text' style={{ width: "13px", height: "13px" }} /></button>}
                             </div>
                         </div>
                         {selectedNames.length > 0 &&

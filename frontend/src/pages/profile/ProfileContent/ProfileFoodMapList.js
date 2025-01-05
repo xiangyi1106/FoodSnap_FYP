@@ -68,7 +68,20 @@ const ProfileFoodMapList = ({ foodVenuesMap, currentPage, itemsPerPage, onPageCh
         // onChange={onPageChange} // Correct handler
         onChange={(event, newPage) => onPageChange(event, newPage)}
         className="foodMapPagination"
-        color="primary"
+        // color="primary"
+        sx={{
+          '.MuiPaginationItem-root': {
+            // backgroundColor: 'lightblue', // Change background color
+            // color: 'white', // Text color
+            '&.Mui-selected': {
+              backgroundColor: '#30BFBF', // Selected page background color
+              color: 'white', // Selected text color
+            },
+            // '&:hover': {
+            //   backgroundColor: 'lightgreen', // Hover effect
+            // },
+          },
+        }}
       />
     </div>
   );
