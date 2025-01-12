@@ -18,10 +18,6 @@ const register = async (req, res) => {
             name,
             email,
             password,
-            // bYear,
-            // bMonth,
-            // bDay,
-            // gender,
         } = req.body;
 
         const isUsernameTaken = await User.exists({ username });
@@ -73,10 +69,6 @@ const register = async (req, res) => {
             password: cryptedPassword,
             role: 'user',
             foodVenueOwned: null,
-            // bYear,
-            // bMonth,
-            // bDay,
-            // gender,
         }).save();
 
         const emailVerificationToken = generateToken(
@@ -193,10 +185,6 @@ const searchPeople = async (req, res) => {
 
         res.json(sanitizedUsers);
 
-        // Check if there are more users available
-        // const hasMore = sanitizedUsers.length === limit;
-        // res.json({ userLists: sanitizedUsers, hasMore});
-
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server Error' });
@@ -222,25 +210,6 @@ const findUser = async (req, res) => {
     }
 
 }
-
-// const verifyBusinessOwner = async (req, res) => {
-//     try {
-//         const userId = req.user.id;
-//         const user = await User.findOne({ userId }).select("-password");
-//         if (!user) {
-//             return res.status(400).json({
-//                 message: "Account does not exists.",
-//             });
-//         }
-//         return res.status(200).json({
-//             foodVenueOwned: user.foodVenueOwned,
-//             role: user.picture,
-//         });
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-
-// }
 
 const sendResetPasswordCode = async (req, res) => {
     try {
@@ -349,17 +318,6 @@ const getProfile = async (req, res) => {
             })
             .sort({ createdAt: -1 });
 
-        // await profile.populate("friends", "first_name last_name username picture");
-
-        //wait to fix
-        // Get the most recent profile image
-        // const latestProfileImage = user.profileImageList.length > 0
-        //     ? user.profileImageList[user.profileImageList.length - 1].url
-        //     : DEFAULT_PROFILE_IMAGE_URL; // Fallback to default if no profile image exists
-        // const latestCoverImage = user.coverImageList.length > 0
-        //     ? user.coverImageList[user.coverImageList.length - 1].url
-        //     : DEFAULT_COVER_IMAGE_URL; // Fallback to default if no profile image exists
-
         res.json({
             ...profile.toObject(),
             posts, follow,
@@ -373,88 +331,6 @@ const getProfile = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
-// const getProfile = async (req, res) => {
-//     try {
-//         const { username } = req.params;
-//         const user = await User.findById(req.user.id);
-
-//         // Find the profile user
-//         const profile = await User.findOne({ username })
-//             .select("-password")
-//             .populate('following', 'username name picture') // Adjust the fields as needed
-//             .populate('followers', 'username name picture'); // Adjust the fields as needed
-
-//         if (!profile) {
-//             return res.status(404).json({ ok: false, message: "Profile not found" });
-//         }
-
-//         const follow = {
-//             following: user.following.includes(profile._id), // Check if the user follows this profile
-//         };
-
-//         // Now, we filter savedPosts by checking if the post still exists
-//         const savedPosts = await Promise.all(
-//             profile.savedPosts.map(async (savedPost) => {
-//                 const post = await Post.findById(savedPost.post);
-
-//                 // If the post exists, keep it, otherwise skip it
-//                 if (post) {
-//                     // Populate the necessary fields in the saved post
-//                     await savedPost.populate({
-//                         path: 'post',
-//                         populate: [
-//                             {
-//                                 path: 'user', 
-//                                 select: 'name picture username _id'
-//                             },
-//                             {
-//                                 path: 'sharedPost',
-//                                 populate: {
-//                                     path: 'user',
-//                                     select: 'name picture username _id',
-//                                 },
-//                             },
-//                         ],
-//                     });
-
-//                     return savedPost; // Return the saved post if the post exists
-//                 }
-
-//                 // If the post doesn't exist, return null or a custom message indicating it's deleted
-//                 return null;
-//             })
-//         );
-
-//         // Filter out any null savedPosts (posts that were deleted)
-//         const filteredSavedPosts = savedPosts.filter(savedPost => savedPost !== null);
-
-//         const posts = await Post.find({ user: profile._id })
-//             .populate("user")
-//             .populate({
-//                 path: "sharedPost",
-//                 populate: {
-//                     path: "user",
-//                     select: "name picture username gender _id"
-//                 }
-//             })
-//             .sort({ createdAt: -1 });
-
-//         res.json({
-//             ...profile.toObject(),
-//             posts,
-//             follow,
-//             postsCount: posts.length,
-//             followersCount: profile.followers.length,
-//             followingCount: profile.following.length,
-//             savedPosts: filteredSavedPosts, // Send only the valid savedPosts
-//         });
-
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };
-
 
 const getListImages = async (req, res) => {
     try {
@@ -1050,28 +926,6 @@ const getFoodVenueMapList = async (req, res) => {
     }
 };
 
-// const getSavedPost = async (req, res) => {
-//     try {
-//       // Find the user by their ID and populate the saved posts' post details
-//       const user = await User.findById(req.user.id)
-//         .populate('savedPost.post');  // Populate the post field within savedPost
-//         // .exec();
-
-//       if (!user) {
-//         return res.status(404).json({ message: 'User not found' });
-//       }
-
-//       // You may want to transform the data before sending it back
-//       const savedPosts = user.savedPost.map(saved => ({
-//         post: saved.post,  // This is the populated post document
-//         savedAt: saved.savedAt
-//       }));
-
-//       res.json({ savedPosts });
-//     } catch (error) {
-//       res.status(500).json({ message: error.message });
-//     }
-//   };
 const getSavedPost = async (req, res) => {
     try {
         const { username } = req.params;

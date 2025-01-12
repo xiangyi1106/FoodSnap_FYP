@@ -7,8 +7,6 @@ import SharePostPopUp from '../sharePostPopup';
 
 export default function Feed({ posts, user, fetchMorePosts, hasMore, dispatch }) {
 
-    // const [userPosts, setUserPosts] = useState(posts);
-
     const middle = useRef(null);
     const [height, setHeight] = useState();
 

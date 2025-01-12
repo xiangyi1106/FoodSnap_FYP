@@ -62,14 +62,7 @@ exports.getPublicEvents = async (req, res) => {
         const events = await Event.find() // Fetch only public events
             .sort({ createdAt: -1 }); // Sort by newest to oldest
             res.json(events);
-            
-            // .sort([
-                // First, sort by date
-                // { date: 1 },
-                // Then, if two events have the same date, sort by time
-                // { time: 1 },
-            // ])
-            // res.json(events);
+
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
@@ -221,18 +214,6 @@ exports.updateEvent = async (req, res) => {
         if (!event.organizer || event.organizer.id.toString() !== req.user.id) {
             return res.status(401).json({ message: 'User not authorized' });
         }
-
-        // Check if another event with the same data already exists in the database
-        // const existingEvent = await Event.findOne({
-        //     eventName: eventName || event.name, // Use the new event name or the current one
-        //     date: date || event.date,
-        //     location: location.latitude ? location.name : location || event.location,
-        //     _id: { $ne: eventId }, // Exclude the current event from the check
-        // });
-
-        // if (existingEvent) {
-        //     return res.status(400).json({ message: 'An event with the same name, date, and location already exists.' });
-        // }
 
         console.log(location);
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import * as Yup from "yup";
 import TextInput from "../../../../components/inputs/TextInput";
 import { MenuItem, CircularProgress, List, ListItem, ListItemText, ListItemIcon } from "@mui/material";
@@ -11,7 +11,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { handleImage } from "../../../../functions/handleImage";
 import { getAllFoodVenues } from "../../../../functions/foodVenue";
 import MapPicker from "../../../../components/MapPicker/MapPicker";
-import { validateLatitude, validateLongitude } from "../../../../functions/fileUtils";
+import { toggleScroll, validateLatitude, validateLongitude } from "../../../../functions/fileUtils";
 import { addFoodVenueToProfileMap } from "../../../../functions/foodVenueMap";
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
@@ -203,6 +203,11 @@ export function ProfileFoodMapAddVenueForm({ setVisible, user, setFoodVenuesMap 
             toast.error("Failed adding food venue: " + (Error));
         }
     };
+
+    useEffect(() => {
+        toggleScroll(true);
+        return () => toggleScroll(false); // Re-enable scrolling on cleanup
+    }, []);
 
     return (
         <form onSubmit={handleSubmit} className="event_form_space_y_8">

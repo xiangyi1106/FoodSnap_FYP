@@ -27,7 +27,7 @@ const EventDetails = ({ user }) => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/event/${id}`); // Include ID in the request URL
                 setEvent(response.data);
-                setVisitor(response.data.organizer.id !== user._id); // Update visitor state
+                setVisitor(response.data.organizer !== user._id); // Update visitor state
                 // console.log(response.data);
             } catch (error) {
                 toast.error("Error fetching event: " + error.message);

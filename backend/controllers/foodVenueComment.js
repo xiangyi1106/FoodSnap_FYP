@@ -130,18 +130,7 @@ exports.addFoodVenueReply = async (req, res) => {
             { path: 'user', select: 'name picture username' },               // Populate the main user field
             { path: 'replies.user', select: 'name picture username' }        // Populate user field in each reply
         ]);
-        // console.log("Populated comment after reply:", comment);
         res.status(201).json({ message: "Reply added successfully", comment: comment });
-        // Populate 'user' fields for the latest reply only
-       // Populate the user field of the last reply
-//        const populatedComment = await comment
-//        .populate({ path: `replies.${comment.replies.length - 1}.user`, select: 'name picture' })
-//        .execPopulate();
-
-//    // Retrieve the latest populated reply
-//    const latestReply = populatedComment.replies[populatedComment.replies.length - 1];
-//         res.status(201).json({ message: "Reply added successfully", reply: latestReply });
-
     } catch (error) {
         res.status(500).json({ message: "Error adding reply: " + error.message });
     }

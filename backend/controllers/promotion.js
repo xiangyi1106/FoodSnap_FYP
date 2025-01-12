@@ -65,19 +65,7 @@ exports.getPublicPromotions = async (req, res) => {
         const promotions = await Promotion.find() // Fetch only public promotions
             .sort({ createdAt: -1 }); // Sort by newest to oldest
             res.json(promotions);
-            // .sort([
-            //     // First, sort by date
-            //     { date: 1 },
-            //     // Then, if two events have the same date, sort by time
-            //     { time: 1 },
-            // ]);
-
-            // const promotions = await Promotion.find()
-            // .sort([
-            //     // { date: 1 },  // Sort by date (ascending)
-            //     { time: 1 },  // Then by time (ascending)
-            // ]);
-            // res.json(promotions);
+            
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

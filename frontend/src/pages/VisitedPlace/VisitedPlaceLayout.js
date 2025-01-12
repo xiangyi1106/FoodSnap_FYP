@@ -41,11 +41,6 @@ export default function VisitedPlaceLayout({ user, dispatch }) {
             if(response.data){
                 const newVisitedDates = response.data.map((post) => new Date(post.createdAt).getDate());
                 setVisitedDates(newVisitedDates); // Set the visited dates state
-                // console.log(newVisitedDates); // Log the correct dates
-                //   // Set the first visited date as the default selected day if any exist
-                // if (newVisitedDates.length > 0) {
-                //     setSelectedDay(newVisitedDates[0]);
-                // }
             }else{
                 //Clear if the data is empty
                 setVisitedDates([]);
@@ -112,8 +107,6 @@ export default function VisitedPlaceLayout({ user, dispatch }) {
     const [selectedSharePost, setSelectedSharePost] = useState(null);
 
     const handleClick = (post) => {
-        // navigate(`/post/${postId}/${0}`);
-        // setSelectedPost(post);
         fetchPostById(post._id);
         setIsFeedCommentVisible(true);
     };
@@ -180,12 +173,7 @@ export default function VisitedPlaceLayout({ user, dispatch }) {
                             <p style={{ color: 'gray', fontSize: '0.85rem' }}>Add some post with location tag to view it in my food journey page</p>
                         </div>
                     )}
-                    {/* Achievement like game profile record how many place visited */}
-                    {/* <div className='game_profile_card_wrapper'>
-                        <GameProfileCard />
-                    </div> */}
                 </div>
-
             </div>
         </div>
     )

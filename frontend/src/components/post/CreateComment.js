@@ -97,14 +97,10 @@ export default function CreateComment({ user, postId, setComments, setCount, set
 
                     setLoading(true);
                     const comments = await addComment(postId, user.id, text, "", user.token);
-                    // setComments((prevComments) => [comments, ...prevComments]);
-                    // setCommentCount((prev) => ++prev);
-                    // setCount((prev) => ++prev);
                     if (comments) {
                         setComments((prev) => [comments, ...prev]);
                         setCommentCount((prev) => prev + 1);
                         setCount((prev) => ++prev);
-                        // onCommentAdded(comments); // Notify parent about the new comment
                         dispatch({
                             type: "UPDATE_COMMENT_COUNT",
                             payload: {

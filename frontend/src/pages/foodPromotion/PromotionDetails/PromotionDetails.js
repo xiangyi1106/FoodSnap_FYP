@@ -18,6 +18,7 @@ const PromotionDetails = ({ user }) => {
     const location = useLocation();
     const [visitor, setVisitor] = useState(false);
     const [visible, setVisible] = useState(false);
+    const [validityToEditFoodVenue, setValidityToEditFoodVenue] = useState(false);
 
     // Generate breadcrumbs using the reusable function
     const breadcrumbs = generateBreadcrumbs(location, 'Food Promotion', '/foodPromotion', promotion?.name);
@@ -27,6 +28,9 @@ const PromotionDetails = ({ user }) => {
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/promotion/${id}`); // Include ID in the request URL
                 setPromotion(response.data);
                 setVisitor(response.data.organizer.id !== user._id); // Update visitor state
+                if (user.role === 'business' && user.foodVenueOwned === response.data.foodVenue) {
+                    setValidityToEditFoodVenue(true);  // Set validity to true if both conditions are met
+                }
                 // console.log(response.data);
             } catch (error) {
                 toast.error("Error fetching promotion: " + error.message);
@@ -40,7 +44,7 @@ const PromotionDetails = ({ user }) => {
         <div className="profile place_detail_information">
             <Header />
             <div className="place_details_wrapper">
-                {visible && <EditPromotion promotionId={promotion?._id} user={user} setVisible={setVisible}/>}
+                {visible && <EditPromotion promotionId={promotion?._id} user={user} setVisible={setVisible} />}
                 {/* {visible && <EditFoodVenueForm />} */}
                 <CustomBreadcrumbs breadcrumbs={breadcrumbs} />
                 <div className="profile_top" style={{ marginTop: '0' }}>
@@ -59,7 +63,7 @@ const PromotionDetails = ({ user }) => {
                                                 <span className=''>{promotion?.location?.name}</span>
                                             </div>
                                         </span>
-                                        <p style={{ color: '#30BFBF' }}>{new Date(promotion?.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} {convertTo12HourFormat(promotion?.time)} {promotion?.endDate && <span style={{color: 'black', margin: '0 5px'}}>- </span>}
+                                        <p style={{ color: '#30BFBF' }}>{new Date(promotion?.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} {convertTo12HourFormat(promotion?.time)} {promotion?.endDate && <span style={{ color: 'black', margin: '0 5px' }}>- </span>}
                                             {promotion?.endDate && new Date(promotion?.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} {promotion?.endTime && convertTo12HourFormat(promotion?.endTime)}
                                         </p>
                                         <div className="discover_post_user">
@@ -84,16 +88,17 @@ const PromotionDetails = ({ user }) => {
                                 className='profile_picture_right'
                                 style={{ gap: '15px', position: 'relative', top: '130px' }}
                             >
-                                {!visitor && <Tooltip title='Edit Promotion Information'>
+                                {/* {!visitor && <Tooltip title='Edit Promotion Information'>
                                     <button className="food_event_card_icon_button logo_color_background_hover">
-                                        <CIcon icon={cilColorBorder} className='icon_size_20' onClick={()=> setVisible(true)}/>
+                                        <CIcon icon={cilColorBorder} className='icon_size_20' onClick={() => setVisible(true)} />
+                                    </button>
+                                </Tooltip>} */}
+                                {validityToEditFoodVenue && <Tooltip title='Edit Promotion Information'>
+                                    <button className="food_event_card_icon_button logo_color_background_hover">
+                                        <CIcon icon={cilColorBorder} className='icon_size_20' onClick={() => setVisible(true)} />
                                     </button>
                                 </Tooltip>}
-                                {/* <Tooltip title='Save Promotion'>
-                                    <button className="food_event_card_icon_button">
-                                        <span className="material-symbols-outlined"><FavoriteBorderOutlined /></span>
-                                    </button>
-                                </Tooltip> */}
+                                
                             </div>
                         </div>
                     </div>

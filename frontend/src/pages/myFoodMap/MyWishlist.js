@@ -260,7 +260,7 @@ const RestaurantItem = ({ imgSrc, name, desc, rating, location, onSelect, onRemo
                     {/* <p>{desc}</p> */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><StarRating rating={rating} /> <span>({rating})</span> </div>
                     <p className="restaurant_wishlist_location">{location}</p>
-                    <p style={{ color: 'gray', fontSize: '0.85rem' }}>Saved at: {new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    {/* <p style={{ color: 'gray', fontSize: '0.85rem' }}>Saved at: {new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p> */}
                 </div>
             </div>
             <div className="restaurant_wishlist_item_actions">

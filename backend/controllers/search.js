@@ -15,37 +15,6 @@ exports.searchTerm = async (req, res) => {
   }
 };
 
-// exports.search = async (req, res) => {
-//   try {
-//     const searchTerm = req.params.searchTerm;
-
-//     // Find users based on text search
-//     const userResults = await User.find({ $text: { $search: searchTerm } })
-//       .select('name username picture');
-
-//     // Find posts based on text search, hashtags, and location
-//     const postResults = await Post.find({
-//       $or: [
-//         { $text: { $search: searchTerm } },
-//         { hashtags: { $in: [searchTerm] } },
-//         { 'location.name': { $regex: searchTerm, $options: 'i' } },
-//         { 'location.displayName': { $regex: searchTerm, $options: 'i' } },
-//         { 'location.address': { $in: [searchTerm] } }
-//       ]
-//     });
-
-//     // Combine results
-//     const results = {
-//       users: userResults,
-//       posts: postResults,
-//     };
-
-//     res.json(results);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
 exports.searchUser = async (req, res) => {
   try {
     const searchTerm = req.params.searchTerm;

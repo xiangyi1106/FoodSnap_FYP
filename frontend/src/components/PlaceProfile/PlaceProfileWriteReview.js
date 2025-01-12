@@ -37,29 +37,6 @@ export default function PlaceProfileWriteReview({ user, foodVenue, setComments }
         });
     };
 
-
-    // const handleImage = (e) => {
-    //     let file = e.target.files[0];
-    //     if (
-    //         file.type !== "image/jpeg" &&
-    //         file.type !== "image/png" &&
-    //         file.type !== "image/webp" &&
-    //         file.type !== "image/gif"
-    //     ) {
-    //         setError(`${file.name} format is not supported.`);
-    //         return;
-    //     } else if (file.size > 1024 * 1024 * 10) {
-    //         setError(`${file.name} is too large. Maximum size allowed is 10MB.`);
-    //         return;
-    //     }
-
-    //     const reader = new FileReader();
-    //     reader.readAsDataURL(file);
-    //     reader.onload = (event) => {
-    //         setCommentImage(event.target.result);
-    //     };
-    // };
-
     const commentSubmit = async () => {
         // Validate input for rating and text
         if (!rating && (rating < 1 || rating > 5)) {
@@ -101,7 +78,6 @@ export default function PlaceProfileWriteReview({ user, foodVenue, setComments }
             }
 
             setLoading(false);
-            // console.log("Review Response:", res);
             toast.success("Review added successfully! Thank you for your response!");
             setComments((prevComments) => [res, ...prevComments]);
             setCommentImage([]);

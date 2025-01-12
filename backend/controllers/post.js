@@ -306,7 +306,6 @@ exports.getLikeStatus = async (req, res) => {
     const { postId } = req.params;
     const userId = req.user.id;
 
-    console.log(userId);
     const post = await Post.findById(postId);
 
     if (!post) {

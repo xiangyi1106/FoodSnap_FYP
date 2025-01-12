@@ -95,7 +95,7 @@ function App() {
       dispatch({ type: 'RESET_POSTS' });
       getAllPosts(page); // Fetch posts for the current page
     }
-  }, [user]);
+  }, [user, user?.id]);
 
 
   const getAllPosts = async (currentPage) => {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { asianCuisines, foodCategory, foodVenueFeatures, priceLevelCategory } from '../../data/foodCategory'
 import { CButton, CModalBody, CModalFooter, CModalHeader, CModalTitle, CModal } from '@coreui/react';
 import { toggleScroll } from '../../functions/fileUtils';
-import { Badge } from '@mui/material';
+import { Badge, CircularProgress } from '@mui/material';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { searchFoodVenuesByFilter } from '../../functions/foodVenue';
 import { toast } from 'react-toastify';
@@ -12,6 +12,7 @@ export default function SearchFoodCategoryModal({ setVisible, visible, selectedC
     const [selectedCategories, setSelectedCategories] = useState([]); // For food categories
     const [selectedPriceLevel, setSelectedPriceLevel] = useState(null); // For price levels
     const [selectedTotal, setSelectedTotal] = useState([]); // Combined total
+    const [loading, setLoading] = useState(false);
 
 
     const handleCategoryClick = (category) => {
@@ -96,8 +97,9 @@ export default function SearchFoodCategoryModal({ setVisible, visible, selectedC
     const handleApplyFilters = async () => {
         // Send the selected filters to the parent component or directly to backend
         // Send the filters to the parent component to fetch the data
-
-        try {
+        setLoading(true);
+        
+        try {    
             let updatedSelectedCategories = [...selectedTotal];
 
             // Filter out <= RM10 and >= RM10 from selectedCategories if they exist
@@ -122,8 +124,10 @@ export default function SearchFoodCategoryModal({ setVisible, visible, selectedC
             }else{
                 setFoodVenues([]);
             }
+            setLoading(false);
             setVisible(false); // Close the modal
         } catch (error) {
+            setLoading(false);
             toast.error("Error searching food venue, please try again.");
         }
     };
@@ -220,7 +224,7 @@ export default function SearchFoodCategoryModal({ setVisible, visible, selectedC
                     <CButton color="secondary" onClick={() => setVisible(false)}>
                         Cancel
                     </CButton>
-                    <CButton color="primary" onClick={handleApplyFilters} >Ok</CButton>
+                    <CButton color="primary" onClick={handleApplyFilters} >{loading ? <CircularProgress size={30} sx={{ color: 'white' }} /> : <span>Ok</span>}</CButton>
                 </CModalFooter>
             </CModal>
         </div>

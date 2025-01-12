@@ -474,31 +474,6 @@ exports.createFoodVenue = async (req, res) => {
   }
 };
 
-// exports.searchFoodVenuesByFilter = async (req, res) => {
-//   const { categories, priceLevel } = req.body;
-
-//   const query = {};
-
-//   if (categories && categories.length > 0) {
-//     query.category = { $in: categories };
-//   }
-
-//   if (priceLevel) {
-//     query.priceRange = priceLevel;
-//   }
-
-//   // if (features && features.length > 0) {
-//   //   query['otherinfo'] = { $elemMatch: { feature: { $in: features } } };
-//   // }
-
-//   try {
-//     const venues = await FoodVenue.find(query);
-//     res.json(venues);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Error fetching venues' });
-//   }
-// }
-
 exports.searchFoodVenuesByFilter = async (req, res) => {
   const { categories, priceLevel, location } = req.body;
 

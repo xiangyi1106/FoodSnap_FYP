@@ -9,11 +9,7 @@ exports.getNotifications = async (req, res) => {
         const notifications = await Notification.find({ userId })
             .sort({ createdAt: -1 })
             .populate("fromUserId", "name picture username gender");
-
-        // console.log("Notifications found:", notifications);
-
         if (notifications.length === 0) {
-            // return res.status(404).json({ message: "No notifications found" });
             return res.json([]);
         }
 
