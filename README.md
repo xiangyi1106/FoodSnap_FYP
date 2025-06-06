@@ -56,7 +56,8 @@ Create and update food venue listings with:
 Only business owners have permissions to manage food venue data to maintain content accuracy
 
 
-⚙️ Tech Stack
+### Tech Stack
+
 Frontend
 - React.js 
 - Material-UI 
