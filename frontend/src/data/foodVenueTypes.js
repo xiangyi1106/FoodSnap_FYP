@@ -35,10 +35,6 @@ export const foodVenueTypes = [
         type: 'Food Truck',
         description: 'Mobile kitchens serving a variety of foods from a truck, often featuring specific cuisines or specialty dishes.',
     },
-    // {
-    //     type: 'Tavern/Pub',
-    //     description: 'Establishments serving alcoholic beverages along with hearty meals, creating a casual and social environment.',
-    // },
     {
         type: 'Bakery',
         description: 'Places specializing in baked goods such as bread, pastries, and cakes, often with a small seating area for customers.',
