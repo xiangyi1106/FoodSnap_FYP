@@ -61,7 +61,6 @@ export default function PostInteraction({ post, user, isPost, onShowFeedComment,
     };
 
     useEffect(() => {
-        // console.log("Updated comment count:", commentCount);
         dispatch({
             type: "UPDATE_COMMENT_COUNT",
             payload: {
@@ -99,7 +98,6 @@ export default function PostInteraction({ post, user, isPost, onShowFeedComment,
                 <div className="reacts_count">
                     <div className="reacts_count_imgs">
                         <LikeButton
-                            // postId={post?._id}
                             post={post}
                             user={user}
                             setLikesCount={setLikesCount} // Pass setLikesCount function
@@ -122,7 +120,6 @@ export default function PostInteraction({ post, user, isPost, onShowFeedComment,
                 </div>
                 <div className="to_right">
                     <div className="likes_count">{postDetailsPage ? likesCount : post?.likes?.length || 0} {(post?.likes?.length || 0) > 1 || likesCount > 1 ? 'likes' : 'like'}</div>
-                    {/* <div className="comments_count">{commentCount} {commentCount > 1 ? 'comments' : 'comment'}</div> */}
                     <div className="comments_count"> {postDetailsPage ? commentCount : commentCount} {(post?.commentCount || 0) > 1 || commentCount > 1 ? 'comments' : 'comment'}</div>
                     <div className="share_count">{postDetailsPage ? sharesCount : post?.shares?.length || 0} {sharesCount > 1 || post?.shares?.length > 1 ? 'shares' : 'share'}</div>
                 </div>

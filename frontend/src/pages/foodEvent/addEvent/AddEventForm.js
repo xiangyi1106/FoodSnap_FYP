@@ -1,17 +1,15 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useFormik, FormikProvider } from "formik";
 import * as Yup from "yup";
 import TextInput from "../../../components/inputs/TextInput";
-import { MenuItem, RadioGroup, FormControlLabel, Radio, FormControl, FormLabel, CircularProgress, List, ListItem, ListItemText, ListItemIcon, Autocomplete, TextField } from "@mui/material";
+import { CircularProgress, List, ListItem, ListItemText, ListItemIcon } from "@mui/material";
 import CIcon from '@coreui/icons-react';
 import { cilX, cilLocationPin } from '@coreui/icons';
 import debounce from 'lodash/debounce';
 import axios from "axios";
 import { uploadMedias } from "../../../functions/uploadMedia";
-import dataURItoBlob from "../../../helpers/dataURItoBlob";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { handleImage } from "../../../functions/handleImage";
-import { getAllFoodVenues } from "../../../functions/foodVenue";
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
 
@@ -59,7 +57,6 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
             }),
         description: Yup.string()
             .max(500, "Description must not exceed 500 characters."),
-        // privacy: Yup.string().required("Privacy setting is required"),
     });
 
     const updatePicture = async (img) => {
@@ -78,7 +75,6 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
         }
     };
     
-    // console.log(foodVenue);
     const [loading, setLoading] = useState(false);
 
     const formik = useFormik({
@@ -90,9 +86,7 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
             endTime: "",
             location: "",
             description: "",
-            // organizer: "",
             eventImage: null,
-            // eventType: "faceToFace",
             privacy: "public",
             foodVenue: null,
         },
@@ -124,18 +118,11 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
                         latitude: foodVenue.latitude || null, // No latitude available
                         longitude: foodVenue.longitude || null, // No longitude available
                     };
-                    // formik.setFieldValue('location', locationData);
                     values.location = locationData;
                     values.foodVenue = foodVenue._id;
                 } else {
-                    console.log(address);
                     // Now process the location: check if address is selected from suggestions
                     if (!address || !address.latitude || !address.longitude) {
-                        // const manualAddress = locationText;
-                        // const addressText = {
-                        //     fullAddress: manualAddress,
-                        // };
-
                         // Set the manually entered location data
                         const locationData = {
                             name: locationText,
@@ -144,9 +131,7 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
                             longitude: null, // No longitude available
                         };
 
-                        // formik.setFieldValue('location', locationData);
                         values.location = locationData;
-                        // user.role === 'business_account' && values.foodVenue = user.foodVenue;
                     }else{
 
                     }
@@ -159,8 +144,6 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
                     },
                 });
 
-                //   // Handle success response
-                console.log(response.data);
                 setEvents((prevEvents) => [
                     response.data,         // Add the new data
                     ...prevEvents,  // Spread the previous promotions
@@ -173,8 +156,6 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
                 toast.success("Event created successfully!");
                 setIsCreateEventVisible(false);
 
-                // Optionally reset the form after successful submission
-                //   resetForm();
             } catch (error) {
                 console.error("Error creating event:", error);
                 toast.error("Failed to create event: " + (error.response?.data?.message || error.message));
@@ -225,7 +206,6 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
         const query = e.target.value;
         setLocationText(query);
         debouncedSearch(query); // Call the memoized debounced search function
-        console.log('Location search input:', query);
     };
 
     const handleItemClick = (index) => {
@@ -243,23 +223,6 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
         setLocationText(selectedItem.name); // Update input state with selected location
         setLocationList([]); // Clear location list after selection
     };
-
-    // const [foodVenues, setFoodVenues] = useState([]); // State to store fetched food venues
-    // const [selectedVenues, setSelectedVenues] = useState(null); // State for selected venues
-    // const [searchTerm, setSearchTerm] = useState(""); // Input value for search term
-    // // Fetch food venues from the backend when the component mounts
-    // useEffect(() => {
-    //     const fetchFoodVenues = async () => {
-    //         try {
-    //             const response = await getAllFoodVenues(user.token); // Replace with your backend endpoint
-    //             setFoodVenues(response); // Assuming the response is an array of food venues
-    //         } catch (error) {
-    //             console.error("Error fetching food venues:", error);
-    //         }
-    //     };
-
-    //     fetchFoodVenues();
-    // }, []); // Empty dependency array ensures this runs once when the component mounts
     
     return (
         <FormikProvider value={formik}>
@@ -362,39 +325,7 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
                     )}
 
                 </div>
-                {/* <div>
-                    <FormControl component="fieldset" style={{ marginTop: '20px' }}>
-                        <FormLabel component="legend" style={{ color: 'black', fontSize: '0.9rem', marginBottom: '0.5rem', }}>Event Type</FormLabel>
-                        <RadioGroup
-                            row
-                            aria-label="eventType"
-                            name="eventType"
-                            value={formik.values.eventType}
-                            onChange={formik.handleChange}
-                        >
-                            <FormControlLabel
-                                value="faceToFace"
-                                control={<Radio sx={{
-                                    color: "#30BFBF",
-                                    '&.Mui-checked': {
-                                        color: "#30BFBF",
-                                    }
-                                }} />}
-                                label="Face to Face"
-                            />
-                            <FormControlLabel value="virtual" control={<Radio sx={{
-                                color: "#30BFBF",
-                                '&.Mui-checked': {
-                                    color: "#30BFBF",
-                                }
-                            }} />}
-                                label="Virtual"
-                            />
 
-                        </RadioGroup>
-                    </FormControl>
-                    <p className="profile_form_description">Select the type of the event.</p>
-                </div> */}
                 {!foodVenue && <div className="profile_form_item">
                     <label className="profile_form_label">
                         Location
@@ -419,11 +350,6 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
                             <ListItem
                                 key={index}
                                 button
-                                // onClick={() => {
-                                //     formik.setFieldValue('location', loc.display_name); // Update formik value
-                                //     setLocationText(loc.display_name); // Update input state with selected location
-                                //     setLocationList([]); // Clear location list after selection
-                                // }}
                                 onClick={() => handleItemClick(index)}
                             >
                                 <ListItemIcon>
@@ -444,117 +370,6 @@ export function AddEventForm({ setIsCreateEventVisible, setEvents, setFilteredEv
                     formik={formik}
                     description="Provide details about the event."
                 />
-
-                {/* <div>
-                    <FormControl component="fieldset" style={{ marginTop: '20px' }}>
-                        <FormLabel component="legend" style={{ color: 'black', fontSize: '0.9rem', marginBottom: '0.5rem', }}>Privacy</FormLabel>
-                        <RadioGroup
-                            row
-                            aria-label="privacy"
-                            name="privacy"
-                            value={formik.values.privacy}
-                            onChange={formik.handleChange}
-                        >
-                            <FormControlLabel
-                                value="public"
-                                control={<Radio sx={{
-                                    color: "#30BFBF",
-                                    '&.Mui-checked': {
-                                        color: "#30BFBF",
-                                    }
-                                }} />}
-                                label="Public"
-                            />
-                            <FormControlLabel
-                                value="followers"
-                                control={<Radio sx={{
-                                    color: "#30BFBF",
-                                    '&.Mui-checked': {
-                                        color: "#30BFBF",
-                                    }
-                                }} />}
-                                label="Followers"
-                            />
-                            <FormControlLabel
-                                value="private"
-                                control={<Radio sx={{
-                                    color: "#30BFBF",
-                                    '&.Mui-checked': {
-                                        color: "#30BFBF",
-                                    }
-                                }} />}
-                                label="Private"
-                            />
-                        </RadioGroup>
-                    </FormControl>
-                    <p className="profile_form_description">Select the privacy of the event.</p>
-                </div> */}
-
-                {/* <TextInput
-                    label="Organizer"
-                    id="organizer"
-                    name="organizer"
-                    placeholder="Enter the organizer's name"
-                    formik={formik}
-                    description="Provide the name of the event organizer."
-                /> */}
-
-                {/* <TextInput
-                    label="Tags"
-                    id="tags"
-                    name="tags"
-                    placeholder="Enter event tags"
-                    formik={formik}
-                    description="Provide relevant tags for the event."
-                /> */}
-
-                {/* Food venue search and select dropdown */}
-                {/* <div className="profile_form_item">
-                    <label htmlFor="foodVenue" className="profile_form_label">Food Venue</label>
-                    <Autocomplete
-                        id="foodVenue"
-                        options={foodVenues}
-                        getOptionLabel={(option) => option.name} // Display venue name in the combobox
-                        value={selectedVenue} // Controlled value
-                        onChange={(event, newValue) => setSelectedVenue(newValue)} // Handle value change
-                        inputValue={searchTerm} // Controlled input value (typed by user)
-                        onInputChange={(event, newInputValue) => setSearchTerm(newInputValue)} // Handle input change for filtering
-                        renderInput={(params) => (
-                            <TextField {...params} placeholder="Type to search for a venue" />
-                        )}
-                    />
-                    <p className="profile_form_description">Select the food venue of the event if available.</p>
-                </div> */}
-
-                {/* {!foodVenue && <div className="profile_form_item">
-                    <label htmlFor="foodVenue" className="profile_form_label">Food Venue</label>
-                    <Autocomplete
-                        id="foodVenue"
-                        multiple={false} // Single selection
-                        options={foodVenues} // Array of available food venues
-                        getOptionLabel={(option) => option.name} // Display venue name
-                        value={selectedVenues} // Controlled value (single object or null)
-                        onChange={(event, newValue) => {
-                            console.log(newValue);
-                            setSelectedVenues(newValue); // Update the selected venue
-                            formik.setFieldValue("foodVenue", newValue ? newValue._id : null); // Update Formik's state with selected venue ID
-                        }}
-                        inputValue={searchTerm} // Controlled input value (typed by user)
-                        onInputChange={(event, newInputValue) => setSearchTerm(newInputValue)} // Handle input change for filtering
-                        filterOptions={(options, state) =>
-                            options.filter((option) =>
-                                option.name.toLowerCase().startsWith(state.inputValue.toLowerCase()) // Filter options based on input
-                            )
-                        }
-                        renderInput={(params) => (
-                            <TextField {...params} placeholder="Type to search for a venue" />
-                        )}
-                        isOptionEqualToValue={(option, value) => option.id === value?.id} // Compare by 'id'
-                    />
-
-
-                    <p className="profile_form_description">Select the food venue of the promotion to show it on food venue's promotion page.</p>
-                </div>} */}
 
                 <button
                     type="submit"

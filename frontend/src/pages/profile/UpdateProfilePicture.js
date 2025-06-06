@@ -99,7 +99,6 @@ export default function UpdateProfilePicture({
                 setShow(false);
             } else {
                 setLoading(false);
-                // setError(updated_picture);
                 toast.error("Failed to upload profile picture: " + updated_picture);
             }
         } catch (error) {
@@ -124,14 +123,6 @@ export default function UpdateProfilePicture({
                     </div>
                     <span>Update profile picture</span>
                 </div>
-                {/* <div className="update_image_desc">
-                    <textarea
-                        placeholder="Description"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        className="textarea_blue details_input"
-                    ></textarea>
-                </div> */}
 
                 <div className="update_center">
                     <div className="crooper">
@@ -140,7 +131,6 @@ export default function UpdateProfilePicture({
                             crop={crop}
                             zoom={zoom}
                             aspect={1 / 1}
-                            // cropShape="round"
                             onCropChange={setCrop}
                             onCropComplete={onCropComplete}
                             onZoomChange={setZoom}
@@ -165,22 +155,12 @@ export default function UpdateProfilePicture({
                         </div>
                     </div>
                 </div>
-                {/* <div className="flex_up">
-                    <div className="gray_btn" onClick={() => getCroppedImage("show")}>
-                        <i className="crop_icon"></i>Crop photo
-                    </div>
-                    <div className="gray_btn">
-                        <i className="temp_icon"></i>Make Temporary
-                    </div>
-                </div> */}
+
                 <div className="flex_p_t">
                     <i className="public_icon"></i>
                     Your profile picture is public
                 </div>
                 <div className="update_submit_wrap">
-                    {/* <div className="blue_link" onClick={() => setImage("")}>
-                        Cancel
-                    </div> */}
                     <button className="white_btn" style={{marginTop: '12px'}}
                         onClick={() => setImage("")}>
                         Cancel
@@ -189,14 +169,6 @@ export default function UpdateProfilePicture({
                         onClick={() => updateProfilePicture()}>
                         {loading ? <PulseLoader color="#fff" size={5} /> : "Save"}
                     </button>
-
-                    {/* <button
-                        className="blue_btn"
-                        disabled={loading}
-                        onClick={() => updateProfielPicture()}
-                    >
-                        {loading ? <PulseLoader color="#fff" size={5} /> : "Save"}
-                    </button> */}
                 </div>
             </div>
         </div>

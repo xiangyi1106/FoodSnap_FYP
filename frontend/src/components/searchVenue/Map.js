@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -45,14 +45,6 @@ export default function Map({ addresses, selected, foodVenues }) {
                     setPosition([latitude, longitude]);
 
                     try {
-                        // const response = await axios.get('https://nominatim.openstreetmap.org/reverse', {
-                        //     params: {
-                        //         lat: latitude,
-                        //         lon: longitude,
-                        //         format: 'json',
-                        //     },
-                        // });
-                        // Call your backend API instead of Nominatim directly
                         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/reverse-geocode`, {
                             params: {
                                 latitude: latitude,
@@ -76,20 +68,6 @@ export default function Map({ addresses, selected, foodVenues }) {
 
     // Update position if a different city is selected
     useEffect(() => {
-        // if (selected) {
-        //     // Fetch coordinates for the selected city
-        //     axios.get('https://nominatim.openstreetmap.org/search', {
-        //         params: {
-        //             q: selected,
-        //             format: 'json',
-        //         },
-        //     }).then((response) => {
-        //         if (response.data.length > 0) {
-        //             const { lat, lon } = response.data[0];
-        //             setPosition([parseFloat(lat), parseFloat(lon)]);
-        //         }
-        //     });
-        // }
         if (selected) {
             // Example: Set position to the coordinates of 'Central Johor Bahru'
             const currentCity = johorBahruAreasCoordinates.find(area => area.name === selected);
@@ -101,66 +79,6 @@ export default function Map({ addresses, selected, foodVenues }) {
 
 
     const [locations, setLocations] = useState([]);
-
-    // useEffect(() => {
-    //     const fetchCoordinates = async () => {
-    //         try {
-    //             const fetchedLocations = await Promise.all(
-    //                 addresses.map(async (address) => {
-    //                     let finalAddressUsed = address;
-    //                     try {
-    //                         let response = await axios.get('https://nominatim.openstreetmap.org/search', {
-    //                             params: {
-    //                                 q: finalAddressUsed,
-    //                                 format: 'json',
-    //                             },
-    //                         });
-
-    //                         let data = response.data;
-
-    //                         if (data.length === 0) {
-    //                             finalAddressUsed = address.replace(/^\d+,\s*/, '');
-    //                             response = await axios.get('https://nominatim.openstreetmap.org/search', {
-    //                                 params: {
-    //                                     q: finalAddressUsed,
-    //                                     format: 'json',
-    //                                 },
-    //                             });
-    //                             data = response.data;
-    //                         }
-
-    //                         if (data.length === 0) {
-    //                             finalAddressUsed = address.split(",").slice(1).join(",");
-    //                             response = await axios.get('https://nominatim.openstreetmap.org/search', {
-    //                                 params: {
-    //                                     q: finalAddressUsed,
-    //                                     format: 'json',
-    //                                 },
-    //                             });
-    //                             data = response.data;
-    //                         }
-
-    //                         if (data.length > 0) {
-    //                             const { lat, lon } = data[0];
-    //                             return { latitude: parseFloat(lat), longitude: parseFloat(lon), name: finalAddressUsed };
-    //                         } else {
-    //                             console.warn(`No results found for address: ${address}`);
-    //                             return null;
-    //                         }
-    //                     } catch (error) {
-    //                         console.error('Error fetching coordinates for address:', error);
-    //                         return null;
-    //                     }
-    //                 })
-    //             );
-    //             setLocations(fetchedLocations.filter(location => location !== null));
-    //         } catch (error) {
-    //             console.error('Error fetching coordinates:', error);
-    //         }
-    //     };
-
-    //     fetchCoordinates();
-    // }, [addresses]);
 
     useEffect(() => {
         const fetchCoordinates = async () => {
@@ -184,11 +102,6 @@ export default function Map({ addresses, selected, foodVenues }) {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             {position && <ResetCenterView position={position} />}
-            {/* {locations.map((location, index) => (
-                <Marker key={index} position={[location.latitude, location.longitude]} icon={customMarkerIcon}>
-                    <Popup>{location.name}</Popup>
-                </Marker>
-            ))} */}
             {foodVenues.length > 0 && foodVenues.map((location, index) => (
                 location.latitude && location.longitude ? (
                     <Marker key={index} position={[location.latitude, location.longitude]} icon={customMarkerIcon}>

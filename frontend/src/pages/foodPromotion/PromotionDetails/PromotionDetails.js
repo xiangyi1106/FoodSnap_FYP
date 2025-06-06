@@ -5,10 +5,9 @@ import { toast } from 'react-toastify';
 import Header from '../../../components/header';
 import CustomBreadcrumbs from '../../../components/BreadCrumbs';
 import { generateBreadcrumbs } from '../../../functions/generateBreadCrumbs';
-import { Avatar, IconButton, Tooltip } from '@mui/material';
+import { Avatar, Tooltip } from '@mui/material';
 import CIcon from '@coreui/icons-react';
-import { cilColorBorder, cilBookmark } from '@coreui/icons';
-import { FavoriteBorderOutlined } from '@mui/icons-material';
+import { cilColorBorder} from '@coreui/icons';
 import EditPromotion from '../EditPromotion/EditPromotion';
 import { convertTo12HourFormat } from '../../../functions/fileUtils';
 
@@ -31,7 +30,6 @@ const PromotionDetails = ({ user }) => {
                 if (user.role === 'business' && user.foodVenueOwned === response.data.foodVenue) {
                     setValidityToEditFoodVenue(true);  // Set validity to true if both conditions are met
                 }
-                // console.log(response.data);
             } catch (error) {
                 toast.error("Error fetching promotion: " + error.message);
             }
@@ -45,7 +43,6 @@ const PromotionDetails = ({ user }) => {
             <Header />
             <div className="place_details_wrapper">
                 {visible && <EditPromotion promotionId={promotion?._id} user={user} setVisible={setVisible} />}
-                {/* {visible && <EditFoodVenueForm />} */}
                 <CustomBreadcrumbs breadcrumbs={breadcrumbs} />
                 <div className="profile_top" style={{ marginTop: '0' }}>
                     <div className="profile_container" style={{ maxWidth: "none" }}>
@@ -53,7 +50,6 @@ const PromotionDetails = ({ user }) => {
                             <img src={promotion?.image ? promotion?.image : `${process.env.PUBLIC_URL}/images/no-picture.png`} className="cover" alt="profile_cover"></img>
                         </div>
                         <div className='event_profile_picture_wrapper'>
-                            {/* {visible && <EditPromotionDetails setVisible={setVisible} />} */}
                             <div className='event_profile_picture_left'>
                                 <div className='event_profile_col'>
                                     <div className='event_place_profile'>
@@ -88,11 +84,6 @@ const PromotionDetails = ({ user }) => {
                                 className='profile_picture_right'
                                 style={{ gap: '15px', position: 'relative', top: '130px' }}
                             >
-                                {/* {!visitor && <Tooltip title='Edit Promotion Information'>
-                                    <button className="food_event_card_icon_button logo_color_background_hover">
-                                        <CIcon icon={cilColorBorder} className='icon_size_20' onClick={() => setVisible(true)} />
-                                    </button>
-                                </Tooltip>} */}
                                 {validityToEditFoodVenue && <Tooltip title='Edit Promotion Information'>
                                     <button className="food_event_card_icon_button logo_color_background_hover">
                                         <CIcon icon={cilColorBorder} className='icon_size_20' onClick={() => setVisible(true)} />

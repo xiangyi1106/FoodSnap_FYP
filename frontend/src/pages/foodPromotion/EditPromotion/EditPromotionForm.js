@@ -20,8 +20,6 @@ export function EditPromotionForm({ user, promotionId, setVisible }) {
     const [locationText, setLocationText] = useState('');
     const [locationList, setLocationList] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    // const [tags, setTags] = useState('');
-    // const [foodVenue, setFoodVenue] = useState(''); // Optional food venue from DB
     const [address, setAddress] = useState([]);
     const today = new Date();
     const [image, setImage] = useState('');
@@ -154,18 +152,6 @@ export function EditPromotionForm({ user, promotionId, setVisible }) {
                     }
                 }
 
-                // if (foodVenue) {
-                //     const locationData = {
-                //         name: foodVenue.name,
-                //         address: foodVenue.address,
-                //         latitude: foodVenue.latitude || null, // No latitude available
-                //         longitude: foodVenue.longitude || null, // No longitude available
-                //     };
-                //     // formik.setFieldValue('location', locationData);
-                //     values.location = locationData;
-                //     values.foodVenue = foodVenue._id;
-                // } else {
-
                 // Now process the location: check if address is selected from suggestions
                 if (!address || !address.latitude || !address.longitude) {
                     const manualAddress = locationText;
@@ -181,10 +167,8 @@ export function EditPromotionForm({ user, promotionId, setVisible }) {
                         longitude: null, // No longitude available
                     };
 
-                    // formik.setFieldValue('location', locationData);
                     values.location = locationData;
                 }
-                // }
 
                 // Finally, post the promotion data to the backend
                 const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/promotion/update/${promotionId}`, values, {
@@ -403,11 +387,6 @@ export function EditPromotionForm({ user, promotionId, setVisible }) {
                             <ListItem
                                 key={index}
                                 button
-                                // onClick={() => {
-                                //     formik.setFieldValue('location', loc.display_name); // Update formik value
-                                //     setLocationText(loc.display_name); // Update input state with selected location
-                                //     setLocationList([]); // Clear location list after selection
-                                // }}
                                 onClick={() => handleItemClick(index)}
                             >
                                 <ListItemIcon>
@@ -428,53 +407,7 @@ export function EditPromotionForm({ user, promotionId, setVisible }) {
                     formik={formik}
                     description="Provide details about the promotion."
                     value={formik.values.description || ''}
-
                 />
-
-                {/* <div>
-                    <FormControl component="fieldset" style={{ marginTop: '20px' }}>
-                        <FormLabel component="legend" style={{ color: 'black', fontSize: '0.9rem', marginBottom: '0.5rem', }}>Privacy</FormLabel>
-                        <RadioGroup
-                            row
-                            aria-label="privacy"
-                            name="privacy"
-                            value={formik.values.privacy}
-                            onChange={formik.handleChange}
-                        >
-                            <FormControlLabel
-                                value="public"
-                                control={<Radio sx={{
-                                    color: "#30BFBF",
-                                    '&.Mui-checked': {
-                                        color: "#30BFBF",
-                                    }
-                                }} />}
-                                label="Public"
-                            />
-                            <FormControlLabel
-                                value="followers"
-                                control={<Radio sx={{
-                                    color: "#30BFBF",
-                                    '&.Mui-checked': {
-                                        color: "#30BFBF",
-                                    }
-                                }} />}
-                                label="Followers"
-                            />
-                            <FormControlLabel
-                                value="private"
-                                control={<Radio sx={{
-                                    color: "#30BFBF",
-                                    '&.Mui-checked': {
-                                        color: "#30BFBF",
-                                    }
-                                }} />}
-                                label="Private"
-                            />
-                        </RadioGroup>
-                    </FormControl>
-                    <p className="profile_form_description">Select the privacy of the promotion.</p>
-                </div> */}
                 <button
                     type="submit"
                     className="event_form_button profile_form_button"

@@ -80,7 +80,6 @@
   }
   
   .restaurant_wishlist_item {
-    /* border-bottom: 1px solid #ddd; */
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     padding: 15px 20px;
     margin: 15px 0;
@@ -99,7 +98,6 @@
   }
   
   .restaurant_wishlist_item_img {
-    /* width: 65px; */
     width: 80px;
     height: 80px;
     border-radius: 4px;

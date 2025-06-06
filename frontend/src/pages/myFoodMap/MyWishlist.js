@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './RestaurantWishlist.css'; // Custom CSS
 import { getFoodVenueWishlist, removeFromFoodVenueWishlist } from '../../functions/user';
 import { convertTo12HourFormat, getCurrentDayAbbreviation } from '../../functions/fileUtils';
@@ -9,7 +9,6 @@ import StarRating from '../../components/searchVenue/StarRating';
 import Tooltip from '@mui/material/Tooltip';
 import { HashLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
-
 
 const RestaurantWishlist = ({ onRemove, user }) => {
 
@@ -63,14 +62,9 @@ const RestaurantWishlist = ({ onRemove, user }) => {
         });
     };
 
-
     const navigate = useNavigate();
 
     const handleClick = (id) => {
-        // navigate(`/foodVenueWishlist/${id}`);
-        // navigate(`/foodVenue/${id}`, {
-        //     state: { breadcrumbs: [{ label: 'Wishlist', href: '/foodVenueWishlist' }] }
-        // });
         navigate(`/foodVenue/${id}`, { state: { from: '/foodVenueWishlist' } });
     };
 
@@ -83,27 +77,6 @@ const RestaurantWishlist = ({ onRemove, user }) => {
         } else {
             alert('Coordinates not available for this location.');
         }
-
-        // let mapsUrl;
-
-        // // Check if name is available
-        // if (selectedRestaurant?.name) {
-        //     mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedRestaurant?.name)}`;
-        // }
-
-        // // Fallback to latitude and longitude if no name or search fails
-        // if (!mapsUrl && selectedRestaurant?.latitude && selectedRestaurant?.longitude) {
-        //     mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${selectedRestaurant?.latitude},${selectedRestaurant?.longitude}&travelmode=driving`;
-        // }
-
-        // // If no valid data is available
-        // if (!mapsUrl) {
-        //     alert('Location details are not available.');
-        //     return;
-        // }
-
-        // // Open the generated URL
-        // window.open(mapsUrl, '_blank', 'noopener noreferrer');
     };
 
     const currentDayAbbreviation = getCurrentDayAbbreviation();
@@ -192,12 +165,6 @@ const RestaurantWishlist = ({ onRemove, user }) => {
                                                                     <p className="restaurant_wishlist_price">
                                                                         {selectedRestaurant?.priceRange || "No details"}
                                                                     </p>
-                                                                    {/* <div className="info_profile">
-                                                                <div className="info_profile_title source-sans-3-bold" style={{ color: 'white', fontSize: '1.2rem' }}>Contact Number</div>
-                                                            </div>
-                                                            <p className="restaurant_wishlist_price">
-                                                                {selectedRestaurant?.phone || "-"}
-                                                            </p> */}
                                                                     <div className="info_profile">
                                                                         <div className="info_profile_title source-sans-3-bold" style={{ color: 'white', fontSize: '1.2rem' }}>Opening Hours</div>
                                                                     </div>
@@ -212,7 +179,6 @@ const RestaurantWishlist = ({ onRemove, user }) => {
                                                                                                 {time.open && time.close
                                                                                                     ? `${convertTo12HourFormat(time.open)} - ${convertTo12HourFormat(time.close)}`
                                                                                                     : <span>Closed</span>}
-                                                                                                {/* {convertTo12HourFormat(time.open)} - {convertTo12HourFormat(time.close)} */}
                                                                                             </div>
                                                                                         ))
                                                                                     ) : (
@@ -249,7 +215,7 @@ const RestaurantWishlist = ({ onRemove, user }) => {
     );
 };
 
-const RestaurantItem = ({ imgSrc, name, desc, rating, location, onSelect, onRemove, id, date }) => (
+const RestaurantItem = ({ imgSrc, name, rating, location, onSelect, onRemove}) => (
 
     <div className="restaurant_wishlist_item hover_style_3" onClick={onSelect}>
         <div className="restaurant_wishlist_item_body">
@@ -257,10 +223,8 @@ const RestaurantItem = ({ imgSrc, name, desc, rating, location, onSelect, onRemo
                 {imgSrc && <img src={imgSrc} alt={name} className="restaurant_wishlist_item_img" />}
                 <div className="restaurant_wishlist_item_details">
                     <h5>{name}</h5>
-                    {/* <p>{desc}</p> */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><StarRating rating={rating} /> <span>({rating})</span> </div>
                     <p className="restaurant_wishlist_location">{location}</p>
-                    {/* <p style={{ color: 'gray', fontSize: '0.85rem' }}>Saved at: {new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p> */}
                 </div>
             </div>
             <div className="restaurant_wishlist_item_actions">

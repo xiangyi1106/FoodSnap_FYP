@@ -22,39 +22,6 @@ const formatTime = (time) => {
   return new Date().setHours(hour24, minutes, 0, 0);
 };
 
-
-// const isOpenNow = (openingHours) => {
-//   const daysOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-//   const currentDay = daysOfWeek[new Date().getDay()]; // Get current day (0 = Sunday, 6 = Saturday)
-
-//   if (!openingHours || !openingHours[currentDay] || openingHours[currentDay].length === 0) {
-//     // return false; // Return false if no opening hours for the current day
-//     return null;
-//   }
-
-//   const todayHours = openingHours[currentDay][0]; // Assuming one entry per day (open-close)
-//   if (!todayHours || !todayHours.open || !todayHours.close) {
-//     // return false; // Return false if open or close time is missing
-//     return null;
-//   }
-
-//   const currentTime = new Date();
-//   // const openTime = formatTime(todayHours.open);
-//   // let closeTime = formatTime(todayHours.close);
-//   const openTime = todayHours.open;
-//   let closeTime = todayHours.close;
-
-//   // Handle the case when close time is after midnight (next day)
-//   if (closeTime <= openTime) {
-//     closeTime = new Date(closeTime).setDate(currentTime.getDate() + 1); // Move to the next day
-//   }
-
-//   console.log(openTime, closeTime);
-
-
-//   return currentTime >= openTime && currentTime <= closeTime;
-// };
-
 const isOpenNow = (openingHours) => {
   const daysOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
   const currentDay = daysOfWeek[new Date().getDay()]; // Get current day (0 = Sunday, 6 = Saturday)
@@ -88,25 +55,6 @@ const isOpenNow = (openingHours) => {
   return currentTime >= openTime && currentTime <= closeTime;
 };
 
-
-// const getOpeningTime = (openingHours) => {
-//   const daysOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-//   const currentDay = daysOfWeek[new Date().getDay()]; // Get current day (0 = Sunday, 6 = Saturday)
-
-//   if (!openingHours || !openingHours[currentDay] || openingHours[currentDay].length === 0) {
-//     return null; // Return null if no opening hours for the current day
-//   }
-
-//   const todayHours = openingHours[currentDay][0]; // Assuming one entry per day (open-close)
-//   if (!todayHours || !todayHours.open || !todayHours.close) {
-//     return null; // Return null if open or close time is missing
-//   }
-
-//   console.log(todayHours);
-
-//   return todayHours;
-// };
-
 const getOpeningTime = (openingHours) => {
   const daysOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
   const currentDay = daysOfWeek[new Date().getDay()]; // Get current day (0 = Sunday, 6 = Saturday)
@@ -123,13 +71,6 @@ const getOpeningTime = (openingHours) => {
   return todayHours;
 };
 
-
-// const convertTo12HourFormat = (time) => {
-//   const [hours, minutes] = time.split(':');
-//   const hoursIn12HourFormat = (hours % 12) || 12;  // Convert 0 to 12 for midnight
-//   const ampm = hours >= 12 ? 'PM' : 'AM';
-//   return `${hoursIn12HourFormat}:${minutes} ${ampm}`;
-// }
 const convertTo12HourFormat = (time) => {
   if (!time) return null;  // Handle empty or invalid time
   const [hours, minutes] = time.split(':').map(Number);
@@ -155,7 +96,6 @@ const FoodVenueListCard = ({ place }) => {
   const isCurrentlyOpen = isOpenNow(place.openingHours); // Check if open now
   
   return (
-    // <div className="place-detail" onClick={() => setVisible(true)}>
     <Link to={`/foodVenue/${place._id}`} className="place-detail">
       <div className="place-header">
         <div className="place-info">
@@ -164,15 +104,12 @@ const FoodVenueListCard = ({ place }) => {
           </div>
           <div className="place-ratings">
             <StarRating rating={place.rating} />
-            {/* <span className="rating-text">{`(${place.review_count})`}</span> */}
             <span className="price-level">{place.priceRange}</span>
           </div>
-          {/* <div className="open-status">{place.opening_status}</div> */}
           <div className="open-status">
             {openingTime ? (
               <>
                 {isCurrentlyOpen ? <span style={{color: '#30BFBF', marginRight: '5px'}}>Open Now</span> : <span style={{color: '#9B1003', marginRight: '5px'}}>Closed Now</span>}
-                {/* <span>{isCurrentlyOpen ? "Open Now: " : "Closed Now: "}</span> */}
                 <span>{convertTo12HourFormat(openingTime.open)} - {convertTo12HourFormat(openingTime.close)}</span>
               </>
             ) : (
@@ -188,15 +125,6 @@ const FoodVenueListCard = ({ place }) => {
           )}
         </div>
         <div className="place-image-container">
-          {/* <img
-            className="place-image"
-            src={
-              place.picture
-                ? place.picture
-                : `${process.env.PUBLIC_URL}/images/no-image.png`
-            }
-            alt={place.name}
-          /> */}
           {place.picture && <img
             className="place-image"
             src={

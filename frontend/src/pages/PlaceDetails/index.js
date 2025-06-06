@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Header from '../../components/header'
 import CustomBreadcrumbs from '../../components/BreadCrumbs'
 import { Outlet, useLocation, useParams } from 'react-router-dom'
 import PlaceProfilePictureInfo from '../../components/PlaceProfile/PlaceProfilePictureInfo'
-import PlaceProfileMenu from '../../components/PlaceProfile/PlaceProfileMenu'
 import './style.css'
 import PlaceDetailsNav from '../../components/PlaceDetails/PlaceDetailsNav'
 import { generateBreadcrumbs } from '../../functions/generateBreadCrumbs'
 import { getFoodVenueDetails } from '../../functions/foodVenue'
 import { toast } from 'react-toastify'
-// import './PlaceDetailInformation.css';
 import '../../components/PlaceProfile/PlaceDetailInformation.css'
-import ProfileSkeleton from '../../components/Skeleton/ProfileSkeleton'
 import FoodVenueProfileSkeleton from '../../components/Skeleton/FoodVenueProfileSkeleton'
 
 export default function PlaceDetailsLayout({ user }) {
@@ -23,7 +20,6 @@ export default function PlaceDetailsLayout({ user }) {
     const [isMounted, setIsMounted] = useState(true); // Track if the component is mounted
     // Generate breadcrumbs using the reusable function
     const breadcrumbs = location.state?.from ? generateBreadcrumbs(location, 'Food Venue Wishlist', location.state?.from, foodVenue?.name) : generateBreadcrumbs(location, 'Search Venue', '/searchVenue', foodVenue?.name);
-    // console.log(location.state?.from);
     useEffect(() => {
         const fetchFoodVenue = async () => {
             setLoading(true);
@@ -31,7 +27,6 @@ export default function PlaceDetailsLayout({ user }) {
                 const response = await getFoodVenueDetails(id, user.token);
                 setFoodVenue(response);
                 setLoading(false);
-                console.log(response);
             } catch (error) {
                 setLoading(false);
                 toast.error("Error fetching food venue, please try again: " + error.message);
@@ -40,8 +35,6 @@ export default function PlaceDetailsLayout({ user }) {
 
         fetchFoodVenue();
     }, [id, user]);
-
-
 
     const menuItems = [
         { name: 'overview', label: 'Overview', href: `/foodVenue/${id}` },
@@ -52,10 +45,6 @@ export default function PlaceDetailsLayout({ user }) {
         { name: 'events', label: 'Events', href: `/foodVenue/${id}/events` },
         { name: 'promotions', label: 'Promotions', href: `/foodVenue/${id}/promotions` },
     ];
-
-    // if (loading) {
-    //     return <div>Loading...</div>; // Add your loading indicator here
-    // }
 
     return (
         <div className="place_detail_information">

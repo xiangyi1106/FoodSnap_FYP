@@ -9,9 +9,8 @@ import debounce from 'lodash/debounce';
 import axios from "axios";
 import { uploadMedias } from "../../../functions/uploadMedia";
 import dataURItoBlob from "../../../helpers/dataURItoBlob";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { handleImage } from "../../../functions/handleImage";
-import { getAllFoodVenues } from "../../../functions/foodVenue";
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
 
@@ -20,7 +19,6 @@ export function AddPromotionForm({ setIsCreatePromotionVisible, user, setPromoti
     const [locationText, setLocationText] = useState('');
     const [locationList, setLocationList] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    // const [tags, setTags] = useState('');
     const [address, setAddress] = useState([]);
     const today = new Date();
     const [image, setImage] = useState('');
@@ -58,12 +56,9 @@ export function AddPromotionForm({ setIsCreatePromotionVisible, user, setPromoti
                 return selectedDateTime >= new Date(); // Compare selected date & time to current date & time
             }),
         description: Yup.string()
-            // .min(10, "Description must be at least 10 characters.")
             .max(500, "Description must not exceed 500 characters."),
         termsAndConditions: Yup.string()
-            // .min(10, "Description must be at least 10 characters.")
             .max(500, "Term And Condition must not exceed 500 characters."),
-        // privacy: Yup.string().required("Privacy setting is required"),
     });
 
     const updatePicture = async (img) => {
@@ -75,7 +70,6 @@ export function AddPromotionForm({ setIsCreatePromotionVisible, user, setPromoti
             formData.append("path", path);
 
             const res = await uploadMedias(formData, path, user.token);
-            console.log(res);
             return res;
 
         } catch (error) {
@@ -95,13 +89,9 @@ export function AddPromotionForm({ setIsCreatePromotionVisible, user, setPromoti
             location: "",
             description: "",
             termsAndConditions: "",
-            // organizer: "",
             promotionImage: null,
-            // promotionType: "faceToFace",
             privacy: "public",
             foodVenue: null,
-            // tags: "",
-            // foodVenue: "",
         },
         validationSchema: promotionFormSchema,
         onSubmit: async (values, { resetForm }) => {
@@ -127,7 +117,6 @@ export function AddPromotionForm({ setIsCreatePromotionVisible, user, setPromoti
                         latitude: foodVenue.latitude || null, // No latitude available
                         longitude: foodVenue.longitude || null, // No longitude available
                     };
-                    // formik.setFieldValue('location', locationData);
                     values.location = locationData;
                     values.foodVenue = foodVenue._id;
                 } else {
@@ -146,7 +135,6 @@ export function AddPromotionForm({ setIsCreatePromotionVisible, user, setPromoti
                             longitude: null, // No longitude available
                         };
 
-                        // formik.setFieldValue('location', locationData);
                         values.location = locationData;
                     }
                 }
@@ -234,8 +222,6 @@ export function AddPromotionForm({ setIsCreatePromotionVisible, user, setPromoti
             place_id: selectedItem.place_id,
             name: selectedItem.display_name,
             address: selectedItem.address,
-            // city: selectedItem.address.city || selectedItem.address.town || selectedItem.address.village || '',
-            // postcode: selectedItem.address.postcode || '',
             latitude: selectedItem.lat,
             longitude: selectedItem.lon,
         };
@@ -248,24 +234,6 @@ export function AddPromotionForm({ setIsCreatePromotionVisible, user, setPromoti
         setLocationText(selectedItem.display_name); // Update input state with selected location
         setLocationList([]); // Clear location list after selection
     };
-
-    // const [foodVenues, setFoodVenues] = useState([]); // State to store fetched food venues
-    // const [selectedVenues, setSelectedVenues] = useState(null); // State for selected venues
-    // const [searchTerm, setSearchTerm] = useState(""); // Input value for search term
-
-    // // Fetch food venues from the backend when the component mounts
-    // useEffect(() => {
-    //     const fetchFoodVenues = async () => {
-    //         try {
-    //             const response = await getAllFoodVenues(user.token); // Replace with your backend endpoint
-    //             setFoodVenues(response); // Assuming the response is an array of food venues
-    //         } catch (error) {
-    //             console.error("Error fetching food venues:", error);
-    //         }
-    //     };
-
-    //     fetchFoodVenues();
-    // }, []); // Empty dependency array ensures this runs once when the component mounts
 
     return (
         <FormikProvider value={formik}>
@@ -392,11 +360,6 @@ export function AddPromotionForm({ setIsCreatePromotionVisible, user, setPromoti
                             <ListItem
                                 key={index}
                                 button
-                                // onClick={() => {
-                                //     formik.setFieldValue('location', loc.display_name); // Update formik value
-                                //     setLocationText(loc.display_name); // Update input state with selected location
-                                //     setLocationList([]); // Clear location list after selection
-                                // }}
                                 onClick={() => handleItemClick(index)}
                             >
                                 <ListItemIcon>
@@ -426,81 +389,6 @@ export function AddPromotionForm({ setIsCreatePromotionVisible, user, setPromoti
                     formik={formik}
                     description="Provide terms and conditions about the promotion."
                 />
-
-                {/* <div>
-                    <FormControl component="fieldset" style={{ marginTop: '20px' }}>
-                        <FormLabel component="legend" style={{ color: 'black', fontSize: '0.9rem', marginBottom: '0.5rem', }}>Privacy</FormLabel>
-                        <RadioGroup
-                            row
-                            aria-label="privacy"
-                            name="privacy"
-                            value={formik.values.privacy}
-                            onChange={formik.handleChange}
-                        >
-                            <FormControlLabel
-                                value="public"
-                                control={<Radio sx={{
-                                    color: "#30BFBF",
-                                    '&.Mui-checked': {
-                                        color: "#30BFBF",
-                                    }
-                                }} />}
-                                label="Public"
-                            />
-                            <FormControlLabel
-                                value="followers"
-                                control={<Radio sx={{
-                                    color: "#30BFBF",
-                                    '&.Mui-checked': {
-                                        color: "#30BFBF",
-                                    }
-                                }} />}
-                                label="Followers"
-                            />
-                            <FormControlLabel
-                                value="private"
-                                control={<Radio sx={{
-                                    color: "#30BFBF",
-                                    '&.Mui-checked': {
-                                        color: "#30BFBF",
-                                    }
-                                }} />}
-                                label="Private"
-                            />
-                        </RadioGroup>
-                    </FormControl>
-                    <p className="profile_form_description">Select the privacy of the promotion.</p>
-                </div> */}
-                {/* {!foodVenue && <div className="profile_form_item">
-                    <label htmlFor="foodVenue" className="profile_form_label">Food Venue</label>
-                    <Autocomplete
-                        id="foodVenue"
-                        multiple={false} // Single selection
-                        options={foodVenues} // Array of available food venues
-                        getOptionLabel={(option) => option.name} // Display venue name
-                        value={selectedVenues} // Controlled value (single object or null)
-                        onChange={(event, newValue) => {
-                            console.log(newValue);
-                            setSelectedVenues(newValue); // Update the selected venue
-                            formik.setFieldValue("foodVenue", newValue ? newValue._id : null); // Update Formik's state with selected venue ID
-                        }}
-                        inputValue={searchTerm} // Controlled input value (typed by user)
-                        onInputChange={(event, newInputValue) => setSearchTerm(newInputValue)} // Handle input change for filtering
-                        filterOptions={(options, state) =>
-                            options.filter((option) =>
-                                option.name.toLowerCase().startsWith(state.inputValue.toLowerCase()) // Filter options based on input
-                            )
-                        }
-                        renderInput={(params) => (
-                            <TextField {...params} placeholder="Type to search for a venue" />
-                        )}
-                        isOptionEqualToValue={(option, value) => option.id === value?.id} // Compare by 'id'
-                    />
-
-
-                    <p className="profile_form_description">Select the food venue of the promotion to show it on food venue's promotion page.</p>
-                </div>} */}
-
                 <button
                     type="submit"
                     className="event_form_button profile_form_button"

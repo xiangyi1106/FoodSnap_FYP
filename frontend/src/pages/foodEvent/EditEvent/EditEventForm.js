@@ -187,7 +187,6 @@ export function EditEventForm({ user, eventId, setVisible }) {
                     navigate(`/foodEvent/${eventId}`, { replace: true });
                 }
             } catch (error) {
-                console.error("Error creating event:", error);
                 toast.error("Failed to create event: " + (error.response?.data?.message || error.message));
             }
             setLoading(false);
@@ -387,11 +386,6 @@ export function EditEventForm({ user, eventId, setVisible }) {
                             <ListItem
                                 key={index}
                                 button
-                                // onClick={() => {
-                                //     formik.setFieldValue('location', loc.display_name); // Update formik value
-                                //     setLocationText(loc.display_name); // Update input state with selected location
-                                //     setLocationList([]); // Clear location list after selection
-                                // }}
                                 onClick={() => handleItemClick(index)}
                             >
                                 <ListItemIcon>
@@ -414,51 +408,6 @@ export function EditEventForm({ user, eventId, setVisible }) {
                     value={formik.values.description || ''}
 
                 />
-
-                {/* <div>
-                    <FormControl component="fieldset" style={{ marginTop: '20px' }}>
-                        <FormLabel component="legend" style={{ color: 'black', fontSize: '0.9rem', marginBottom: '0.5rem', }}>Privacy</FormLabel>
-                        <RadioGroup
-                            row
-                            aria-label="privacy"
-                            name="privacy"
-                            value={formik.values.privacy}
-                            onChange={formik.handleChange}
-                        >
-                            <FormControlLabel
-                                value="public"
-                                control={<Radio sx={{
-                                    color: "#30BFBF",
-                                    '&.Mui-checked': {
-                                        color: "#30BFBF",
-                                    }
-                                }} />}
-                                label="Public"
-                            />
-                            <FormControlLabel
-                                value="followers"
-                                control={<Radio sx={{
-                                    color: "#30BFBF",
-                                    '&.Mui-checked': {
-                                        color: "#30BFBF",
-                                    }
-                                }} />}
-                                label="Followers"
-                            />
-                            <FormControlLabel
-                                value="private"
-                                control={<Radio sx={{
-                                    color: "#30BFBF",
-                                    '&.Mui-checked': {
-                                        color: "#30BFBF",
-                                    }
-                                }} />}
-                                label="Private"
-                            />
-                        </RadioGroup>
-                    </FormControl>
-                    <p className="profile_form_description">Select the privacy of the event.</p>
-                </div> */}
                 <button
                     type="submit"
                     className="event_form_button profile_form_button"

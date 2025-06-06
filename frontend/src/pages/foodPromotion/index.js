@@ -3,8 +3,6 @@ import FoodEventCard from '../../components/FoodEvent/FoodEventCard'
 import PromotionFilter from '../../components/foodPromotion/Filter';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { Fab } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import AddPromotion from './AddPromotion/AddPromotion';
 import CardSkeleton from '../../components/Skeleton/CardSkeleton';
 import RollingBanner from '../../components/Banner/RollingBanner';

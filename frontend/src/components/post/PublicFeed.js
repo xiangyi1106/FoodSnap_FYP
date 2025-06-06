@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react'
-import Post from "../post";
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import DiscoverPostList from '../../pages/Discover/DiscoverPostList';
@@ -11,17 +10,15 @@ export default function PublicFeed({ user, dispatch }) {
         const fetchPosts = async () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/getPublicPosts`);
-                // setPosts(response.data);
                 const rawPosts = response.data;
 
                 // Process posts to add `hasLiked` property
                 const processedPosts = rawPosts.map((post) => ({
                     ...post,
-                    hasLiked: post.likes.some((like) => like._id === user.id), // Assuming `user._id` is available
+                    hasLiked: post.likes.some((like) => like._id === user.id),
                 }));
 
                 setPosts(processedPosts);
-                // console.log(processedPosts);
             } catch (error) {
                 toast.error("Error fetching posts: " + error.message);
             }
@@ -30,27 +27,13 @@ export default function PublicFeed({ user, dispatch }) {
         fetchPosts();
     }, []);
 
-    // const middle = useRef(null);
-    // const [height, setHeight] = useState();
-
-    // useEffect(() => {
-    //     if (middle.current) {
-    //         setHeight(middle.current.clientHeight);
-    //     }
-    // }, [posts]);
-
     const location = useLocation();
 
     // Extract the current path to determine the active menu item
     const currentPath = location.pathname;
 
     return (
-        // <div className='feed_middle' style={{ height: `${height + 80}px` }}>
-        //     <div className="public_feed_middle" ref={middle} style={{ overflowY: 'auto' }}>
-        //         <DiscoverPostList posts={posts} user={user} setPosts={setPosts} dispatch={dispatch} />
-        //     </div>
-        // </div>
-                <div className='feed_middle' style={{ minHeight: '100vh' }} >
+            <div className='feed_middle' style={{ minHeight: '100vh' }} >
                 <div className="public_feed_middle" style={{ overflowY: 'auto' }}>
                     <DiscoverPostList posts={posts} user={user} setPosts={setPosts} dispatch={dispatch} />
                 </div>
