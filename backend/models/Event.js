@@ -19,14 +19,6 @@ const eventSchema = new Schema({
   },
   endDate: { type: Date }, // Optional end date and time
   endTime: { type: String }, // Optional end date and time
-  // placeName: { type: String }, // Name of the place or venue
-  // address: {
-  //   street: { type: String },
-  //   city: { type: String },
-  //   state: { type: String },
-  //   postalCode: { type: String },
-  //   country: { type: String },
-  // },
   location: {
     type: {
       place_id: { type: String, 
@@ -51,25 +43,16 @@ const eventSchema = new Schema({
   image: {
     type: String // URL to an image (optional) 
   },
-  // organizers: [{
-  //   type: Schema.Types.ObjectId,
-  //   ref: 'User'
-  // }],
   organizer: {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
-  // foodVenue: [{
-  //   type: Schema.Types.ObjectId,
-  //   ref: 'FoodVenue' // Reference to the food venue if applicable
-  // }],
   foodVenue: {
     type: Schema.Types.ObjectId,
     ref: 'FoodVenue', // Reference to the FoodVenue collection
     default: null // Set to null if no FoodVenue is provided
   },
-  // tags: [{ type: String }],
   status: {
     type: String,
     enum: ['upcoming', 'completed', 'canceled']

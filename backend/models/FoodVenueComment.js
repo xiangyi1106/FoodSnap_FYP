@@ -9,20 +9,11 @@ const ReplySchema = new mongoose.Schema({
         required: true,
     },
     text: String,
-    // media: {
-    //     type: Array,
-    //     default: [],
-    // },
-    // replyTo: String,
 }, {
     timestamps: true,
 });
 
 const foodVenueCommentSchema = new mongoose.Schema({
-    // author: String,
-    // text: String,
-    // date: { type: Date, default: Date.now },
-    // avatarUrl: String,
     user: {
         type: ObjectId,
         ref: "User",

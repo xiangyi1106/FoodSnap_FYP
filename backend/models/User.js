@@ -48,31 +48,11 @@ const userSchema = mongoose.Schema({
         type: String,
         trim: true,
     },
-    // gender: {
-    //     type: String,
-    //     required: [true, "Gender is required"],
-    //     trim: true,
-    // },
     gender: {
         type: String,
         enum: ['male', 'female', 'secret'],
         default: 'secret',
     },
-    // bYear: {
-    //     type: Number,
-    //     required: true,
-    //     trim: true,
-    // },
-    // bMonth: {
-    //     type: Number,
-    //     required: true,
-    //     trim: true,
-    // },
-    // bDay: {
-    //     type: Number,
-    //     required: true,
-    //     trim: true,
-    // },
     birthday:{
         type: Date,
         default: null,
@@ -163,6 +143,3 @@ const userSchema = mongoose.Schema({
 });
 
 module.exports = mongoose.model("User", userSchema);
-
-// const User = mongoose.model("User", userSchema);
-// module.exports = User;

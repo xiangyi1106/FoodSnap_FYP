@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Post from "../post";
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useDispatch } from 'react-redux';
 import FeedComment from './FeedComment';
 import SharePostPopUp from '../sharePostPopup';
 
@@ -35,9 +34,6 @@ export default function Feed({ posts, user, fetchMorePosts, hasMore, dispatch })
             {isShareVisible && <SharePostPopUp setIsShareVisible={setIsShareVisible} post={selectedSharePost} user={user} dispatch={dispatch} sharesCount={sharesCount} setSharesCount={setSharesCount} />}
             <div className="home_middle" ref={middle}>
                 <div className="posts postDetailsInformation">
-                    {/* {posts.map((post) => (
-                        <Post key={post._id} post={post} user={user} />
-                    ))} */}
                     <InfiniteScroll
                         dataLength={posts.length}
                         next={() => {

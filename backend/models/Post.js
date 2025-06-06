@@ -11,22 +11,6 @@ const postSchema = new mongoose.Schema(
         text: {
             type: String,
         },
-        // media: [
-        //     {
-        //         type: {
-        //             type: String,
-        //             enum: ["image", "video"],
-        //             required: true,
-        //         },
-        //         url: {
-        //             type: String,
-        //             required: true,
-        //         },
-        //         type: Array,
-        //         default: [],
-        //     }
-        // ],
-        //media should be no array bracket but need to change a lot
         media: {
                 type: Array,
                 default: [],
@@ -60,41 +44,13 @@ const postSchema = new mongoose.Schema(
                 type: Array,
                 default: [],
             },
-            // address: [{
-            //     address1: {
-            //         type: String,
-            //     },
-            //     city: {
-            //         type: String,
-            //     },
-            //     state: {
-            //         type: String,
-            //     },
-            //     postalCode: {
-            //         type: Number,
-            //     },
-            //     country: {
-            //         type: String,
-            //     },
-            //     fullAddress:{
-            //         type: String,
-            //     }
-            // }],
             latitude: {
                 type: Number,
             },
             longitude: {
                 type: Number,
             },
-            //not important
-            // license: {
-            //     type: String,
-            // }
         }],
-        // //not important
-        // rating: {
-        //     type: Number,
-        // },
         privacy: {
             type: String,
             enum: ["public", "private", "followers"],
@@ -108,36 +64,17 @@ const postSchema = new mongoose.Schema(
         likes: [{
             likeBy: {
                 type: ObjectId,
-                ref: "User",//contain the _id of a user document from the "User" collection
+                ref: "User",
             },
             likeAt: {
                 type: Date,
                 default: new Date(),
             }
         }],
-        // comments: [{ 
-        //     type: ObjectId,
-        //     ref: 'Comment' }],
-        // comments: [{
-        //     comment: {
-        //         type: String,
-        //     },
-        //     image: {
-        //         type: String,
-        //     },
-        //     commentBy: {
-        //         type: ObjectId,
-        //         ref: "User",//contain the _id of a user document from the "User" collection
-        //     },
-        //     commentAt: {
-        //         type: Date,
-        //         default: new Date(),
-        //     }
-        // }],
         shares: [{
             shareBy: {
                 type: ObjectId,
-                ref: "User",//contain the _id of a user document from the "User" collection
+                ref: "User",
             },
             shareAt: {
                 type: Date,

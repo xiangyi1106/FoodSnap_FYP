@@ -21,27 +21,11 @@ const LikeButton = ({ post, user, setLikesCount, isLiked, setIsLiked, dispatch, 
             if (response.data) {
                 // Toggle the like status
                 setIsLiked(!isLiked);
-                // console.log(isLiked);
                 // Update likes count with server response
                 setLikesCount(response.data.likes.length);
-                // setLikesCount(response.data.likes);
                 if (fromPage) {
                     // Update the post data
                     if (fromPage === 'discover') {
-                        // Discover page: update local state (setPosts)
-                        // setPosts((prevPosts) =>
-                        //     prevPosts.map((post) =>
-                        //         post._id === post._id
-                        //             ? {
-                        //                 ...post,
-                        //                 hasLiked: !post.hasLiked,
-                        //                 likes: post.hasLiked
-                        //                     ? post.likes.filter((like) => like._id !== user.id)
-                        //                     : [...post.likes, { _id: user.id }],
-                        //             }
-                        //             : post
-                        //     )
-                        // );
                         setPosts((prevPosts) =>
                             prevPosts.map((currentPost) =>
                                 currentPost._id === post._id
@@ -57,16 +41,6 @@ const LikeButton = ({ post, user, setLikesCount, isLiked, setIsLiked, dispatch, 
                         );
                         return;
                     }
-                    // else {
-                    //     // Post page: use dispatch to update global state (e.g., Redux)
-                    //     dispatch({
-                    //         type: "UPDATE_POST",
-                    //         payload: {
-                    //             _id: post._id,
-                    //             likes: response.data.likes,
-                    //         },
-                    //     });
-                    // }
                 }
 
                 dispatch({
@@ -76,30 +50,6 @@ const LikeButton = ({ post, user, setLikesCount, isLiked, setIsLiked, dispatch, 
                         likes: response.data.likes,
                     },
                 });
-                // // Update global state via dispatch
-                // dispatch({
-                //     type: "UPDATE_POST",
-                //     payload: {
-                //         _id: post._id, // Ensure post ID is sent
-                //         likes: response.data.likes, // The updated likes array
-                //     },
-                // });
-
-                // discover && setPosts((prevPosts) =>
-                //     prevPosts.map((post) =>
-                //         post._id === post._id
-                //             ? {
-                //                 ...post,
-                //                 hasLiked: !post.hasLiked,
-                //                 likes: post.hasLiked
-                //                     ? post.likes.filter((like) => like._id !== user.id)
-                //                     : [...post.likes, { _id: user.id }],
-                //             }
-                //             : post
-                //     )
-                // );
-
-                console.log(response.data);
             }
 
         } catch (error) {

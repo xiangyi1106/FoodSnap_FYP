@@ -8,7 +8,6 @@ import { getFoodRecommendations } from '../../functions/AIRecommendation';
 import { toast } from 'react-toastify';
 
 export default function FoodSuggestion({ setVisible, user }) {
-    // const [weather, setWeather] = useState('');
     const [mealType, setMealType] = useState(localStorage.getItem('AImealType') || 'breakfast');
     const [mood, setMood] = useState(localStorage.getItem('AImood') || 'normal');
     const [dietaryPreference, setDietaryPreference] = useState(localStorage.getItem('AIdietaryPreference') || 'no');
@@ -16,13 +15,10 @@ export default function FoodSuggestion({ setVisible, user }) {
     const [loveIngredients, setLoveIngredients] = useState(localStorage.getItem('AIloveIngredients') || ''); // State for ingredients they love
     const [avoidIngredients, setAvoidIngredients] = useState(localStorage.getItem('AIavoidIngredients') || ''); // State for ingredients they want to avoid
 
-    // const handleWeatherChange = (selectedWeather) => setWeather(selectedWeather);
     const handleMealTypeChange = (selectedMealType) => { setMealType(selectedMealType); };
     const handleMoodChange = (selectedMood) => { setMood(selectedMood); };
     const handleDietaryPreferenceChange = (selectedDietaryPreference) => { setDietaryPreference(selectedDietaryPreference); };
     const handleSpicyLevelChange = (event, value) => setSpicyLevelValue(value); // Handle spicy level change
-    // const handleLoveIngredientsChange = (event) => setLoveIngredients(event.target.value); // Handle love ingredients
-    // const handleAvoidIngredientsChange = (event) => setAvoidIngredients(event.target.value); // Handle avoid ingredients
 
     const spicyLevel = [
         {
@@ -82,17 +78,6 @@ export default function FoodSuggestion({ setVisible, user }) {
             setFoodSuggestion(suggestions);
             setIsResultShown(true);
             setIsFoodLoading(false);
-            console.log('Suggestions:', suggestions);
-            console.log('Food Suggestions:', foodSuggestion);
-
-            console.log(localStorage.getItem('AImealType'));
-            console.log(localStorage.getItem('AImood'));
-            console.log(localStorage.getItem('AIdietaryPreference'));
-            console.log(localStorage.getItem('AIspicyLevelValue'));
-            console.log(localStorage.getItem('AIloveIngredients'));
-            console.log(localStorage.getItem('AIavoidIngredients'));
-            console.log(location);
-            console.log(user.token);
 
         } catch (error) {
             // Handle the error gracefully

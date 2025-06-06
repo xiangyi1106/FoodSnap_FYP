@@ -9,12 +9,6 @@
     margin: 10px 30px;
 }
 
-/* @media (max-width: 480px){
-    .fab_button{
-        bottom: 70px!important;
-    }
-} */
-
 @media (max-width: 769px) {
     .promotion-filter{
         display: block;
@@ -25,12 +19,6 @@
         margin-bottom: 20px;
     }
 
-    /* Ensure consistency in spacing between all elements */
-    /* .promotion-filter .MuiFormControl-root {
-        margin-bottom: 20px; 
-    } */
-
-    /* If you want to target individual items like the text field specifically */
     .promotion-filter .MuiTextField-root {
         margin-bottom: 20px;
     }

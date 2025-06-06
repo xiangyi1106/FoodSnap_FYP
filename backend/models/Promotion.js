@@ -22,10 +22,6 @@ const promotionSchema = new Schema({
   image: { 
     type: String // URL to an image (optional) 
   },
-  // isActive: { 
-  //   type: Boolean, 
-  //   default: true 
-  // },
   termsAndConditions: { 
     type: String // Optional field for any additional terms and conditions
   },
@@ -42,13 +38,8 @@ const promotionSchema = new Schema({
       name: { type: String,
         //  required: true 
         }, // Display name or place name
-      // address: {
-      //   type: Object, // Instead of Map
-      //   // required: true
-      // },
       address: {
-        type: String, // Instead of Map
-        // required: true
+        type: String,
       },
       latitude: { type: Number, 
         // required: true 

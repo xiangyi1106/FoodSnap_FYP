@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-// import Bio from "./Bio";
 import "./style.css";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { getUserSelector } from "../../helpers/selectors";
 import EditProfile from "../../pages/profile/EditProfile/EditProfileLayout";
-// import EditDetails from "./EditDetails";
 export default function Intro({ detailss, visitor, setOthername }) {
     const user = useSelector(getUserSelector);
 
@@ -56,27 +54,6 @@ export default function Intro({ detailss, visitor, setOthername }) {
     return (
         <div className="profile_card">
             <div className="profile_card_header">Intro</div>
-            {/* {details?.about && !showBio && (
-                <div className="info_col">
-                    <span className="info_text">{details?.about}</span>
-                    {!visitor && (
-                        <button
-                            className="gray_btn hover1"
-                            onClick={() => setShowBio(true)}
-                        >
-                            Edit about
-                        </button>
-                    )}
-                </div>
-            )} */}
-            {/* {!details?.bio && !showBio && !visitor && (
-                <button
-                    className="gray_btn hover1 w100"
-                    onClick={() => setShowBio(true)}
-                >
-                    Add Bio
-                </button>
-            )} */}
             {details?.currentCity && (
                 <div className="info_profile">
                     <img src="../../../icons/home.png" alt="" />
@@ -144,15 +121,6 @@ export default function Intro({ detailss, visitor, setOthername }) {
                     Edit Details
                 </button>
             )}
-            {/* {visible && !visitor && (
-        <EditDetails
-          details={details}
-          handleChange={handleChange}
-          updateDetails={updateDetails}
-          infos={infos}
-          setVisible={setVisible}
-        />
-      )} */}
             {visible && <EditProfile setVisible={setVisible} />}
         </div>
     );
