@@ -1,4 +1,4 @@
-FoodSnap
+### FoodSnap
 FoodSnap is a food discovery social media web application that connects users with local restaurants and culinary experiences. Combining AI-driven recommendations, interactive maps, and social networking features, FoodSnap offers a unique space for discovering food, sharing moments, and connecting with other food lovers.
 
 
