@@ -17,9 +17,7 @@ export default function SearchMenu({ setIsShowMenu, searchRef, results, user, se
     }, []);
     const getHistory = async () => {
         const res = await getSearchHistory(user.token);
-        // setSearchHistory(res);
         setSearchHistory([...res]);
-        console.log("searchhistory", res);
     };
 
     const navigate = useNavigate();
@@ -33,9 +31,6 @@ export default function SearchMenu({ setIsShowMenu, searchRef, results, user, se
     };
     const handleRemove = async (term) => {
         const res = await removeFromSearch(term, user.token);
-        console.log("afterremove", res);
-        // setSearchHistory([]);
-        // await getHistory();
     };
 
     const handleClearAll = async () => {
@@ -68,32 +63,10 @@ export default function SearchMenu({ setIsShowMenu, searchRef, results, user, se
                             >
                                 <CIcon icon={cilSearch} className="icon_size_18" />
                                 <span> {search.searchTerm}</span>
-                                {/* <i
-                                    className="exit_icon"
-                                    onClick={() => {
-                                        handleRemove(search.searchTerm);
-                                    }}
-                                ></i> */}
                             </div>
 
                         ))}
             </div>
-            {/* <div className="search_result scrollbar">
-                {results &&
-                    results.map((user) => (
-                        <Link
-                            to={`/profile/${user.username}`}
-                            className="search_user_item hover1"
-                            // onClick={() => addToSearchHistoryHandler(user._id)}
-                            key={user._id}
-                        >
-                            <img src={user.picture} alt="" />
-                            <span>
-                                {user.name}
-                            </span>
-                        </Link>
-                    ))}
-            </div> */}
             <div className="search_result scrollbar">
                 {results &&
                     results.map((result) => {

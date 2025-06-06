@@ -45,7 +45,6 @@ export default function PlaceProfileFoodMenu() {
       if (foodVenue._id && user.role === 'business' && user.foodVenueOwned === foodVenue._id) {
         setValidityToEditFoodVenue(true);
       }
-      // console.log(validityToEditFoodVenue);
     }
   }, [foodVenue]);  // Only runs when `foodVenue` changes
 
@@ -56,15 +55,9 @@ export default function PlaceProfileFoodMenu() {
 
   const menuSubmit = async () => {
     try {
-      // console.log(medias);
-      // Store the previous state before the optimistic update
-      // const previousMenuState = [...foodVenueMenu];
 
       if (medias && medias.length > 0) {
         setIsLoading(true);
-        // Optimistically update the menu state by adding new media to the local state
-        // const updatedMenu = [...foodVenueMenu, ...medias];
-        // setFoodVenueMenu(updatedMenu);
 
         const menuMedias = medias.map((media) => {
           return dataURItoBlob(media);
@@ -75,12 +68,10 @@ export default function PlaceProfileFoodMenu() {
         menuMedias.forEach((media) => {
           formData.append("file", media);
         });
-        // console.log(formData);
 
         const response = await uploadMedias(formData, path, user.token);
         // Check if media upload was successful
         if (!response || response.length === 0) {
-          // throw new Error("Failed to upload media");
           toast.error('Failed to upload menu, please try again');
           return;
         }
@@ -97,10 +88,7 @@ export default function PlaceProfileFoodMenu() {
       }
       setIsMenuPreviewOpen(false);
     } catch (error) {
-      console.error('Error submitting menu:', error);
       toast.error('Error submitting menu:', error);
-      // If upload fails, rollback to the previous state (before optimistic update)
-      // setFoodVenueMenu(previousMenuState);
       setIsLoading(false);
       setIsMenuPreviewOpen(false);
     }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MentionsInput, Mention } from 'react-mentions';
 import axios from 'axios';
-import './style.css';  // Custom styling for the mentions input
+import './style.css';
 
 const PostInput = ({ isLoading, text, setText, user, textRef, isShowImage }) => {
     const [users, setUsers] = useState([]);
@@ -55,32 +55,6 @@ const PostInput = ({ isLoading, text, setText, user, textRef, isShowImage }) => 
         fetchHashtags();
     }, []);
 
-    // const analyseText = (text) => {
-    //     // const textComp = [];
-    //     const words = text.split(" ");
-        
-    //     const textComp = words.map((w, index) => {
-    //         if (w.startsWith("#")) {
-    //             return (
-    //               `<span key=${index} style="color: blue;">${w} </span>` // Hashtag styled in blue
-    //             );
-    //           } else if (w.startsWith("@")) { // Handling mentions
-    //             return (
-    //               `<span key=${index} style="color: black; background-color: yellow;">${w} </span>` // Mention styled with background
-    //             );
-    //           } else {
-    //             return (
-    //               `<span key=${index} style="color: black;">${w} </span>` // Regular text
-    //             );
-    //           }
-    //     });
-    //     setText(textComp.join("")); // Update state with processed text
-    //   };
-      
-    //   useEffect(() => {
-    //     analyseText(text);
-    // }, [text]);
-
     const renderMention = (mention) => (
         <span className="mention" style={{ color: 'blue' }}>
             @{mention.display}
@@ -94,29 +68,6 @@ const PostInput = ({ isLoading, text, setText, user, textRef, isShowImage }) => 
     );
 
     const mentionStyle = {
-        control: {
-            // backgroundColor: 'transparent',
-            // height: "320px",
-            // padding: "5px 15px",
-            // border: 'none',
-            // overflowY: 'hidden', // Ensure no vertical overflow
-            // width: '100%',
-            // lineHeight: '1.5', // Maintain line height
-            // whiteSpace: 'pre-wrap', // Ensure wrapping behaves well
-        },
-        // input: {
-        //     position: 'relative',
-        //     outline: 'none',
-        //     border: 'none',
-        //     resize: 'none',
-        //     marginBottom: '10px',
-        //     fontFamily: 'inherit',
-        //     color: 'var(--color-primary)',
-        //     background: 'transparent',
-        //     lineHeight: '1.5', // Consistent line height for input text
-        //     whiteSpace: 'pre-wrap',
-        //     wordWrap: 'break-word',
-        // },
         '&multiLine': {
             control: {
                 // minHeight: '320px',
@@ -167,18 +118,14 @@ const PostInput = ({ isLoading, text, setText, user, textRef, isShowImage }) => 
                 <Mention
                     trigger="@"
                     data={users}
-                    // renderSuggestion={renderMention}
                     displayTransform={(id, display) => `@${display}`}
-                    // style={{ backgroundColor: 'lightblue'}}
                 />
 
                 {/* Hashtags using # */}
                 <Mention
                     trigger="#"
                     data={hashtags}
-                    // renderSuggestion={renderHashtag}
                     displayTransform={(id, display) => `#${display}`}
-                    // style={{ backgroundColor: 'lightgreen'}}
                 />
             </MentionsInput>
         </div>

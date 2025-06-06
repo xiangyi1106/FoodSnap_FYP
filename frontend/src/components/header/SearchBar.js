@@ -28,32 +28,6 @@ const SearchBar = ({ user }) => {
         }
     };
 
-    // const searchHandler = async () => {
-    //     if (searchTerm === "") {
-    //         // setResults([]);
-    //         setResults('');
-    //     } else {
-    //         const res = await search(searchTerm, user.token);
-    //         console.log(res);
-    //         // Ensure `res` is an array before mapping, or set it as an empty array if not.
-    //         const formattedResults = Array.isArray(res)
-    //             ? res.map((item) => ({
-    //                 ...item,
-    //                 type: item.username ? "user" : "searchTerm",
-    //             }))
-    //             : [];
-
-    //         setResults(formattedResults);
-    //         console.log(formattedResults);
-    //     }
-    // };
-
-    // const getHistory = async () => {
-    //     const res = await getSearchHistory(user.token);
-    //     // setSearchHistory(res);
-    //     setSearchHistory([...res]);
-    //     console.log("searchhistory", res);
-    // };
     const navigate = useNavigate();
 
     const performSearch = async () => {

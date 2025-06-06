@@ -27,57 +27,9 @@ export default function AddPlaceInfo({ setVisible, user }) {
         restaurantName: '',
         category: [],
         address: '',
-        // postalCode: '',
-        // city: '',
-        // state: 'Johor',
         latitude: null,
         longitude: null,
         phone: '',
-        // openingHours: {},
-        // openingHours: {
-        //     "mon": [
-        //         {
-        //             "open": "8:00am",
-        //             "close": "5:00pm"
-        //         }
-        //     ],
-        //     "tue": [
-        //         {
-        //             "open": "8:00am",
-        //             "close": "5:00pm"
-        //         }
-        //     ],
-        //     "wed": [
-        //         {
-        //             "open": "8:00am",
-        //             "close": "5:00pm"
-        //         }
-        //     ],
-        //     "thu": [
-        //         {
-        //             "open": "8:00am",
-        //             "close": "5:00pm"
-        //         }
-        //     ],
-        //     "fri": [
-        //         {
-        //             "open": "8:00am",
-        //             "close": "5:00pm"
-        //         }
-        //     ],
-        //     "sat": [
-        //         {
-        //             "open": "8:00am",
-        //             "close": "5:00pm"
-        //         }
-        //     ],
-        //     "sun": [
-        //         {
-        //             "open": "8:00am",
-        //             "close": "5:00pm"
-        //         }
-        //     ],
-        // },
         openingHours: {
             "mon": [
                 {
@@ -142,7 +94,6 @@ export default function AddPlaceInfo({ setVisible, user }) {
             wheelchairAccessible: "No", // Default value
             wifi: "No" // Default value
         }],
-        // type: [],
     });
     const [errors, setErrors] = useState({});
     const pictureInput = useRef(null);
@@ -162,7 +113,6 @@ export default function AddPlaceInfo({ setVisible, user }) {
             [name]: value ? '' : prevErrors[name] // Clear error if input is filled
         }));
     };
-
 
     const filterOptions = createFilterOptions({
         matchFrom: 'start',
@@ -205,7 +155,6 @@ export default function AddPlaceInfo({ setVisible, user }) {
             formData.append("path", path);
 
             const res = await uploadMedias(formData, path, user.token);
-            console.log(res);
             return res;
 
         } catch (error) {
@@ -256,8 +205,6 @@ export default function AddPlaceInfo({ setVisible, user }) {
 
     const validateWebsite = (url) => {
         try {
-            // const parsedUrl = new URL(url);  // Try to parse the URL
-            // return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:";  // Ensure it's HTTP or HTTPS
             const urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(\/.*)?$/;
             return urlPattern.test(url);
         } catch (e) {
@@ -379,7 +326,6 @@ export default function AddPlaceInfo({ setVisible, user }) {
 
 
             const venueId = createResponse.foodVenue._id; // Get the newly created venue ID
-            console.log(venueId);
 
             if (venueId) {
                 if (picture) {
@@ -390,7 +336,6 @@ export default function AddPlaceInfo({ setVisible, user }) {
                         // Directly set the image URL in the values object
                         formData.profilePicture = pic[0].url;
                     }
-                    console.log(pic);
                 }
 
                 if (cover) {
@@ -409,7 +354,6 @@ export default function AddPlaceInfo({ setVisible, user }) {
                     console.log(updateResponse);
                     if (updateResponse && updateResponse.success) {
                         toast.success("Food venue photo updated successfully!");
-                        // Optionally, redirect or update state here
                     } else {
                         toast.error("Error updating food venue's photo, please try again.");
                         return;
@@ -432,7 +376,6 @@ export default function AddPlaceInfo({ setVisible, user }) {
             toast.error("Error saving data: " + error);
             setIsSubmitLoading(false);
         }
-        // console.log(formData);
         setVisible(false);
     }
 
@@ -612,7 +555,6 @@ export default function AddPlaceInfo({ setVisible, user }) {
                                         value={formData.priceRange}
                                         onChange={handleChange}
                                         placeholder='RM20-40'
-                                    // style={{width: '300px'}}
                                     />
                                     {errors.priceRange && <span className="error_message">{errors.priceRange}</span>}
                                 </div>
@@ -643,14 +585,6 @@ export default function AddPlaceInfo({ setVisible, user }) {
                                         className="edit_place_info_basic_input"
                                         name="address"
                                         value={address}
-                                        // onChange={(e) => setAddress(e.target.value)}
-                                        // onChange={(e) => {
-                                        //     setAddress(e.target.value); setErrors((prevErrors) => ({
-                                        //         ...prevErrors,
-                                        //         address: ''
-                                        //     }))
-                                        // }}
-                                        // required
                                         onChange={handleLocationSearch}
                                     />
                                     {isLoading ? (
@@ -698,16 +632,13 @@ export default function AddPlaceInfo({ setVisible, user }) {
                                     <input
                                         className="edit_place_info_basic_input "
                                         name="latitude"
-                                        // value={formData.latitude}
                                         value={latitude || ''}
-                                        // onChange={handleChange}
                                         onChange={(e) => {
                                             setLatitude(e.target.value); setErrors((prevErrors) => ({
                                                 ...prevErrors,
                                                 latitude: ''
                                             }))
                                         }}
-                                    // style={{ width: '35%' }}
                                     />
                                     {errors.latitude && <span className="error_message">{errors.latitude}</span>}
                                 </div>
@@ -721,16 +652,13 @@ export default function AddPlaceInfo({ setVisible, user }) {
                                     <input
                                         className="edit_place_info_basic_input "
                                         name="longitude"
-                                        // value={formData.longitude}
                                         value={longitude || ''}
-                                        // onChange={handleChange}
                                         onChange={(e) => {
                                             setLongitude(e.target.value); setErrors((prevErrors) => ({
                                                 ...prevErrors,
                                                 longitude: ''
                                             }))
                                         }}
-                                    // style={{ width: '35%' }}
                                     />
                                     {errors.longitude && <span className="error_message">{errors.longitude}</span>}
                                     <p style={{ color: 'gray', fontSize: '0.85rem' }}>Provide latitude and longitude to perform a better accuracy on the map.</p>
@@ -748,7 +676,6 @@ export default function AddPlaceInfo({ setVisible, user }) {
                                         value={formData.phone}
                                         onChange={handleChange}
                                         placeholder='Eg: 012345678'
-                                    // style={{ width: '35%' }}
                                     />
                                     {errors.phone && <span className="error_message">{errors.phone}</span>}
                                 </div>
@@ -773,7 +700,6 @@ export default function AddPlaceInfo({ setVisible, user }) {
                                 <div className="edit_place_info_basic_label">
                                     Opening Hours
                                 </div>
-                                {/* <OpeningHours openingHours={formData.openingHours} setFormData={setFormData} /> */}
                                 <FoodVenueOpeningHours openingHours={formData.openingHours} setFormData={setFormData} />
                             </div>
                             <div className="edit_place_info_basic_row">
@@ -835,9 +761,6 @@ export default function AddPlaceInfo({ setVisible, user }) {
                             <button className="green_btn save_button" onClick={handleSave} disabled={isSubmitLoading}>
                                 {!isSubmitLoading ? "Save" : <CircularProgress size={30} sx={{ color: 'white' }} />}
                             </button>
-                            {/* <button className="white_btn cancel_button" onClick={() => setVisible(false)}>
-                                Cancel
-                            </button> */}
                         </div>
                     </div>
                 </div>

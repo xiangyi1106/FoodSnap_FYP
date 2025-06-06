@@ -33,7 +33,6 @@ export default function TagPeople({ page, setPage, setSelectedNames, selectedNam
 
     const fetchUsers = () => {
         setIsLoading(true);
-        // Your API call to fetch users from MongoDB
         fetch(`${process.env.REACT_APP_BACKEND_URL}/searchPeople`
             , {
                 headers: {
@@ -50,7 +49,6 @@ export default function TagPeople({ page, setPage, setSelectedNames, selectedNam
                     setFilteredUsers(data); // Set filtered users initially
                 }
                 setIsLoading(false);
-                console.log(data);
             })
             .catch(error => {console.error('Error fetching users:', error); setIsLoading(false);});
     };

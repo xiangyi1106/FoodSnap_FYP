@@ -11,8 +11,6 @@ import CIcon from '@coreui/icons-react';
 import { cilSearch, cilBell } from '@coreui/icons';
 import { MDBBtn, MDBIcon } from 'mdb-react-ui-kit';
 import Tooltip from '@mui/material/Tooltip';
-import AddEvent from "../../pages/foodEvent/addEvent/addEvent";
-import AddPromotion from "../../pages/foodPromotion/AddPromotion/AddPromotion";
 import SearchBar from "./SearchBar";
 import Notification from "../Notification";
 import { getNotifications } from "../../functions/user";
@@ -28,12 +26,9 @@ export default function Header({ setVisible, visible, page, currentPath, profile
     // Memoize the selector function
     const memoizedUserSelector = useMemo(() => userSelector, []);
 
-    // const [isShowMenu, setIsShowMenu] = useState(false);
     const [isShowUserMenu, setIsShowUserMenu] = useState(false);
     const [isShowNotifications, setIsShowNotifications] = useState(false);
     const searchIconRef = useRef(null);
-    // const searchInput = useRef(null);
-    // const searchRef = useRef(null);
 
     const handleProfileLinkClick = () => {
         setIsShowUserMenu((prev) => !prev);
@@ -42,7 +37,6 @@ export default function Header({ setVisible, visible, page, currentPath, profile
     const profileLinkRef = useRef(null);
 
     const [notificationNumber, setNotificationNumber] = useState(0);
-    // const [searchTerm, setSearchTerm] = useState("");
     const [notifications, setNotifications] = useState([]);
     const navigate = useNavigate();
     // Flag to track if the redirection is already done
@@ -128,8 +122,6 @@ export default function Header({ setVisible, visible, page, currentPath, profile
                         {/* <MailIcon color="action" /> */}
                         <CIcon icon={cilBell} className="icon_size_22" style={{ position: "relative" }} />
                     </Badge>
-                    {/* <CIcon icon={cilBell} className="icon_size_22 hover_color" style={{ position: "relative" }} onClick={() => setIsShowNotifications(prev => !prev)} /> */}
-                    {/* {notificationNumber > 0 && <div className="notification_number">{notificationNumber}</div>} */}
                     {isShowNotifications && <Notification userId={user?.id} token={user?.token} setNotificationNumber={setNotificationNumber} setIsShowNotifications={setIsShowNotifications} searchIconRef={searchIconRef} notifications={notifications} setNotifications={setNotifications} />}
                 </div>
                 <Link className="profile_link hover1" onClick={handleProfileLinkClick} ref={profileLinkRef}>

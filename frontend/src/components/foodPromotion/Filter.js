@@ -8,7 +8,6 @@ import { cilSearch, cilBell } from '@coreui/icons';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-// const locations = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami']; // Example locations
 const dates = ['Any Date', 'Today', 'Tomorrow', 'This Week', 'Next Week', 'This Month', 'Next Month']; // Example locations
 
 export default function PromotionFilter({ onResults, isEvent }) {
@@ -25,11 +24,8 @@ export default function PromotionFilter({ onResults, isEvent }) {
                     startDate,
                 },
             });
-            console.log(keyword, startDate, selectedLocation);
-            console.log(response.data);
             // Send results back to the parent component
             onResults(response.data);
-            // console.log('filter',response.data);
         } catch (error) {
             toast.error("Error searching searching: " + error);
         }
@@ -54,15 +50,6 @@ export default function PromotionFilter({ onResults, isEvent }) {
                         },
                     },
                 }}
-            // InputProps={{
-            //     endAdornment: (
-            //         <InputAdornment position="end">
-            //             <IconButton  edge="end" style={{ color: '#30BFBF' }}>
-            //                 <CIcon icon={cilSearch} className="icon_size_20" />
-            //             </IconButton>
-            //         </InputAdornment>
-            //     ),
-            // }}
             >
             </TextField>
             <FormControl>

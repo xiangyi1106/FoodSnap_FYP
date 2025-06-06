@@ -33,7 +33,7 @@ const PostTextArea = ({ text, setText, user, isShowImage }) => {
         const fetchHashtags = async () => {
             try {
                 const response = await axios.get('/getHashtags');
-                setHashtags(response.data); // Data should now be in the format { id, display }
+                setHashtags(response.data);
                 setIsLoading(false);
             } catch (error) {
                 console.error('Error fetching hashtags:', error);
@@ -61,7 +61,6 @@ const PostTextArea = ({ text, setText, user, isShowImage }) => {
             setIsMentioning(false);
         }
 
-        // Handle other text input logic here
     };
 
     const handleSuggestionClick = (suggestion) => {
