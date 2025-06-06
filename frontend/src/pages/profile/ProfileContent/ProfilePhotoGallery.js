@@ -42,19 +42,6 @@ const ProfilePhotoGallery = ({ photos }) => {
                 );
             }}
         >
-            {/* {<ImageList variant="masonry" cols={3} gap={8}>
-                {photos?.resources && photos.resources.length > 0 && photos.resources.map((img) => (
-                    <PhotoView src={img.secure_url} key={img.public_id}>
-                        <ImageListItem key={img.public_id} style={{cursor: 'pointer', padding: '0px 8spx'}}>
-                            <img
-                                srcSet={`${img.secure_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                                src={`${img.secure_url}?w=248&fit=crop&auto=format`}
-                                loading="lazy"
-                            />
-                        </ImageListItem>
-                    </PhotoView>
-                ))}
-            </ImageList>} */}
             {photos?.resources && photos.resources.length > 0 ? (
                 <ImageList variant="masonry" cols={3} gap={8}>
                     {photos.resources.map((img) => (

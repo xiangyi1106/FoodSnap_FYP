@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import "./ProfileIntroCarousel.css"; // Updated CSS file
 import { useOutletContext } from "react-router-dom";
 import EditProfile from "../EditProfile/EditProfileLayout";
-import { toast } from "react-toastify";
 import { HashLoader } from "react-spinners";
 
 // Updated emojis array with keys matching the user data
@@ -12,10 +11,6 @@ const emojis = [
     ["🚻", "Gender", "gender"],            // Gender
     ["🌍", "Current City", "currentCity"],  // Current City
     ["🍕", "Favorite Food", "favouriteFood"], // Favorite Food
-    // ["🥦", "Dietary Preferences", "dietaryPreferences"], // Dietary Preferences or Restrictions
-    // ["🚫", "Allergic", "allergies"],       // Allergies
-    // ["🍭", "Taste Preference", "tastePreferences"], // Taste Preference
-    // ["🌶️", "Spicy Level", "spicyLevel"],   // Spicy Level
     ["ⓕ", "Facebook", "facebook"],         // Facebook
     ["📸", "Instagram", "instagram"],       // Instagram
     ["▶️", "YouTube", "youtube"]            // YouTube
@@ -36,16 +31,7 @@ const ProfileIntroCarousel = () => {
 
     const handleProfileUpdate = (updatedProfile) => {
         setCurrentProfile(updatedProfile); // Update profile state
-        // toast.success("Profile updated successfully");
     };
-
-    // Format the birthday (assuming profile.bDay, profile.bMonth, profile.bYear exist)
-    // const formatBirthday = () => {
-    //     if (profile?.bDay && profile?.bMonth && profile?.bYear) {
-    //         return `${profile.bDay}/${profile.bMonth}/${profile.bYear}`;
-    //     }
-    //     return "Not provided";
-    // };
 
      // Helper function to format the birthday into a readable format
      const formatBirthday = (birthday) => {

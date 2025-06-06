@@ -11,26 +11,16 @@
 .profile_intro_carousel__container {
     position: relative;
     width: 100%;
-    /* max-width: 500px; */
     display: flex;
     justify-content: center;
     flex-direction: column;
 }
 
-/* .profile_intro_carousel__container.paused {
-    animation-play-state: paused;
-} */
-
 .profile_intro_carousel__item {
     display: flex;
     align-items: center;
-    /* position: absolute; */
     width: 100%;
     padding: 10px 12px;
-    /* opacity: 0; */
-    /* filter: drop-shadow(0 2px 2px #555);
-    will-change: transform, opacity;
-    animation: profile_intro_carousel-animate-vertical 27s linear infinite; */
 }
 
 .profile_intro_carousel__item-head {
@@ -60,44 +50,3 @@
     font-size: 20px;
     margin-top: 10px;
 }
-
-/* @keyframes profile_intro_carousel-animate-vertical {
-    0% {
-        transform: translateY(100%) scale(0.5);
-        opacity: 0;
-        visibility: hidden;
-    }
-
-    10%,
-    15% {
-        transform: translateY(100%) scale(0.7);
-        opacity: 0.4;
-        visibility: visible;
-    }
-
-    15%,
-    25% {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-        visibility: visible;
-    }
-
-    25%,
-    35% {
-        transform: translateY(-100%) scale(0.7);
-        opacity: 0.4;
-        visibility: visible;
-    }
-
-    35%,
-    100% {
-        transform: translateY(-100%) scale(0.5);
-        opacity: 0;
-        visibility: hidden;
-    }
-}
-
-/* Pausing the carousel on click */
-/* .profile_intro_carousel__container.paused .profile_intro_carousel__item {
-    animation-play-state: paused;
-} */ 

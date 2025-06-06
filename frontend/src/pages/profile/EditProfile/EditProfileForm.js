@@ -2,11 +2,8 @@ import React, { useEffect, useState } from "react"
 import { useFormik, FormikProvider } from "formik"
 import * as Yup from "yup"
 import TextInput from "../../../components/inputs/TextInput"
-import { MenuItem } from "@mui/material"
-import axios from "axios"
 import { toast } from "react-toastify"
 import { updateProfile } from "../../../functions/user"
-import { useDispatch } from "react-redux"
 
 export function EditProfileForm({ user, profile, dispatch, setVisible }) {
     const profileFormSchema = Yup.object({
@@ -41,15 +38,8 @@ export function EditProfileForm({ user, profile, dispatch, setVisible }) {
             console.log('Profile data is not loaded yet');
             return;
         }
-        console.log(profile);
         const fetchProfileData = async () => {
             try {
-                // // Check if bYear, bMonth, and bDay are not empty
-                // let birthday = "";
-                // if (profile.bYear && profile.bMonth && profile.bDay) {
-                //     // If all values are present, combine them into a valid date
-                //     birthday = new Date(profile.bYear, profile.bMonth - 1, profile.bDay).toISOString().split('T')[0];
-                // }
                 const formatBirthday = (birthday) => {
                     if (birthday) {
                         // Ensure the date is in yyyy-MM-dd format
@@ -70,7 +60,6 @@ export function EditProfileForm({ user, profile, dispatch, setVisible }) {
                 });
 
             } catch (error) {
-                console.error("Failed to fetch profile", error);
                 toast.error("Failed to fetch profile, please try again.");
             }
         };
@@ -86,7 +75,6 @@ export function EditProfileForm({ user, profile, dispatch, setVisible }) {
         onSubmit: async (values) => {
             try {
                 const response = await updateProfile(values, user);
-                console.log(response);
 
                 if (response.success) {
                     toast.success("Profile updated successfully");
@@ -101,7 +89,6 @@ export function EditProfileForm({ user, profile, dispatch, setVisible }) {
                 }
 
             } catch (error) {
-                console.error("Error updating profile:", error);
                 toast.error("An error occurred while updating your profile. Please try again.");
             }
         },
@@ -148,7 +135,6 @@ export function EditProfileForm({ user, profile, dispatch, setVisible }) {
                         className="profile_form_input"
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        // value={formik.values.gender}
                         value={formik.values.gender || 'secret'}
                     >              
                         {genders.map((option) => (

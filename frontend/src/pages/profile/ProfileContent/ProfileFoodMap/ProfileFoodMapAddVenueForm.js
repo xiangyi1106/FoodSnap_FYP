@@ -1,15 +1,11 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import * as Yup from "yup";
-import TextInput from "../../../../components/inputs/TextInput";
-import { MenuItem, CircularProgress, List, ListItem, ListItemText, ListItemIcon } from "@mui/material";
+import { CircularProgress, List, ListItem, ListItemText, ListItemIcon } from "@mui/material";
 import CIcon from '@coreui/icons-react';
 import { cilX, cilLocationPin } from '@coreui/icons';
 import debounce from 'lodash/debounce';
-import axios from "axios";
 import { uploadMedias } from "../../../../functions/uploadMedia";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { handleImage } from "../../../../functions/handleImage";
-import { getAllFoodVenues } from "../../../../functions/foodVenue";
 import MapPicker from "../../../../components/MapPicker/MapPicker";
 import { toggleScroll, validateLatitude, validateLongitude } from "../../../../functions/fileUtils";
 import { addFoodVenueToProfileMap } from "../../../../functions/foodVenueMap";
@@ -195,11 +191,9 @@ export function ProfileFoodMapAddVenueForm({ setVisible, user, setFoodVenuesMap 
                 toast.error(response || "An error occurred while adding the food venue.");
             }
 
-            console.log(response);
             setIsSubmitLoading(false);
         } catch (error) {
             setIsSubmitLoading(false);
-            console.error("Error adding food venue:", error);
             toast.error("Failed adding food venue: " + (Error));
         }
     };
@@ -345,17 +339,6 @@ export function ProfileFoodMapAddVenueForm({ setVisible, user, setFoodVenuesMap 
                 />
                 {errors.description && <div className="profile_form_message">{errors.description}</div>}
             </div>
-
-            {/* <TextInput
-                label="Description"
-                id="description"
-                name="description"
-                isTextarea
-                placeholder="Enter a brief description of the event"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                description="Provide details about the event."
-            /> */}
 
             <button type="submit" className="event_form_button profile_form_button">
                 {isSubmitLoading ? <CircularProgress size={24} /> : "Add Food Venue"}
