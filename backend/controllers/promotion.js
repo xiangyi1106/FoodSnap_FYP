@@ -87,7 +87,6 @@ exports.getPromotionsByID = async (req, res) => {
         if (promotions.length === 0) {
             return res.status(404).json({ message: "No public promotions found." }); // Handle empty result
         }
-        console.log(promotions);
 
         return res.json(promotions); // Return the promotions
 
@@ -191,15 +190,12 @@ exports.searchPromotion = async (req, res) => {
                     break;
             }
         }
-        // console.log(query);
 
         // Query the database for matching promotions
         const promotions = await Promotion.find(query).sort({ date: -1 });;
-        console.log(promotions);
 
         res.status(200).json(promotions);
     } catch (error) {
-        console.error('Error fetching promotions:', error);
         res.status(500).json({ message: 'Error fetching promotions', error });
     }
 };
@@ -254,7 +250,6 @@ exports.updatePromotion = async (req, res) => {
         res.status(200).json({ message: 'Promotion updated successfully', promotion });
 
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: 'Server error' });
     }
 };

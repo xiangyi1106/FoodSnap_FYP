@@ -11,8 +11,6 @@ import SharePostPopUp from '../../components/sharePostPopup';
 
 const PostDetailsPage = ({ user, dispatch }) => {
     const { id, mediaIndex } = useParams();
-    // const location = useLocation();  // Get the location to retrieve state
-    // const [post, setPost] = useState(location.state?.post || null);
     const [post, setPost] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(parseInt(mediaIndex, 10) || 0);
     const [visible, setVisible] = useState(false);
@@ -32,7 +30,6 @@ const PostDetailsPage = ({ user, dispatch }) => {
             fetchPosts();
             console.log(post);
         }
-        // console.log(dispatch);
     }, [id, dispatch]);
 
     useEffect(() => {

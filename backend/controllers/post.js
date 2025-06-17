@@ -222,7 +222,6 @@ exports.getPublicPosts = async (req, res) => {
 exports.getPostDetails = async (req, res) => {
   try {
     const postId = req.params.id;
-    // const post = await Post.findById(postId).exec();
     const post = await Post.findById(postId)
     .populate("user", "name picture username gender")
     .populate({
@@ -272,14 +271,19 @@ exports.toggleLike = async (req, res) => {
       return res.status(404).json({ message: 'Post not found' });
     }
 
-    const likeIndex = post.likes.findIndex(like => like._id.toString() === userId);
+    // const likeIndex = post.likes.findIndex(like => like._id.toString() === userId);
+    const likeIndex = post.likes.findIndex(
+      like => like.likeBy.toString() === userId
+    );
 
     if (likeIndex !== -1) {
       // Unlike the post
       post.likes.splice(likeIndex, 1); // Remove the like object at the found index
     } else {
       // Like the post
-      post.likes.push({ _id: userId, likeAt: new Date() }); // Add a new like object
+      // post.likes.push({ _id: userId, likeAt: new Date() }); // Add a new like object
+      post.likes.push({ likeBy: userId, likeAt: new Date() });
+
       // Create a notification
       await Notification.create({
         userId: post.user._id, // post owner's user ID
@@ -289,7 +293,6 @@ exports.toggleLike = async (req, res) => {
         message: `${likeUser.name} liked your post`
       });
     }
-
 
     await post.save();
     res.json({ success: true, message: likeIndex !== -1 ? 'Post unliked' : 'Post liked', likes: post.likes });
@@ -476,8 +479,6 @@ exports.getPostsWithLocation = async (req, res) => {
     // Find posts with a location for the specified user and month
     const postsWithLocation = await Post.find({
       user: userId, // Filter by user ID
-      // location: { $exists: true, $ne: null }, // Ensure location exists and is not null
-      // location: { $ne: [] }, // Ensure location array is not empty
       location: { $nin: [null, []] },
       createdAt: { $gte: startOfMonth, $lt: endOfMonth }, // Filter by date range
     })
@@ -497,11 +498,7 @@ exports.getPostsWithLocation = async (req, res) => {
 
 exports.getPostsByFoodVenue = async (req, res) => {
   try {
-    // const foodVenueName = req.query.name;
-    // const name = decodeURIComponent(req.query.name);
     const foodVenueName = decodeURIComponent(req.query.name);
-    // console.log(name);
-    // const foodVenueName = name.match(/[a-zA-Z]+/g); 
 
     const posts = await Post.find({
       $or: [

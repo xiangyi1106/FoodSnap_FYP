@@ -1,5 +1,4 @@
 export function postReducer(state, action) {
-  // console.log("Reducer action:", action); // Check if this log appears
   switch (action.type) {
     case "POSTS_REQUEST":
       return { ...state, loading: true, error: "" };
@@ -48,7 +47,6 @@ export function postReducer(state, action) {
       return { ...state, posts: action.payload };
     case "ADD_POST":
       const updatedPosts = [action.payload, ...state];
-      console.log("Updated posts in reducer:", updatedPosts); // Check if the new post is added
       return {
         ...state,
         posts: updatedPosts,
@@ -80,7 +78,6 @@ export function profileReducer(state, action) {
     case "PROFILE_ERROR":
       return { ...state, loading: false, error: action.payload };
     case "PROFILE_UPDATE_SUCCESS":
-      // console.log("Updating profile state with:", action.payload);
       return { ...state, profile: { ...state.profile, ...action.payload } }; // Merge updated fields
     case "UPDATE_POST": {
       // Update the specific post by replacing it with the new post data

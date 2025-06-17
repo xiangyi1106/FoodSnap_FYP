@@ -104,7 +104,6 @@ function App() {
         type: "POSTS_REQUEST",
       });
       const { data } = await axios.get(
-        // `${process.env.REACT_APP_BACKEND_URL}/getAllPosts`,
         `${process.env.REACT_APP_BACKEND_URL}/getAllPosts?page=${currentPage}&limit=10`,
         {
           headers: {
@@ -120,12 +119,8 @@ function App() {
 
       dispatch({
         type: "POSTS_SUCCESS",
-        // payload: currentPage === 1 ? data : [...posts, ...data], // Append new posts
         payload: sortedPosts, // Pass the sorted posts
       });
-      // if (data.length === 0 || data.length < 10) {
-      //   setHasMore(false); // Stop fetching when there are no more posts
-      // }
 
       if (data.length === 0) {
         setHasMore(false);
@@ -140,7 +135,6 @@ function App() {
   
   const fetchMorePosts = () => {
     setPage((prevPage) => prevPage + 1); // Fetch next page when user scrolls down
-    console.log('Page', page)
   };
 
   const { axiosInstance, isExpired, setIsExpired } = useAxios();
@@ -199,7 +193,6 @@ function App() {
             <Route path="promotions" element={<PlaceProfilePromotions user={user} />} />
           </Route>
           <Route path="/" element={<Layout user={user} />}>
-            {/* <Route index element={<Feed posts={posts} user={user} />} /> */}
             <Route index element={<Feed posts={posts} user={user} fetchMorePosts={fetchMorePosts} hasMore={hasMore} dispatch={dispatch} />} />
             <Route path="discover" element={<PublicFeed user={user} dispatch={dispatch} />} />
             <Route path="searchVenue" element={<SearchVenue user={user} />} />
@@ -214,7 +207,6 @@ function App() {
         </Route>
       </Routes>
       <ToastContainer position="bottom-right" />
-      {/* {isExpired && <ExpiredPopup onConfirm={handleLoginAgain} />} */}
     </div>);
 }
 

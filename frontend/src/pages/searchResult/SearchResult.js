@@ -21,7 +21,6 @@ export default function SearchResult({ user, dispatch }) {
                 const data = await getSearchResult(term, user.token);
                 setCombinedResults(data || []); // Ensure data is at least an empty array
                 setFilteredResults(data || []); // Initialize with all results
-                console.log(data);
             } catch (error) {
                 console.error("Failed to fetch search results", error);
             }
@@ -45,34 +44,6 @@ export default function SearchResult({ user, dispatch }) {
     const [isShareVisible, setIsShareVisible] = useState(false);
     const [sharesCount, setSharesCount] = useState(0);
     const [selectedSharePost, setSelectedSharePost] = useState(null);
-
-    // const updateProfilePosts = (newPost) => {
-    //     const updatedPosts = filteredResults.map(post =>
-    //         post._id === newPost._id ? newPost : post // Replace the old post with the new post by matching the _id
-    //     );
-    //     setFilteredResults(updatedPosts); // Update the profile posts state
-    // };
-
-    // const fetchPostById = async (postId) => {
-    //     try {
-    //         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/post/${postId}`, {
-    //             headers: {
-    //                 Authorization: `Bearer ${user.token}`,
-    //             },
-    //         });
-    //         setSelectedPost(response.data);
-    //         updateProfilePosts(response.data);
-    //         console.log(response.data);
-    //     } catch (error) {
-    //         console.error('Error fetching the post data:', error);
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     if (selectedPost) {
-    //         fetchPostById(selectedPost._id);
-    //     }
-    // }, [selectedPost])
 
     return (
         <div className='food_event_container'>

@@ -2,17 +2,9 @@ import "./style.css";
 import { useEffect, useRef, useState } from "react";
 import useClickOutside from "../../helpers/clickOutside";
 import Picker from "emoji-picker-react";
-import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
-import AddLocationIcon from '@mui/icons-material/AddLocation';
-import TagIcon from '@mui/icons-material/Tag';
-import Rating from '@mui/material/Rating';
-import StarsIcon from '@mui/icons-material/Stars';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import StarIcon from '@mui/icons-material/Star';
-import ImagePreview from "./ImagePreview";
 import Location from "./Location";
 import CIcon from '@coreui/icons-react';
-import { cilX, cilSmile, cilImage, cilTag, cilLocationPin, cilStar, cilUserFollow } from '@coreui/icons';
+import { cilX, cilSmile, cilImage, cilTag, cilLocationPin, cilUserFollow } from '@coreui/icons';
 import Tooltip from '@mui/material/Tooltip';
 import TagPeople from "./TagPeople";
 import { Link } from "react-router-dom";
@@ -25,13 +17,12 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import classNames from 'classnames';
-import PostLoading from "./PostLoading";
 import CircularProgress from '@mui/material/CircularProgress';
 import dataURItoBlob from "../../helpers/dataURItoBlob";
 import { uploadMedias } from "../../functions/uploadMedia";
 import { createPost } from "../../functions/post";
 import { useDispatch } from "react-redux";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PostInput from "./PostInput";
 import { toggleScroll } from "../../functions/fileUtils";
@@ -85,8 +76,6 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
     const emojiPickerRef = useRef(null);
     const emojiPickerIconRef = useRef(null);
     const createPostPopUpRef = useRef(null);
-
-    // useClickOutside(createPostPopUpRef, [createPostPopUpRef, alertRef], () => setVisible(false));
 
     const [privacy, setPrivacy] = useState("followers");
 
@@ -149,7 +138,6 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
             postMedias.forEach((media) => {
                 formData.append("file", media);
             });
-            console.log(formData);
             const response = await uploadMedias(formData, path, user.token);
             // Check if media upload was successful
             if (!response || response.length === 0) {
@@ -163,7 +151,6 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
                 response,
                 selectedNames,
                 location,
-                // rating,
                 privacy,
                 user.id,
                 user.token
@@ -190,7 +177,6 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
                 null,
                 selectedNames,
                 location,
-                // rating,
                 privacy,
                 user.id,
                 user.token
@@ -208,7 +194,6 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
                 toast.error("Failed to create post: " + response);
             }
         } else {
-            // console.log("nothing");
             toast.error("Please add content before posting.");
         }
         setLoading(false);
@@ -254,9 +239,6 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
                             </div>
                         }
                         <PostInput setText={setText} text={text} isLoading={isLoading} user={user} textRef={textRef} isShowImage={isShowImage}/>
-                        {/* <div className="post_content" style={{ minHeight: `${isShowImage ? "110px" : "320px"}` }}>
-                            <textarea autoFocus={true} disabled={isLoading} placeholder="Share something..." id="post_input" ref={textRef} maxLength={22000} value={text} style={{ minHeight: `${isShowImage ? "110px" : "320px"}` }} onChange={(e) => setText(e.target.value)} className="post_input" ></textarea>
-                        </div> */}
                         {isShowImage && <MediaPreview medias={medias} setMedias={setMedias} setPage={setPage} setIsVisible={setIsVisible} />}
 
                     </div>
@@ -270,7 +252,6 @@ export default function CreatePostPopUp({ setVisible, isPostLoading, setIsPostLo
                             })} ref={emojiPickerIconRef} onClick={() => { setIsShowPicker((prev) => !prev); handleButtonClick("emoji"); }} /></Tooltip>
                             <Tooltip title="Add Image"><CIcon icon={cilImage} className={classNames("icon_size_22", "icon_button", {
                                 "active_color": activeButtons.has('image')
-                            // })} onClick={() => { setIsShowImage(!isShowImage); document.getElementById('post_input').focus(); handleButtonClick("image"); }} /></Tooltip>
                             })} onClick={() => { setIsShowImage(prev => !prev); handleButtonClick("image"); }} /></Tooltip>
                             <Tooltip title="Add Location"><CIcon icon={cilLocationPin} className={classNames("icon_size_22", "icon_button", {
                                 "active_color": location

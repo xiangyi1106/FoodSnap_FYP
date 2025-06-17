@@ -47,8 +47,6 @@ a {
   bottom: 0;
   background: rgba(255, 255, 255, 0.968);
   background: gray;
-  /* background: #7f7f7f;
-  opacity: 0.6; */
   z-index: 99;
 }
 
@@ -290,8 +288,6 @@ a {
 }
 
 .underline {
-  /* text-decoration: none; Start with no underline */
-  /* transition: text-decoration 1 ease; Transition the text-decoration property over 0.3 seconds with an ease timing function */
   color: inherit;
   text-decoration: underline 0.1em rgba(255, 255, 255, 0);
   transition: text-decoration-color 300ms;
@@ -312,12 +308,12 @@ a {
 
 .text_up_effect:hover {
   transform: translateY(-3px);
-  color: #0288d1; /* Adjust the color as needed */
+  color: #0288d1;
 }
 
 .scale_effect:hover{
   color: black;
-  transform: scale(1.02); /* Adjust the scale factor as needed */
+  transform: scale(1.02);
 }
 
 .profile_card a{
@@ -342,7 +338,6 @@ a {
 /* Font */
 .source-sans-3-bold {
   font-family: "Source Sans 3", sans-serif;
-  /* font-optical-sizing: auto; */
   font-weight: 600;
   font-style: normal;
 }

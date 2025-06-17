@@ -1,9 +1,3 @@
-// exports.validateEmail = (email) => {
-//     return String(email)
-//     .toLowerCase
-//     .match(/^([a-z\d\.-]+)@([a-z\d-]+)\.([a-z]{2,12})(\.[a-z]{2,12})?$/);
-// }
-
 exports.validateEmail = (email) => {
     // Convert email to lowercase before matching
     const lowerCaseEmail = String(email).toLowerCase();
@@ -26,7 +20,6 @@ exports.validateUsername = (username) => {
     return String(username)
     .match(/^[a-zA-Z][a-zA-Z0-9_.-]{5,29}$/);
 }
-
 
 exports.validateName = (name) => {
     return String(name)

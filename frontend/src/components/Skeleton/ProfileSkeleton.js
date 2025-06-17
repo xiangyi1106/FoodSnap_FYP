@@ -22,7 +22,6 @@ export default function ProfileSkeleton({ visitor }) {
             >
                 <div className="profile_picture_left">
                     <Skeleton
-                        // circle
                         height="180px"
                         width="180px"
                         containerClassName="avatar-skeleton"

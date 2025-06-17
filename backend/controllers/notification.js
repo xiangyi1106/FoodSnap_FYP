@@ -4,7 +4,6 @@ const User = require("../models/User");
 exports.getNotifications = async (req, res) => {
     try {
         const { userId } = req.params;
-        // console.log("Received userId:", userId);
 
         const notifications = await Notification.find({ userId })
             .sort({ createdAt: -1 })

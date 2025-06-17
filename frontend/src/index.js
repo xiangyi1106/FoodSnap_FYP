@@ -27,8 +27,8 @@ const store = createStore(rootReducer, composeWithDevTools());
 
 
 //Wrap the app into strict mode: React 18 new format
-// 👇️ IMPORTANT: use correct ID of your root element
-// this is the ID of the div in your index.html file
+//use correct ID of root element
+//this is the ID of the div in index.html file
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
 root.render(
@@ -40,23 +40,6 @@ root.render(
     </Provider>
   </StrictMode>,
 );
-// const root = ReactDOM.createRoot(document.getElementById('root'));
-// root.render(
-//   <Provider>
-//     <Router>
-//       <App />
-//     </Router>
-//   </Provider>
-// );
-
-// ReactDOM.render(
-//   <Provider store={store}>
-//     <Router>
-//       <App />
-//     </Router>
-//   </Provider>,
-//   document.getElementById('root')
-// );
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

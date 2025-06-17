@@ -9,10 +9,8 @@ export default function PlaceCommentReply({ setIsReplying, author, user, reviewI
     const handleReply = async () => {
         try {
             if (replyText.trim()) {
-                // onReply(replyText, author);
                 const response = await addFoodVenueReviewReply(user, replyText, reviewId);
                 // If successful, replace the old comment with the populated comment
-                console.log("Reply response:", response); // Check response
                 const updatedComment = response.comment;
                 // Update comments with the latest replies for the specific review
                 setComments((prevComments) =>
@@ -20,14 +18,12 @@ export default function PlaceCommentReply({ setIsReplying, author, user, reviewI
                         comment._id === reviewId ? updatedComment : comment
                     )
                 );
-                console.log(response);
                 toast.success(response.message);
                 setReplyText('');
                 setIsReplying(false);
             }
         } catch (error) {
             console.log(error.message);
-
         }
 
     };

@@ -5,15 +5,6 @@ import { Link } from "react-router-dom"
 import TextInput from "../../components/inputs/TextInput"
 
 export function PasswordForm() {
-  // const [initialValues, setInitialValues] = useState(null)
-
-  // useEffect(() => {
-  //     // Fetch the initial values from the database
-  //     fetchInitialValues().then((data) => {
-  //         setInitialValues(data)
-  //     })
-  // }, [fetchInitialValues])
-
   const profileFormSchema = Yup.object({
     username: Yup.string().required("Username is required"),
     name: Yup.string()
@@ -27,7 +18,7 @@ export function PasswordForm() {
 
   const formik = useFormik({
     initialValues: {
-      username: "user123", // Example: assuming username is pre-filled and cannot be edited
+      username: "user123", 
       name: "",
       email: "",
     },

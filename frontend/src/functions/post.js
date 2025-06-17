@@ -5,7 +5,6 @@ export const createPost = async (
   media,
   tag,
   location,
-  // rating,
   privacy,
   user,
   token
@@ -19,7 +18,6 @@ export const createPost = async (
         media,
         tag,
         location,
-        // rating,
         privacy,
         user,
       },

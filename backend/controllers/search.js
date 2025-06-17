@@ -1,16 +1,14 @@
-// const SearchTerm = require('../models/SearchTerm'); // Adjust the path as necessary
 const { User, SearchTerm } = require("../models/models");
-// console.log(User); // Should output the User model definition
 exports.searchTerm = async (req, res) => {
   try {
     const searchTerm = req.params.searchTerm;
-    console.log(searchTerm);
+
     const results = await User.find({ $text: { $search: searchTerm } }).select(
       "name username picture"
     );
     res.json(results);
+
   } catch (error) {
-    console.error("Error in searchTerm:", error);  // Log error details
     res.status(500).json({ message: error.message });
   }
 };
@@ -26,6 +24,7 @@ exports.searchUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 exports.addToSearchHistory = async (req, res) => {
   try {
     const { searchTerm } = req.body;
@@ -81,7 +80,6 @@ exports.removeFromSearch = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 exports.getPopularSearchTerms = async (req, res) => {
   const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // Calculate the date one week ago

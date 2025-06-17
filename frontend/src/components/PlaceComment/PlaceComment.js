@@ -8,8 +8,6 @@ import MediaCarousel from './MediaCarousel';
 
 const PlaceComment = ({ author, date, text, avatarUrl, children, id, user, setComments, depth, rating, media }) => {
     const [isReplying, setIsReplying] = useState(false);
-    // Format the date to a more readable format
-    //  const formattedDate = format(new Date(date), 'MMMM d, yyyy h:mm a');
     return (
         <div className="comment_article">
             <div className="comment_footer">
@@ -31,7 +29,6 @@ const PlaceComment = ({ author, date, text, avatarUrl, children, id, user, setCo
                     </p>
                 </div>
             </div>
-            {/* <p className="comment_text">{rating}</p> */}
             {rating && <div className='place-ratings'>
                 <StarRating rating={rating} />
                 <span className='rating-text' style={{ marginRight: '10px' }}>
@@ -39,7 +36,6 @@ const PlaceComment = ({ author, date, text, avatarUrl, children, id, user, setCo
                 </span>
             </div>}
             <p className="comment_text">{text}</p>
-            {/* <MediaCarousel media={media} /> */}
             {media && media.length > 0 && (
                 <div className='' style={{display: 'flex', gap: '10px'}}>
                     {media.map((item, index) => {
@@ -61,7 +57,6 @@ const PlaceComment = ({ author, date, text, avatarUrl, children, id, user, setCo
                                 </div>
                             );
                         }
-                        // You can add other types (like audio, pdf, etc.) as needed
                         return null;  // If the media type is unsupported, return nothing
                     })}
                 </div>
@@ -79,27 +74,6 @@ const PlaceComment = ({ author, date, text, avatarUrl, children, id, user, setCo
             }
             {isReplying && (
                 <PlaceCommentReply setIsReplying={setIsReplying} author={author} user={user} reviewId={id} setComments={setComments} />
-                // <div className="comment_reply_form">
-                //     <TextField
-                //         multiline
-                //         margin="normal"
-                //         rows={2}
-                //         className="comment_reply_textarea"
-                //         placeholder={`Reply to ${author}`}
-                //         value={replyText}
-                //         onChange={(e) => setReplyText(e.target.value)}
-                //         sx={{
-                //             '& .MuiOutlinedInput-root': {
-                //                 '&.Mui-focused fieldset': {
-                //                     borderColor: 'gray', // Focused border color
-                //                 },
-                //             },
-                //         }}
-                //     />
-                //     <Button variant="contained" size="small" className="logo_color_background" onClick={handleReply}>
-                //         Send
-                //     </Button>
-                // </div>
             )}
             {children}
         </div>

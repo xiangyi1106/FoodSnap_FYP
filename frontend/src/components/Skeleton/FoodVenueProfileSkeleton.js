@@ -24,7 +24,6 @@ export default function FoodVenueProfileSkeleton({ visitor }) {
                 <div className="profile_picture_left">
                     <div className='profile_picture'>
                         <Skeleton
-                            // circle
                             height="180px"
                             width="180px"
                             containerClassName="avatar-skeleton profile_picture_bg"
@@ -44,43 +43,13 @@ export default function FoodVenueProfileSkeleton({ visitor }) {
                                 containerClassName="avatar-skeleton"
                                 style={{ transform: "translateY(-15.5px)" }}
                             />
-                            {/* {<Skeleton
-                                height="30px"
-                                width="150px"
-                                containerClassName="avatar-skeleton"
-                                style={{ transform: "translateY(-35.5px)" }}
-                            />} */}
                             <div className='' style={{ display: 'flex', justifyContent: 'flex-start' }}>
                                 <Skeleton
                                 height="30px"
                                 width="80px"
                                 containerClassName="avatar-skeleton"
                                 style={{ transform: "translateY(-15.5px)" }}
-                            />
-                            {/* <Skeleton
-                                height="30px"
-                                width="80px"
-                                containerClassName="avatar-skeleton"
-                                style={{ transform: "translateY(-15.5px)" }}
-                            /> */}
-                            {/* <Skeleton
-                                height="30px"
-                                width="80px"
-                                containerClassName="avatar-skeleton"
-                                style={{ transform: "translateY(-15.5px)" }}
-                            /> */}
-                            
-                                {/* {Array.from(new Array(3), (val, i) => i + 1).map(
-                                    (id, i) => (
-                                        <Skeleton
-                                            key={id}
-                                            height="30px"
-                                            width="80px"
-                                            containerClassName="avatar-skeleton"
-                                            style={{ transform: `translateX(${-i * 7}px) translateY(-15.5px)`, marginRight: '30px' }}
-                                        />
-                                    )
-                                )} */}
+                                />
                             </div>
                         </div>
                     </div>
@@ -93,7 +62,6 @@ export default function FoodVenueProfileSkeleton({ visitor }) {
                         width={40}
                         circle
                         containerClassName="avatar-skeleton"
-                    // style={{ transform: `translateY(20.5px)`, marginRight: '30px' }}
                     />
                 </div>
             </div>

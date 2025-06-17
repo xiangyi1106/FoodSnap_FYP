@@ -24,14 +24,13 @@ export function SettingsForm({ user }) {
 
   const formik = useFormik({
     initialValues: {
-      username: user.username || "", // Example: assuming username is pre-filled and cannot be edited
+      username: user.username || "", 
       name: user.name || "",
       // email: "",
     },
     validationSchema: profileFormSchema,
     onSubmit: async (values) => {
       try {
-        // Make the API call using axios to update the name
         const response = await axios.patch(
           `${process.env.REACT_APP_BACKEND_URL}/api/users/${user.id}/update-name`,
           {
@@ -51,18 +50,15 @@ export function SettingsForm({ user }) {
             name: response.data.name,
           };
           Cookies.set("user", JSON.stringify(updatedUser));
-          console.log("Updated user cookie:", Cookies.get("user")); // Log to debug
 
           dispatch({
             type: "UPDATENAME",
             name: response.data.name,
           });
-          console.log(response);
         } else {
           toast.error(response.data.message || "An error occurred while updating the name.")
         }
       } catch (error) {
-        console.error("Error updating name:", error)
         toast.error("An error occurred while updating the name.")
       }
     },

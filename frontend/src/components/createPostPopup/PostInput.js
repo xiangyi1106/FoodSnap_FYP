@@ -70,7 +70,6 @@ const PostInput = ({ isLoading, text, setText, user, textRef, isShowImage }) => 
     const mentionStyle = {
         '&multiLine': {
             control: {
-                // minHeight: '320px',
                 minHeight: `${isShowImage ? "110px" : "320px"}`,
                 width: '350px',
                 outline: 'none',

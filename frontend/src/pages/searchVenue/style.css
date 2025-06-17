@@ -4,27 +4,16 @@
   margin-top: 56px;
   margin-left: 50px;
   overflow: hidden;
-  /* width: calc(100vw - 50px); */
   height: calc(100vh - 56px);
-
-  /* margin-left: 20vw; */
-  /* Adjust this value to match the width of the left navigation */
   overflow: hidden;
-  /* width: calc(100vw - 20vw); */
-  /* Adjust the width calculation accordingly */
   height: calc(100vh - 56px);
-
   width: calc(100vw - 38px);
-  /* margin-left: 38px; */
 }
 
 .map {
   overflow: hidden;
-  /* width: 30%; */
   flex-grow: 1;
-  /* Map will take up the remaining space */
   margin-right: auto;
-  /* Ensures the map stays on the left */
 }
 
 .search_box {
@@ -55,11 +44,9 @@
   overflow: hidden;
 }
 /* Place Details */
-/* PlaceDetail.css */
 .place-detail {
   background-color: rgba(255, 255, 255, 0.9);
   padding: 16px;
-  /* margin-bottom: 8px; */
   margin: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -68,16 +55,15 @@
   justify-content: space-between;
   cursor: pointer;
   font-family: "Source Sans 3", sans-serif;
-  transition: transform 0.3s; /* Optional: smooth transition */
+  transition: transform 0.3s; 
 }
 
 .place-detail:hover{
   transform: scale(1.01); 
-  /* background-color: var(--bg-primary); */
 }
 
 .place-detail:hover .place-name{
-  color: #30BFBF;/* Optional: slight scale effect */
+  color: #30BFBF;
 }
 
 .place-header {
@@ -104,7 +90,6 @@
 
 .place-name {
   text-transform: capitalize;
-  /* width: 40%; */
   font-size: 1.125rem;
   font-weight: 500;
   white-space: nowrap;
@@ -135,7 +120,6 @@
   font-size: 0.875rem;
   font-weight: 500;
   color: gray;
-  /* margin-left: auto; */
   margin-left: 10px;
 }
 
@@ -173,19 +157,11 @@
   cursor: default;
 }
 
-/* .place-image {
-  object-fit: cover;
-  width: 120px;
-  height: 120px;
-  border-radius: 8px;
-} */
-
 .place-image-container {
   width: 120px;
   height: 120px;
   overflow: hidden;
   border-radius: 8px;
-  /* This rounds the corners of the container */
 }
 
 .place-image {
@@ -220,8 +196,6 @@
 }
 
 .selected_active:hover {
-  /* background: var(--bg-third); */
-  /* color: rgba(72, 71, 71, 0.801); */
   background-color: #2cabab;
 }
 
@@ -247,7 +221,6 @@
 }
 
 
-
 @media (max-width: 769px) {
   .search_venue {
     width: 100vw !important;
@@ -255,7 +228,6 @@
     display: flex;
     flex-direction: column;
     overflow: auto;
-    /* Add scrolling if needed */
     margin: 0;
   }
 
@@ -264,7 +236,6 @@
     margin: 0;
     order: 2;
     flex-shrink: 0;
-    /* Optionally add a fixed height if needed, or let it grow naturally */
   }
 
   .map {

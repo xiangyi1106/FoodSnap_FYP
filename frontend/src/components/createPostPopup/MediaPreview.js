@@ -76,34 +76,9 @@ export default function MediaPreview({ medias, setMedias, setPage, setError }) {
                         </button>
                         <button className='' onClick={() => setMedias([])} style={{ zIndex: "99" }}>
                             <CIcon icon={cilX} className="icon_size_18" />
-                            {/* <i className='exit_icon'></i> */}
                             Clear
                         </button>
                     </div>
-                    {/* <i className='exit_icon' onClick={() => setMedias([])} style={{ zIndex: "99" }}></i> */}
-                    {/* <div className={
-                        medias.length === 1 ? 'preview1' :
-                            medias.length === 2 ? 'preview2' :
-                                medias.length === 3 ? 'preview3' :
-                                    medias.length === 4 ? 'preview4' :
-                                        medias.length === 5 ? 'preview5' :
-                                            medias.length % 2 === 0 ? 'preview6' :
-                                                'preview6 singular_grid'}>
-                        {medias.map((media, i) => (
-                            isImageFile(media.type) ? (
-                                // Handle image upload
-                                <img key={i} src={media.data} alt="post_img_upload" />
-                            ) : (
-                                isVideoFile(media.type) ? (
-                                    // Handle video upload
-                                    <video key={i} controls preload="metadata">
-                                        <source src={`${media.data}#t=0.1`} type={media.type} />
-                                    </video>
-                                ) : null
-                            )
-                        ))}
-         
-                    </div> */}
                     <div className={
                         `${medias.length === 1 ? 'preview1' :
                             medias.length === 2 ? 'preview2' :
@@ -136,7 +111,6 @@ export default function MediaPreview({ medias, setMedias, setPage, setError }) {
 
                 </div>
             ) : (
-                // <div className='add_picture' onClick={() => mediainputref.current.click()}>
                 <div className='add_picture' onClick={open}>
                     <div className='add_col'>
                         <div className='add_circle'>

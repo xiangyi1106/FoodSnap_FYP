@@ -11,10 +11,6 @@ export function userReducer(state = Cookies.get('user') ? JSON.parse(Cookies.get
       return { ...state, picture: action.payload };
     case "UPDATENAME":
       return { ...state, name: action.payload };
-    // const updatedState = { ...state, picture: action.payload };
-    // Cookies.set('user', JSON.stringify(updatedState)); // Set the cookie here as well
-    // console.log("Updated state in reducer:", updatedState); // Log to debug
-    // return updatedState;
     case "VERIFY":
       return { ...state, verified: action.payload };
     default:
