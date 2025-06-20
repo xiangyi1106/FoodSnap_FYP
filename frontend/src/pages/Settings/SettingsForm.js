@@ -1,15 +1,14 @@
-import React from "react"
-import { useFormik, FieldArray, FormikProvider } from "formik"
-import * as Yup from "yup"
-import { Link } from "react-router-dom"
-import TextInput from "../../components/inputs/TextInput"
-import { toast } from "react-toastify"
-import axios from "axios"
-import { useDispatch } from "react-redux"
+import React from "react";
+import { useFormik, FieldArray, FormikProvider } from "formik";
+import * as Yup from "yup";
+import { Link } from "react-router-dom";
+import TextInput from "../../components/inputs/TextInput";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
 
 export function SettingsForm({ user }) {
-
   const profileFormSchema = Yup.object({
     username: Yup.string().required("Username is required"),
     name: Yup.string()
@@ -19,12 +18,12 @@ export function SettingsForm({ user }) {
     // email: Yup.string()
     //   .email("Invalid email address")
     //   .required("Email is required"),
-  })
+  });
   const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
-      username: user.username || "", 
+      username: user.username || "",
       name: user.name || "",
       // email: "",
     },
@@ -34,14 +33,14 @@ export function SettingsForm({ user }) {
         const response = await axios.patch(
           `${process.env.REACT_APP_BACKEND_URL}/api/users/${user.id}/update-name`,
           {
-            name: values.name,  // Send only the updated name to the backend
+            name: values.name, // Send only the updated name to the backend
           },
           {
             headers: {
-              Authorization: `Bearer ${user.token}`,  // Include the Authorization header with Bearer token
+              Authorization: `Bearer ${user.token}`, // Include the Authorization header with Bearer token
             },
           }
-        )
+        );
 
         if (response.status === 200) {
           toast.success("Name updated successfully!");
@@ -53,23 +52,23 @@ export function SettingsForm({ user }) {
 
           dispatch({
             type: "UPDATENAME",
-            name: response.data.name,
+            payload: response.data.name,
           });
         } else {
-          toast.error(response.data.message || "An error occurred while updating the name.")
+          toast.error(
+            response.data.message ||
+              "An error occurred while updating the name."
+          );
         }
       } catch (error) {
-        toast.error("An error occurred while updating the name.")
+        toast.error("An error occurred while updating the name.");
       }
     },
-  })
+  });
 
   return (
     <FormikProvider value={formik}>
-      <form
-        onSubmit={formik.handleSubmit}
-        className="profile_form_space_y_8"
-      >
+      <form onSubmit={formik.handleSubmit} className="profile_form_space_y_8">
         <TextInput
           label="Username"
           id="username"
@@ -103,5 +102,5 @@ export function SettingsForm({ user }) {
         </button>
       </form>
     </FormikProvider>
-  )
+  );
 }
