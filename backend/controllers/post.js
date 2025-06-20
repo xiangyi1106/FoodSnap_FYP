@@ -316,7 +316,7 @@ exports.getLikeStatus = async (req, res) => {
     }
 
     // Check if the userId is in the likes array of objects
-    const isLiked = post.likes.some(like => like._id.toString() === userId);
+    const isLiked = post.likes.some(like => like.likeBy.toString() === userId);
 
     const user = await User.findById(userId);
     const checkSaved = user?.savedPosts.find(

@@ -58,7 +58,7 @@ const LikeButton = ({ post, user, setLikesCount, isLiked, setIsLiked, dispatch, 
     };
 
     useEffect(() => {
-        setIsLiked(post.likes.some((like) => like._id === user.id));
+        setIsLiked(post.likes.some((like) => like.likeBy.toString() === user.id));
         setLikesCount(post.likes.length);
     }, [post.likes, user.id]);
 
