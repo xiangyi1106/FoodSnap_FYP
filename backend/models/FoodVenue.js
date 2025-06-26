@@ -2,16 +2,6 @@ const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 const { ObjectId } = Schema;
 
-// const MenuItemSchema = new Schema({
-//     name: { type: String, required: true },
-//     description: { type: String },
-//     price: { type: Number, required: true },
-//     category: { type: String },
-//     image: { type: String }
-// }, {
-//     timestamps: true,
-// });
-
 const openingHoursSchema = new mongoose.Schema({
     open: String,
     close: String
@@ -26,18 +16,8 @@ const foodVenueSchema = new Schema({
     website: { type: String }, // Website URL
     description: { type: String }, // Description of the venue
     address: { type: String, require: true }, // Description of the venue
-    // address: [{
-    //     street: { type: String },
-    //     city: { type: String },
-    //     state: { type: String },
-    //     postalCode: { type: Number },
-    //     country: { type: String },
-    //     fullAddress: { type: String } // Full address as a single string
-    // }],
-
     latitude: { type: Number },
     longitude: { type: Number },
-
     openingHours: {
         mon: [openingHoursSchema],
         tue: [openingHoursSchema],
@@ -47,11 +27,9 @@ const foodVenueSchema = new Schema({
         sat: [openingHoursSchema],
         sun: [openingHoursSchema]
     },
-
     rating: { type: Number, default: 0 }, // Rating of the venue
     priceRange: { type: String }, // Price level (e.g., "$", "$$", "$$$")
     category: [{ type: String }], //tags
-    // dishesType: [{ type: String, default: [] }],
     otherinfo: [{
         halalOptions: { type: String, default: 'No' }, // Halal options (e.g., "Yes", "No")
         vegetarianOptions: { type: String, default: 'No' }, // Vegetarian options (e.g., "Yes", "No")
@@ -65,13 +43,10 @@ const foodVenueSchema = new Schema({
         acceptsDebitCards: { type: String, default: 'Yes' },
         acceptsCreditCards: { type: String, default: 'Yes' },
         acceptsTNGBoostQRPayment: { type: String, default: 'Yes' },
-
     }],
 
     serviceCharge: { type: Number, default: 0 },
     SSTCharge: { type: Number, default: 0 },
-    // Reference to MenuItem
-    // menuItems: [{ type: ObjectId, ref: 'MenuItem' }]
     menu: {
         type: Array,
         default: [],

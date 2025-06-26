@@ -1,13 +1,10 @@
 import { Form, Formik } from "formik";
 import { useState, useRef } from "react";
 import RegisterInput from "../inputs/registerInput";
-import WcIcon from '@mui/icons-material/Wc';
-import CakeIcon from '@mui/icons-material/Cake';
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import CIcon from '@coreui/icons-react';
-// import * as icon from '@coreui/icons';
-import { cilCheckCircle, cilXCircle, cilBirthdayCake } from '@coreui/icons';
+import { cilCheckCircle, cilXCircle } from '@coreui/icons';
 
 import {
   MDBBtn,
@@ -18,8 +15,6 @@ import {
   MDBCol,
 } from 'mdb-react-ui-kit';
 
-import DateOfBirthSelect from "./DateOfBirthSelect";
-import GenderRadioButton from "./GenderRadioButton";
 import BeatLoader from "react-spinners/BeatLoader";
 import axios from "axios";
 import { useDispatch } from "react-redux";
@@ -31,29 +26,6 @@ export default function RegisterForm({ setVisible }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
  
-  // //Prepare the birthday day,month,year options for the select
-  // const currentDate = new Date();
-  // const currentYear = currentDate.getFullYear();
-  // const currentMonth = currentDate.getMonth() + 1;
-  // const currentDay = currentDate.getDate(); // This will give you the current day of the month
-
-  // const years = Array.from(new Array(100), (val, index) => currentYear - index);
-  // const months = Array.from(new Array(12), (val, index) => index + 1);
-
-  // const [selectDay, setSelectDay] = useState(currentDay);
-  // const [selectMonth, setSelectMonth] = useState(currentMonth);
-  // const [selectYear, setSelectYear] = useState(currentYear);
-
-
-  // //This creates a Date object representing the last day of the previous month of the specified year and month. Setting the day to 0 effectively means the last day of the previous month.
-  // const getDays = () => {
-  //   return new Date(selectYear, selectMonth, 0).getDate();
-  // };
-
-  // const days = Array.from(new Array(getDays()), (val, index) => index + 1);
-
-  // const [selectGender, setSelectGender] = useState("");
-
   const registerValidation = Yup.object({
     username: Yup.string()
       .required("What is your username?")
@@ -66,20 +38,15 @@ export default function RegisterForm({ setVisible }) {
       )
       .matches(
         /^[A-Za-z][A-Za-z0-9_.-]{5,29}$/,
-        // /^[a-zA-Z]{6,30}([_.-]?[a-zA-Z0-9])*$/,
         "Username can only contain alphanumeric characters and characters (_.-)."
       ),
     name: Yup.string()
       .required("What is your name?")
       .min(1, "Name must be at least 1 characters.")
       .max(30, "Name must be at most 30 characters."),
-    // .matches(/^[a-zA-Z\u4e00-\u9fff\\pL\\pM\\p{Nl}]{1,30}([_.'-]?[a-zA-Z0-9\u4e00-\u9fff])*$/, "Invalid characters in name."),
-    ///^[a-zA-Z\u4e00-\u9fff]{1,30}([_.-]?[a-zA-Z0-9\u4e00-\u9fff])*$/
-    // ^[\\pL\\pM\\p{Nl}]{1,50}(?: [\\pL\\pM\\p{Nl}]{1,50})*$
     email: Yup.string()
       .required("Email address is required.")
-      .email("Please enter a valid email.")
-    ,
+      .email("Please enter a valid email."),
     password: Yup.string()
       .required("Password is required.")
       .matches(
@@ -88,8 +55,6 @@ export default function RegisterForm({ setVisible }) {
       ),
   });
 
-  // const [dateError, setDateError] = useState("");
-  // const [genderError, setGenderError] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [emailError, setEmailError] = useState("");
 
@@ -155,54 +120,18 @@ export default function RegisterForm({ setVisible }) {
                   name: '',
                   email: '',
                   password: '',
-                  // bYear: '',
-                  // bMonth: '',
-                  // bDay: '',
-                  // gender: '',
                 }}
                 validationSchema={registerValidation}
 
                 onSubmit={
                   async (values) => {
-                    // // Perform validation checks for birthday and gender here
-                    // let currentDate = new Date();
-                    // let pickedDate = new Date(selectYear, selectMonth - 1, selectDay);
-                    // let minimumAgeDate = new Date(1970 + 14, 0, 1);//The value 1970 is used because it is the starting point for the JavaScript Date object. In JavaScript, dates are represented as the number of milliseconds since January 1, 1970, 00:00:00 UTC (the "Unix epoch"). 
-
-                    // //major social media platforms like Facebook also need to consider these factors when deciding on their registration policies for users under the age of 14. 
-                    // //Facebook, like other platforms, is subject to various laws and regulations governing the collection of personal information from minors, such as COPPA in the United States and similar regulations in other jurisdictions.
-                    // if (currentDate - pickedDate < minimumAgeDate) {
-                    //   setDateError(
-                    //     "You must be at least 14 years old to register."
-                    //   );
-                    //   setGenderError("");
-                    //   return;
-                    // } else {
-                    //   setDateError("");
-                    // }
-
-                    // if (selectGender === "") {
-                    //   setGenderError(
-                    //     "Please choose a gender. You can change who can see this later."
-                    //   );
-                    //   return;
-                    // } else {
-                    //   setGenderError("");
-                    // }
-
                     try {
-
                       const { data } = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/register`, {
                         username: values.username,
                         name: values.name,
                         email: values.email,
                         password: values.password,
-                        // bYear: selectYear,
-                        // bMonth: selectMonth,
-                        // bDay: selectDay,
-                        // gender: selectGender,
                       });
-                      console.log(data);
                       setSubmitSuccessed(data.message);
                       setSubmitError("");
                       setEmailError("");
@@ -278,7 +207,6 @@ export default function RegisterForm({ setVisible }) {
                     <div className="reg_line">
                       <div className="password_input">
                         <RegisterInput
-                          // type={passwordType}
                           type="password"
                           name="password"
                           label="New password"
@@ -341,33 +269,6 @@ export default function RegisterForm({ setVisible }) {
                       </div>
                     </div>
 
-                    {/* <div className="reg_col">
-                      <div className="reg_line_header">
-                        Date of birth
-                        <CakeIcon style={{ fontSize: "medium", position: "relative", bottom: "2px" }} />
-                      </div>
-                      <DateOfBirthSelect
-                        selectDay={selectDay}
-                        setSelectDay={setSelectDay}
-                        selectYear={selectYear}
-                        setSelectYear={setSelectYear}
-                        selectMonth={selectMonth}
-                        setSelectMonth={setSelectMonth}
-                        days={days}
-                        months={months}
-                        years={years}
-                        dateError={dateError}
-                      />
-                    </div>
-                    <div className="reg_col">
-                      <div className="reg_line_header">
-                        Gender <WcIcon style={{ fontSize: "medium" }} />
-                      </div>
-                      <GenderRadioButton
-                        setSelectGender={setSelectGender}
-                      />
-                      {genderError !== "" && <div className="input_error">{genderError}</div>}
-                    </div> */}
                     <div className="reg_infos mb-4">
                       By clicking Sign Up, you agree to our{" "}
                       <span>Terms, Data Policy &nbsp;</span>

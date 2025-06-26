@@ -55,7 +55,6 @@ export default function ResetPassword() {
                         <Link to="/profile">
                             <img src={user.picture} alt="" />
                         </Link>
-                        {/* <Button style={{color: "var(--logo-color)"}} endIcon={<LogoutOutlinedIcon />} >Logout</Button> */}
                         <Button variant="contained" style={{ backgroundColor: "var(--logo-color)" }} endIcon={<LogoutOutlinedIcon />} onClick={() => { logout(); }}>
                             Logout
                         </Button>

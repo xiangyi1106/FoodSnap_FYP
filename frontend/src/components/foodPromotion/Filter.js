@@ -17,7 +17,7 @@ export default function PromotionFilter({ onResults, isEvent }) {
 
     const handleFilter = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/${isEvent ? 'event' : 'promotion'}/search`, {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/${isEvent ? 'event' : 'promotion'}/search`, {
                 params: {
                     keyword,
                     location: selectedLocation,

@@ -56,7 +56,7 @@ export default function Profile() {
           },
         }
       );
-      console.log(data);
+
       if (data.ok === false) {
         navigate(`/profile/${userName}`);
       } else {

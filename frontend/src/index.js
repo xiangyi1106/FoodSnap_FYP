@@ -16,16 +16,6 @@ import '@fontsource/geist-sans';
 
 const store = createStore(rootReducer, composeWithDevTools());
 
-//npm install @reduxjs/toolkit
-// import { configureStore } from '@reduxjs/toolkit';
-
-// // Configure the store using Redux Toolkit's configureStore method
-// const store = configureStore({
-//   reducer: rootReducer,
-//   devTools: true // Enable Redux DevTools extension
-// });
-
-
 //Wrap the app into strict mode: React 18 new format
 //use correct ID of root element
 //this is the ID of the div in index.html file

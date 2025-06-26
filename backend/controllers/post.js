@@ -3,8 +3,6 @@ const Hashtag = require("../models/Hashtag");
 const User = require("../models/User");
 const Notification = require("../models/Notification");
 
-// const { User, Post, Hashtag } = require("../models/models");
-
 const extractHashtags = (text) => {
   const hashtagRegex = /#(\w+)/g;
   let hashtags = [];
@@ -13,8 +11,6 @@ const extractHashtags = (text) => {
   while ((match = hashtagRegex.exec(text)) !== null) {
     hashtags.push(match[1].toLowerCase()); // Extract and normalize hashtag
   }
-
-  console.log(hashtags);
 
   return hashtags;
 };
@@ -67,8 +63,6 @@ exports.createPost = async (req, res) => {
 
     // Check if mentions exist in the text
     if (text.includes('@')) {
-      // mentions = extractMentions(text);  // Extract mentions only if present
-      // text = cleanMentions(text);        // Clean mentions from the text
       // Extract and add usernames to mentions
       const rawMentions = extractMentions(text); // Extract mentions without usernames
       mentions = await addUsernamesToMentions(rawMentions); // Add usernames
@@ -136,26 +130,6 @@ exports.createPost = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-// exports.getAllPosts = async (req, res) => {
-//   try {
-//     const posts = await Post.find()
-//       .populate("user", "name picture username gender")
-//       //get the data from user database
-//       .populate({
-//         path: "sharedPost", // Populate the sharedPost field
-//         populate: {
-//           path: "user", // Populate the user inside sharedPost
-//           select: "name picture username gender _id" // Select fields to retrieve from user
-//         }
-//       })
-//       .sort({ createdAt: -1 });
-//     //sort by newest to oldest
-//     res.json(posts);
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
 
 exports.getAllPosts = async (req, res) => {
   try {

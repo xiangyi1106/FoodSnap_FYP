@@ -151,7 +151,6 @@ exports.getFoodVenues = async (req, res) => {
 
 exports.getFoodVenueDetails = async (req, res) => {
   try {
-
     const id = req.params.id;
     const foodVenue = await FoodVenue.findById(id);
     if (!foodVenue) {
@@ -182,8 +181,6 @@ exports.updateFoodVenueDetails = async (req, res) => {
     priceRange,
     openingHours,
     category,
-    // profilePicture,
-    // coverPicture,
   } = req.body;
 
   try {

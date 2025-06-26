@@ -7,19 +7,17 @@ import CreatePostPopUp from "../../components/createPostPopup";
 import CircularProgress from '@mui/material/CircularProgress';
 import { useSelector } from "react-redux";
 import 'react-toastify/dist/ReactToastify.css';
-import Post from "../../components/post";
-import SearchVenue from "../searchVenue";
 import Feed from "../../components/post/Feed";
-import MyFoodMap from "../myFoodMap";
-import FoodEvent from "../foodEvent";
-import FoodPromotion from "../foodPromotion";
 import PublicFeed from "../../components/post/PublicFeed";
 import { useMediaQuery } from "react-responsive";
 import MobileBottomNavigation from "../../components/home/BottomNavigation";
+import { getUserSelector } from "../../helpers/selectors";
 
 export default function Home({ posts }) {
-  const userSelector = (state) => state.user;
-  const user = useSelector(userSelector);
+  // const userSelector = (state) => state.user;
+  // const user = useSelector(userSelector);
+  const user = useSelector(getUserSelector);
+  
   const [visible, setVisible] = useState(false);
   const el = useRef(null);
   useClickOutside(el, () => {
@@ -42,12 +40,6 @@ export default function Home({ posts }) {
     };
   }, [page]);
 
-  // const middle = useRef(null);
-  // const [height, setHeight] = useState();
-  // useEffect(() => {
-  //   setHeight(middle.current.clientHeight);
-  // }, [height]);
-
   const width768 = useMediaQuery({
     query: "(max-width:769px)"
   });
@@ -65,10 +57,6 @@ export default function Home({ posts }) {
       <div className="main_middle">
         {page === "home" && <Feed posts={posts} user={user} />}
         {page === "discover" && <PublicFeed />}
-        {/* {page === "searchVenue" && <SearchVenue />} */}
-        {/* {page === "myFoodMap" && <MyFoodMap />} */}
-        {/* {page === "foodEvent" && <FoodEvent />} */}
-        {/* {page === "foodPromotion" && <FoodPromotion />} */}
       </div>
       {width768 && <MobileBottomNavigation/>}
     </div>

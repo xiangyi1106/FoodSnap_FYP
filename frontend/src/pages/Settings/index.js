@@ -16,14 +16,6 @@ const sidebarNavItems = [
     //     title: "Password",
     //     href: "/settings/password",
     // },
-    // {
-    //     title: "Notifications",
-    //     href: "/examples/forms/notifications",
-    // },
-    // {
-    //     title: "Display",
-    //     href: "/examples/forms/display",
-    // },
 ];
 
 

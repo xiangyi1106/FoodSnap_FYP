@@ -17,14 +17,16 @@ import { getNotifications } from "../../functions/user";
 import { useMediaQuery } from "react-responsive";
 import MobileNav from "../home/Navbar/MobileNav";
 import { Badge } from "@mui/material";
+import { getUserSelector } from "../../helpers/selectors";
 
 export default function Header({ setVisible, visible, page, currentPath, profile }) {
-    const userSelector = (state) => state.user;
-    const user = useSelector(userSelector);
+    // const userSelector = (state) => state.user;
+    // const user = useSelector(userSelector);
+    const user = useSelector(getUserSelector);
     const dispatch = useDispatch();
 
     // Memoize the selector function
-    const memoizedUserSelector = useMemo(() => userSelector, []);
+    // const memoizedUserSelector = useMemo(() => userSelector, []);
 
     const [isShowUserMenu, setIsShowUserMenu] = useState(false);
     const [isShowNotifications, setIsShowNotifications] = useState(false);

@@ -1,27 +1,3 @@
-// import { useEffect } from "react";
-
-// // A ref object that points to the DOM element you want to monitor for click events.
-// //fun: A callback function that will be called when a click occurs outside the referenced element.
-// export default function useClickOutside(ref, fun) {
-//     useEffect(() => {
-//         const listener = (e) => {
-//             if (!ref.current || ref.current.contains(e.target)) {
-//                 //If the clicked element is inside the ref element, the function returns early without calling the provided callback (fun).
-//                 return;
-//             }
-
-//             fun();
-//         };
-//         document.addEventListener("mousedown", listener);
-//         document.addEventListener("touchstart", listener);
-
-//         return () => {
-//             document.removeEventListener("mousedown", listener);
-//             document.removeEventListener("touchstart", listener);
-//         };
-//     }, [ref]);
-// }
-
 import { useEffect } from "react";
 
 export default function useClickOutside(ref, excludeRefs, fun) {

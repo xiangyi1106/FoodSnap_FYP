@@ -82,7 +82,7 @@ export function ProfileFoodMapAddVenueForm({ setVisible, user, setFoodVenuesMap 
                     console.error("Error fetching data: ", err);
                     setIsLoading(false);
                 });
-        }, 500),
+        }, 1000),
         [] // Empty dependency array ensures debounce is created only once
     );
 

@@ -4,7 +4,6 @@ import { Pagination } from '@mui/material';
 import ProfileFoodMapVenueDetails from './ProfileFoodMap/ProfileFoodMapVenueDetails';
 
 const ProfileFoodMapList = ({ foodVenuesMap, currentPage, itemsPerPage, onPageChange, setIsVisible, isVisible }) => {
-  // const [currentPage, setCurrentPage] = useState(1);
   const [selectedVenue, setSelectedVenue] = useState(null);
    // Calculate paginated venues
    const indexOfLastVenue = currentPage * itemsPerPage;
@@ -51,24 +50,12 @@ const ProfileFoodMapList = ({ foodVenuesMap, currentPage, itemsPerPage, onPageCh
       ) : (
         <p className={"foodMapNoVenuesMessage"}>No food venues available.</p>
       )}
-      {/* Pagination */}
-      {/* <Pagination
-        // count={Math.ceil(foodVenuesMap.length / venuesPerPage)}
-        // page={currentPage}
-        // onChange={handleChangePage}
-        count={Math.ceil(foodVenuesMap.length / itemsPerPage)} // Total pages
-        page={currentPage} // Current page
-        onChange={onPageChange}
-        className={"foodMapPagination"}
-        color="primary"
-      /> */}
+      
       <Pagination
         count={Math.ceil(foodVenuesMap.length / itemsPerPage)} // Total pages
         page={currentPage} // Current page
-        // onChange={onPageChange} // Correct handler
         onChange={(event, newPage) => onPageChange(event, newPage)}
         className="foodMapPagination"
-        // color="primary"
         sx={{
           '.MuiPaginationItem-root': {
             // backgroundColor: 'lightblue', // Change background color
@@ -77,9 +64,6 @@ const ProfileFoodMapList = ({ foodVenuesMap, currentPage, itemsPerPage, onPageCh
               backgroundColor: '#30BFBF', // Selected page background color
               color: 'white', // Selected text color
             },
-            // '&:hover': {
-            //   backgroundColor: 'lightgreen', // Hover effect
-            // },
           },
         }}
       />

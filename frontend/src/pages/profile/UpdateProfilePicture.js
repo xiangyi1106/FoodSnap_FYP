@@ -73,8 +73,6 @@ export default function UpdateProfilePicture({
                 throw new Error('Media upload failed or returned invalid data.');
             }
 
-            console.log('Uploaded medias response:', res);
-
             const updated_picture = await updateprofilePicture(
                 res[0].url,
                 user.token
@@ -90,7 +88,6 @@ export default function UpdateProfilePicture({
                     picture: res[0].url,
                 };
                 Cookies.set("user", JSON.stringify(updatedUser));
-                console.log("Updated user cookie:", Cookies.get("user")); // Log to debug
 
                 dispatch({
                     type: "UPDATEPICTURE",
@@ -108,7 +105,6 @@ export default function UpdateProfilePicture({
         }
     };
 
-    // console.log(user);
     useEffect(() => {
         toggleScroll(true);
         return () => toggleScroll(false); // Re-enable scrolling on cleanup

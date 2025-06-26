@@ -1,29 +1,48 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 exports.getFoodRecommendation = async (req, res) => {
-    // Extract preferences from the request body
-    let { mealType, mood, dietaryPreference, spicyLevelValue, loveIngredients, avoidIngredients, location } = req.body;
+  // Extract preferences from the request body
+  let {
+    mealType,
+    mood,
+    dietaryPreference,
+    spicyLevelValue,
+    loveIngredients,
+    avoidIngredients,
+    location,
+  } = req.body;
 
-    // Set default values to 'none' if the fields are empty or not provided
-    mealType = mealType || 'none';
-    mood = mood || 'none';
-    dietaryPreference = dietaryPreference || 'none';
-    spicyLevelValue = (spicyLevelValue !== undefined && spicyLevelValue !== null) ? spicyLevelValue : 'none';
-    loveIngredients = loveIngredients || 'none';
-    avoidIngredients = avoidIngredients || 'none';
-    location = location || 'Johor Bahru'
+  // Set default values to 'none' if the fields are empty or not provided
+  mealType = mealType || "none";
+  mood = mood || "none";
+  dietaryPreference = dietaryPreference || "none";
+  spicyLevelValue =
+    spicyLevelValue !== undefined && spicyLevelValue !== null
+      ? spicyLevelValue
+      : "none";
+  loveIngredients = loveIngredients || "none";
+  avoidIngredients = avoidIngredients || "none";
+  location = location || "Johor Bahru";
 
-    console.log(mealType, mood, dietaryPreference, spicyLevelValue, loveIngredients, avoidIngredients, location);
-    try {
-        // Initialize the Google Generative AI client
-        const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_AI_API_KEY);
-        // const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash",
-            maxTokens: 200 // Restrict token output for faster response
-        });
+  console.log(
+    mealType,
+    mood,
+    dietaryPreference,
+    spicyLevelValue,
+    loveIngredients,
+    avoidIngredients,
+    location
+  );
+  try {
+    // Initialize the Google Generative AI client
+    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_AI_API_KEY);
+    // const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      maxTokens: 200, // Restrict token output for faster response
+    });
 
-        const prompt = `
+    const prompt = `
             You are an advanced AI food recommendation expert with extensive knowledge of Malaysian cuisine. Based on the user's preferences below, provide an array of 1-6 highly relevant food recommendations. These recommendations should:
 - Be realistic and region-specific.
 - Include dishes commonly available in ${location}.
@@ -42,45 +61,44 @@ exports.getFoodRecommendation = async (req, res) => {
             Respond only with an array, e.g., ["Laksa", "Roti Canai", "Nasi Lemak"].
         `;
 
-        const result = await model.generateContent(prompt);
+    const result = await model.generateContent(prompt);
 
-        let suggestions = await result.response.text();
+    let suggestions = await result.response.text();
 
-        console.log('API response:', suggestions);
+    console.log("API response:", suggestions);
 
-        const jsonStart = suggestions.indexOf('[');
-        const jsonEnd = suggestions.lastIndexOf(']') + 1;
+    const jsonStart = suggestions.indexOf("[");
+    const jsonEnd = suggestions.lastIndexOf("]") + 1;
 
-        // Extract the JSON content
-        if (jsonStart !== -1 && jsonEnd !== -1) {
-            suggestions = suggestions.slice(jsonStart, jsonEnd);
-        } else {
-            // throw new Error('Invalid JSON format');
-            suggestions = [];
-        }
-
-        food_suggestions = JSON.parse(suggestions);
-        res.json({ food_suggestions });
-
-    } catch (error) {
-        console.error('Error fetching food suggestions:', error);
-        res.status(500).json({ error: 'Failed to fetch food suggestions' });
+    // Extract the JSON content
+    if (jsonStart !== -1 && jsonEnd !== -1) {
+      suggestions = suggestions.slice(jsonStart, jsonEnd);
+    } else {
+      // throw new Error('Invalid JSON format');
+      suggestions = [];
     }
+
+    food_suggestions = JSON.parse(suggestions);
+    res.json({ food_suggestions });
+  } catch (error) {
+    console.error("Error fetching food suggestions:", error);
+    res.status(500).json({ error: "Failed to fetch food suggestions" });
+  }
 };
 
 exports.getRestaurantsRecommendation = async (req, res) => {
-    // Extract preferences from the request body
-    let { food, location } = req.body;
+  // Extract preferences from the request body
+  let { food, location } = req.body;
 
-    location = location || 'Johor Bahru';
+  location = location || "Johor Bahru";
 
-    try {
-        // Initialize the Google Generative AI client
-        const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_AI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  try {
+    // Initialize the Google Generative AI client
+    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_AI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-        // Create the prompt to request exactly two restaurant suggestions
-        const prompt = `
+    // Create the prompt to request exactly two restaurant suggestions
+    const prompt = `
 You are an advanced AI food recommendation expert. Based on the following selected food, provide max three food venues/restaurants recommendations that can find that selected food at that location at Johor, Malaysia:
             Food: ${food}
             Location: ${location}, Johor
@@ -115,28 +133,26 @@ You are an advanced AI food recommendation expert. Based on the following select
             Please give me only the json.
         `;
 
-        const result = await model.generateContent(prompt);
+    const result = await model.generateContent(prompt);
 
-        let restaurant_suggestion = await result.response.text();
+    let restaurant_suggestion = await result.response.text();
 
-        const jsonStart = restaurant_suggestion.indexOf('[');
-        const jsonEnd = restaurant_suggestion.lastIndexOf(']') + 1;
+    const jsonStart = restaurant_suggestion.indexOf("[");
+    const jsonEnd = restaurant_suggestion.lastIndexOf("]") + 1;
 
-        // Extract the JSON content
-        if (jsonStart !== -1 && jsonEnd !== -1) {
-            restaurant_suggestion = restaurant_suggestion.slice(jsonStart, jsonEnd);
-        } else {
-            throw new Error('Invalid JSON format');
-        }
-
-        console.log('API response:', restaurant_suggestion);
-
-        restaurant_suggestions = JSON.parse(restaurant_suggestion);
-        res.json({ restaurant_suggestions });
-
-
-    } catch (error) {
-        console.error('Error fetching restaurant suggestions:', error);
-        res.status(500).json({ error: 'Failed to fetch restaurant suggestions' });
+    // Extract the JSON content
+    if (jsonStart !== -1 && jsonEnd !== -1) {
+      restaurant_suggestion = restaurant_suggestion.slice(jsonStart, jsonEnd);
+    } else {
+      throw new Error("Invalid JSON format");
     }
+
+    console.log("API response:", restaurant_suggestion);
+
+    restaurant_suggestions = JSON.parse(restaurant_suggestion);
+    res.json({ restaurant_suggestions });
+  } catch (error) {
+    console.error("Error fetching restaurant suggestions:", error);
+    res.status(500).json({ error: "Failed to fetch restaurant suggestions" });
+  }
 };

@@ -12,19 +12,18 @@ export const follow = async (id, token) => {
         },
       }
     );
-    // return "ok";
     return data;
   } catch (error) {
     console.log(error.response.data.message);
     return error.response.data.message;
   }
 };
+
 export const unfollow = async (id, token) => {
   try {
     const { data } = await axios.put(
       `${process.env.REACT_APP_BACKEND_URL}/unfollow/${id}`,
       {},
-
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -42,7 +41,6 @@ export const search = async (searchTerm, token) => {
     const { data } = await axios.post(
       `${process.env.REACT_APP_BACKEND_URL}/search/${searchTerm}`,
       {},
-
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -60,7 +58,6 @@ export const saveSearchTermAndHistory = async (searchTerm, token) => {
     const { data } = await axios.put(
       `${process.env.REACT_APP_BACKEND_URL}/saveSearchTermAndHistory/${searchTerm}`,
       {},
-
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -77,7 +74,6 @@ export const getSearchHistory = async (token) => {
   try {
     const { data } = await axios.get(
       `${process.env.REACT_APP_BACKEND_URL}/getSearchHistory`,
-
       {
         headers: {
           Authorization: `Bearer ${token}`,

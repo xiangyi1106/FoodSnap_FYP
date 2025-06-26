@@ -1,18 +1,15 @@
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useClickOutside from "../../helpers/clickOutside";
 import Picker from "emoji-picker-react";
 import CIcon from '@coreui/icons-react';
-import { cilX, cilSmile, cilImage, cilTag, cilLocationPin, cilStar, cilUserFollow } from '@coreui/icons';
+import { cilX, cilSmile } from '@coreui/icons';
 import Tooltip from '@mui/material/Tooltip';
 import classNames from 'classnames';
 import CircularProgress from '@mui/material/CircularProgress';
-import { createPost } from "../../functions/post";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import PostInput from "../createPostPopup/PostInput";
-import PostTextArea from "../createPostPopup/PostTextArea";
-import { postReducer } from "../../functions/reducers";
 import { toggleScroll } from "../../functions/fileUtils";
 
 export default function SharePostPopUp({ setIsShareVisible, user, post, dispatch, setSharesCount }) {
@@ -89,13 +86,10 @@ export default function SharePostPopUp({ setIsShareVisible, user, post, dispatch
                 setSharesCount(response.data.post.shares.length);
                 toast.success(response.data.message);
             }
-
-
         } catch (error) {
             // Handle any errors that occur during the request
             console.error("Failed to share the post:", error.message);
             toast.error("Failed to share the post:", error.message);
-
         }
     };
 
@@ -112,11 +106,7 @@ export default function SharePostPopUp({ setIsShareVisible, user, post, dispatch
                                 {isLoading && <button className="logo_color_text">Sharing <CircularProgress className='logo_color_text' style={{ width: "13px", height: "13px" }} /></button>}
                             </div>
                         </div>
-                        {/* <div className="post_content" style={{ minHeight: "320px" }}>
-                            <textarea autoFocus={true} disabled={isLoading} placeholder="Share something..." id="post_input" ref={textRef} maxLength={22000} value={text} style={{ minHeight: "320px" }} onChange={(e) => setText(e.target.value)} className="post_input" ></textarea>
-                        </div> */}
                         <PostInput setText={setText} text={text} isLoading={isLoading} user={user} textRef={textRef} />
-                        {/* <PostTextArea setText={setText} text={text} isLoading={isLoading} user={user}/> */}
                     </div>
                     <div className="create_post_popup_footer">
                         <div className="create_post_popup_footer_button_set">

@@ -20,7 +20,6 @@ export default function Post({ post, user, profile, skip, onShowFeedComment, dep
     const navigate = useNavigate();
 
     const handleClick = (postId, i) => {
-        // navigate(`/post/${postId}/${i}`);
         navigate(`/post/${postId}/${i}`, { state: { post } });
     };
 

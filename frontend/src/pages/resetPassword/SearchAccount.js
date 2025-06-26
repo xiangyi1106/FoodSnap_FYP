@@ -15,8 +15,6 @@ const validateEmail = Yup.object({
         .email("Please enter a valid email.")
 });
 
-
-
 export default function SearchAccount({ error, setError, setLoading, loading, setUserInfos, setPage }) {
     const handleInputBlur = () => {
         if (error) {

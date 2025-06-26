@@ -1,9 +1,4 @@
-const { text } = require("express");
-const { url } = require("inspector");
 const mongoose = require("mongoose");
-const { type } = require("os");
-const { searchTerm } = require("../controllers/search");
-
 const { ObjectId } = mongoose.Schema;
 
 const ImageSchema = new mongoose.Schema({

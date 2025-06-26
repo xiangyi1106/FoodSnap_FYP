@@ -21,7 +21,7 @@ export default function Introduction() {
                 </div>
                 <div className='details_col'>
                     <span>LOCATION <LocationOnIcon style={{fontSize:"medium"}}/></span>
-                    <span>Gelang Patah, Johor, Malaysia</span>
+                    <span>Malaysia</span>
                 </div>
             </div>
 

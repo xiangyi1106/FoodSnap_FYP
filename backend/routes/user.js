@@ -38,7 +38,7 @@ router.post("/register", register);
 
 router.post("/login", login);
 
-router.get("/searchPeople", searchPeople);
+router.get("/searchPeople", authUser, searchPeople);
 
 router.post("/findUser", findUser);
 
@@ -50,7 +50,7 @@ router.post("/changePassword", changePassword);
 
 router.get("/getProfile/:username", authUser, getProfile);
 
-router.get('/getImages/:userId', getListImages);
+router.get('/getImages/:userId', authUser, getListImages);
 
 router.put("/updateProfilePicture", authUser, updateProfilePicture);
 

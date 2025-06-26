@@ -6,7 +6,7 @@ const router = express.Router();
 router.post("/addPromotion", authUser, addPromotion);
 router.get("/getPublicPromotions", getPublicPromotions);
 router.get("/getPromotionsByID/:id", getPromotionsByID);
-router.get("/api/promotion/search", searchPromotion);
+router.get("/promotion/search", searchPromotion);
 router.get("/api/promotion/:id", getPromotionDetails);
 router.put('/api/promotion/update/:id', authUser, updatePromotion);
 

@@ -1,13 +1,11 @@
 .place_detail_information {
   overflow: hidden;
-  /* background-color: gray; */
 }
 
 .container_wrapper {
   width: 90vw;
   height: 90vh;
   overflow-y: auto;
-  /* justify-content: center; */
   margin: auto;
   position: absolute;
   top: 50%;
@@ -35,8 +33,6 @@
 .place_profile {
   display: flex;
   flex-direction: column;
-  /* align-items: center; */
-  /* gap: 10px; */
   font-weight: 600;
   justify-content: flex-start;
 }
@@ -60,7 +56,6 @@
 .place_detail_information .profile_grid {
   position: relative;
   display: grid;
-  /* grid-template-columns: 1.4fr 1fr; */
   gap: 30px;
 }
 
@@ -90,9 +85,8 @@
 .opening_hour_row{
   display: flex;
   gap: 30px;
-  /* justify-content: space-between; Makes sure the day and time are on separate ends */
-  /* margin-bottom: 10px; Adds space between rows */
 }
+
 .other_info_text_wrapper,
 .opening_hour_day,
 .opening_hour_time {
@@ -129,10 +123,7 @@
   margin: 0.5em;
   border-radius: 10px;
   background-color: #30BFBF;
-  /* Primary color for the badge */
   color: white;
-  /* Text color */
-  /* font-size: 0.9em; */
   font-weight: bold;
   text-transform: uppercase;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
@@ -141,15 +132,9 @@
   cursor: default;
 }
 
-/* .badge_category:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  } */
-
 .badge_category_container {
   display: flex;
   flex-wrap: wrap;
-  /* justify-content: center; */
   align-items: center;
   position: relative;
   right: 4px;
@@ -170,7 +155,6 @@
 
 .profile_review_wrapper {
   border-radius: 50px;
-
 }
 
 .place_detail_information .place_comment_textarea textarea {
@@ -181,7 +165,6 @@
   width: 100%;
   padding: 10px 15px;
   color: var(--color-primary);
-  /* background: transparent; */
   background-color: var(--bg-forth);
   resize: none;
   border-radius: 10px;
@@ -205,22 +188,15 @@
   height: 100%;
   display: flex;
   align-items: center;
-  /* background: var(--bg-forth); */
   border-radius: 50px;
   padding-right: 10px;
 }
-
-/* .place_detail_information .create_comment_wrap {
-  padding: 10px 20px;
-
-} */
 
 .place_detail_information .place_comment_id {
   display: flex;
   align-items: center;
   padding: 10px 15px;
   gap: 5px;
-  /* justify-content: flex-start; */
 }
 
 .place_comment_id {
@@ -228,10 +204,6 @@
   align-items: center;
   padding: 10px 2px;
 }
-
-/* .create_comment_wrap{
-  padding: 10px 20px;
-} */
 
 .place_create_comment img {
   width: 40px;
@@ -273,7 +245,6 @@
 }
 
 /* place_profile_photos */
-
 .place_profile_photos {
   width: 100%;
   margin-left: auto;
@@ -283,9 +254,7 @@
 
 /* edit_place_info */
 .edit_place_info {
-  /* width: 100%; */
   background: #fff;
-  /* height: 100%; */
 }
 
 .place_details_wrapper{
@@ -311,19 +280,15 @@
   .place_detail_information .bottom_container{
     padding: 10px 20px!important;
   }
-
-  
 }
 
 @media (min-width: 581px) {
-
   .place_detail_information .profile_grid{
       grid-template-columns: 1.4fr 1fr!important;
   }
 }
 
 @media (max-width: 580px) {
-
   .place_detail_information .profile_grid{
       gap: 0;
   }

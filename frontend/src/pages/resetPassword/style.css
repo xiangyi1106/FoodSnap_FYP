@@ -44,8 +44,6 @@
     background: var(--bg-primary);
     box-shadow: 0 1px 2px var(--shadow-1);
     border-radius: 10px;
-    /* width: 100%; */
-    /* width: 40%; */
     width: 50vw;
     height: fit-content !important;
 }
@@ -53,7 +51,6 @@
 .reset_form_header {
     padding: 15px;
     font-weight: 600;
-    /* font-size: 24px; */
     font-size: 1.5em;
     border-bottom: 1px solid var(--bg-third);
     text-align: center;
@@ -61,10 +58,8 @@
 
 .reset_form_text {
     padding: 15px;
-    /* font-size: 17px; */
     font-size: 1em;
     text-align: center;
-
 }
 
 .reset_form form {
@@ -76,15 +71,12 @@
 
 .reset_form_btns {
     display: flex;
-    /* align-self: flex-end; */
-    /* align-self: center; */
     justify-content: center;
     gap: 10px;
     margin-top: 5px;
     padding: 10px;
     position: relative;
     width: 100%;
-    /* padding-left: 65%; */
     border-top: 1px solid var(--bg-third);
 }
 
@@ -104,17 +96,13 @@
     justify-content: center;
     align-items: center;
     padding: 10px;
-    /* flex-direction: column; */
 }
 
 .enter_code_wrapper input{
-    font-size: 1.5rem; /* Equivalent to text-2xl */
-    /* background-color: #4b5563; Equivalent to bg-gray-800 */
-    /* width: 2.5rem; Equivalent to w-10 */
+    font-size: 1.5rem; 
     width: 10%;
     display: flex;
-    padding: 0.5rem; /* Equivalent to p-2 */
- 
+    padding: 0.5rem;
     text-align: center;
 }
 
@@ -131,9 +119,6 @@
     justify-content: center;
     align-items: center;
 }
-/* .reset .error_icon{
-    top: 12%;
-} */
 
 .reset_right {
     display: flex;
@@ -170,7 +155,6 @@ input[type=number] {
 /* Media Queries */
 @media (max-width: 650px){
     .reset_wrap, .reset_form{
-        /* height: 100vh!important; */
         width: 100vw;
     }
 }

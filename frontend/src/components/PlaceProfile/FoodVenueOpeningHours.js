@@ -1,20 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './OpeningHours.css';
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Button from '@mui/material/Button';
 import { toast } from 'react-toastify';
 
 const FoodVenueOpeningHours = ({ openingHours, setFormData }) => {
-
-    // const handleTimeChange = (day, index, type, value) => {
-    //     setFormData((prevData) => {
-    //         const updatedHours = { ...prevData.openingHours };
-    //         updatedHours[day][index][type] = value;
-    //         return { ...prevData, openingHours: updatedHours };
-    //     });
-    // };
 
     const handleTimeChange = (day, index, type, value) => {
         setFormData((prevData) => {
@@ -32,7 +21,6 @@ const FoodVenueOpeningHours = ({ openingHours, setFormData }) => {
             return { ...prevData, openingHours: updatedHours };
         });
     };
-
 
     const toggleClosed = (day) => {
         setFormData((prevData) => {
@@ -55,17 +43,6 @@ const FoodVenueOpeningHours = ({ openingHours, setFormData }) => {
         });
     };
 
-    // const convertTo24HourFormat = (time) => {
-    //     const [timePart, modifier] = time.split(' ');
-    //     let [hours, minutes] = timePart.split(':');
-    //     if (modifier === 'pm' && hours !== '12') {
-    //         hours = parseInt(hours, 10) + 12;
-    //     }
-    //     if (modifier === 'am' && hours === '12') {
-    //         hours = '00';
-    //     }
-    //     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-    // };
     // Convert 12-hour format (am/pm) to 24-hour format
     const convertTo24HourFormat = (time) => {
         const [timePart, modifier] = [time.slice(0, -2), time.slice(-2)];  // Extract time and am/pm

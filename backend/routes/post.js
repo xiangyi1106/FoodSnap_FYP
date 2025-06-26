@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post("/createPost", authUser, createPost);
 router.get("/getAllPosts", authUser, getAllPosts);
-router.get("/getPublicPosts", getPublicPosts);
+router.get("/getPublicPosts", authUser, getPublicPosts);
 router.get("/api/post/:id", getPostDetails);
 // Route for liking/unliking a post
 router.put("/likePost/:postId", authUser, toggleLike);

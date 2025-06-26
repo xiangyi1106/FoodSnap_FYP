@@ -7,8 +7,8 @@ const router = express.Router();
 router.post("/addEvent", authUser, addEvent);
 router.get("/getPublicEvents", getPublicEvents);
 router.get("/getEventsByID/:id", getEventsByID);
-router.get("/api/event/search", searchEvent);
-router.get("/api/event/:id", getEventDetails);
+router.get("/event/search", searchEvent);
+router.get("/event/:id", getEventDetails);
 router.put('/api/event/update/:id', authUser, updateEvent);
 
 module.exports = router;

@@ -3,11 +3,11 @@ const jwt = require("jsonwebtoken");
 exports.authUser = async (req, res, next) => {
     try {
         let tmp = req.header("Authorization");
-        console.log("Authorization header:", tmp); // Debugging line
+        // console.log("Authorization header:", tmp); // Debugging line
 
         // Extract the token from the Authorization header
         const token = tmp ? tmp.slice(7, tmp.length) : "";
-        console.log("Extracted token:", token); // Debugging line
+        // console.log("Extracted token:", token); // Debugging line
 
         if (!token) {
             console.log("1 - No token provided"); // Debugging line
@@ -21,7 +21,8 @@ exports.authUser = async (req, res, next) => {
                 console.log("2 - Token verification failed", err); // Debugging line
                 return res.status(400).json({ message: err });
             }
-            console.log("3 - Token verified, user:", user); // Debugging line
+            // console.log("3 - Token verified, user:", user); // Debugging line
+            
             // Attach the user information to the request object
             req.user = user;
             next();
